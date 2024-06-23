@@ -2,7 +2,7 @@
 
 pub mod BUILTIN {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn WAIT(ms: i32) { invoke_ignore!(0x4EDE34FBADD967A6, ms) }
@@ -30,7 +30,7 @@ pub mod BUILTIN {
 }
 pub mod AICOVERPOINT {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x53E4D0C079CA6855(handle: ScrHandle) -> Entity { invoke!(0x53E4D0C079CA6855, handle) }
@@ -53,7 +53,7 @@ pub mod AICOVERPOINT {
 }
 pub mod AITRANSPORT {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn TASK_ENTER_TRANSPORT(args: &mut Any) { invoke_ignore!(0xAEE3ADD08829CB6F, args) }
@@ -83,7 +83,7 @@ pub mod AITRANSPORT {
 }
 pub mod ANIMSCENE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _CREATE_ANIM_SCENE(animDict: & CStr, flags: i32, playbackListName: & CStr, p3: bool, p4: bool) -> AnimScene { invoke!(0x1FCA98E33C1437B3, animDict, flags, playbackListName, p3, p4) }
@@ -188,14 +188,14 @@ pub mod ANIMSCENE {
 }
 pub mod _NAMESPACE4 {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _REPORT_PLAYER_BAD_SPORT_BEHAVIOR(gamerHandle: &mut Any, badSportBehaviorType: i32) { invoke_ignore!(0xC31C44C43B48FDE3, gamerHandle, badSportBehaviorType) }
 }
 pub mod ATTRIBUTE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn SET_ATTRIBUTE_BASE_RANK(ped: Ped, attributeIndex: i32, newValue: i32) { invoke_ignore!(0x5DA12E025D47D4E5, ped, attributeIndex, newValue) }
@@ -228,7 +228,7 @@ pub mod ATTRIBUTE {
 }
 pub mod AUDIO {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x7455CD705F7E933E() { invoke_ignore!(0x7455CD705F7E933E) }
@@ -455,7 +455,7 @@ pub mod AUDIO {
 }
 pub mod BOUNTY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _BOUNTY_REQUEST_PAY_OFF_BOUNTY(outRpcGuid: &mut Any) -> bool { invoke!(0x537CE992BD2D7BCB, outRpcGuid) }
@@ -494,7 +494,7 @@ pub mod BOUNTY {
 }
 pub mod BRAIN {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn REGISTER_OBJECT_SCRIPT_BRAIN(scriptName: & CStr, modelHash: Hash, p2: i32, activationRange: f32, p4: i32, p5: i32) { invoke_ignore!(0x16AF9B4EEAC3B305, scriptName, modelHash, p2, activationRange, p4, p5) }
@@ -511,7 +511,7 @@ pub mod BRAIN {
 }
 pub mod CAM {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn RENDER_SCRIPT_CAMS(render: bool, ease: bool, easeTime: i32, p3: bool, p4: bool, p5: i32) { invoke_ignore!(0x33281167E4942E4F, render, ease, easeTime, p3, p4, p5) }
@@ -750,7 +750,7 @@ pub mod CAM {
 }
 pub mod CLOCK {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn SET_CLOCK_TIME(hour: i32, minute: i32, second: i32) { invoke_ignore!(0x3A52C59FFB2DEED8, hour, minute, second) }
@@ -775,7 +775,7 @@ pub mod CLOCK {
 }
 pub mod COLLECTION {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _COLLECTABLE_GET_CATEGORY(collectableItem: Hash) -> Hash { invoke!(0x725D52F21A5E9EF6, collectableItem) }
@@ -812,7 +812,7 @@ pub mod COLLECTION {
 }
 pub mod COMPANION {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0xD730281E496621FB(ped: Ped, p1: Hash) { invoke_ignore!(0xD730281E496621FB, ped, p1) }
@@ -843,7 +843,7 @@ pub mod COMPANION {
 }
 pub mod COMPENDIUM {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x725D52F21A5E9E22(category: Hash) -> f32 { invoke!(0x725D52F21A5E9E22, category) }
@@ -883,7 +883,7 @@ pub mod COMPENDIUM {
 }
 pub mod CRASHLOG {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x0FD3ECF9D0C8655F(p0: & CStr) { invoke_ignore!(0x0FD3ECF9D0C8655F, p0) }
@@ -902,7 +902,7 @@ pub mod CRASHLOG {
 }
 pub mod CREW {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn NETWORK_FIND_GAMERS_IN_CREW(crewId: i32) -> bool { invoke!(0xE532D6811B3A4D2A, crewId) }
@@ -926,7 +926,7 @@ pub mod CREW {
 }
 pub mod DATABINDING {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _DATABINDING_GET_DATA_CONTAINER_FROM_PATH(p0: & CStr) -> Any { invoke!(0x0C827D175F1292F2, p0) }
@@ -1015,7 +1015,7 @@ pub mod DATABINDING {
 }
 pub mod DATAFILE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn DATAFILE_WATCH_REQUEST_ID(id: i32) { invoke_ignore!(0xA5834834CA8FD7FC, id) }
@@ -1080,7 +1080,7 @@ pub mod DATAFILE {
 }
 pub mod DEBUG {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0xACF9CB705BEFA8CB() -> Any { invoke!(0xACF9CB705BEFA8CB) }
@@ -1089,7 +1089,7 @@ pub mod DEBUG {
 }
 pub mod DECORATOR {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn DECOR_SET_BOOL(entity: Entity, propertyName: & CStr, value: bool) -> bool { invoke!(0xFE26E4609B1C3772, entity, propertyName, value) }
@@ -1110,7 +1110,7 @@ pub mod DECORATOR {
 }
 pub mod DLC {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn IS_DLC_PRESENT(dlcHash: Hash) -> bool { invoke!(0x2763DC12BBE2BB6F, dlcHash) }
@@ -1120,7 +1120,7 @@ pub mod DLC {
 }
 pub mod ENTITY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn DOES_ENTITY_EXIST(entity: Entity) -> bool { invoke!(0xD42BD6EB2E0F1677, entity) }
@@ -1394,7 +1394,7 @@ pub mod ENTITY {
 }
 pub mod EVENT {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn SET_DECISION_MAKER(ped: Ped, name: Hash) { invoke_ignore!(0x8AE2F981CDDB8FA4, ped, name) }
@@ -1438,7 +1438,7 @@ pub mod EVENT {
 }
 pub mod FIRE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn START_SCRIPT_FIRE(x: f32, y: f32, z: f32, p3: i32, p4: f32, p5: bool, soundsetName: & CStr, p7: f32, p8: i32) -> FireId { invoke!(0x6B83617E04503888, x, y, z, p3, p4, p5, soundsetName, p7, p8) }
@@ -1472,7 +1472,7 @@ pub mod FIRE {
 }
 pub mod FLOCK {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn GET_SPECIES_TUNING_FLOAT_PARAM(p0: Hash, p1: i32, p2: i32) -> f32 { invoke!(0xE108489621422F91, p0, p1, p2) }
@@ -1524,7 +1524,7 @@ pub mod FLOCK {
 }
 pub mod GRAPHICS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn DRAW_LINE(fromX: f32, fromY: f32, fromZ: f32, toX: f32, toY: f32, toZ: f32, r: i32, g: i32, b: i32, a: i32) { invoke_ignore!(0xec2ab68b,fromX,fromY, fromZ, toX, toY, toZ, r, g, b, a) }
@@ -1798,7 +1798,7 @@ pub mod GRAPHICS {
 }
 pub mod GANG {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn NETWORK_IS_GANG_ID_VALID(gangId: Any) -> bool { invoke!(0xD6F6ACF4392187FB, gangId) }
@@ -1846,7 +1846,7 @@ pub mod GANG {
 }
 pub mod GOOGLE_ANALYTICS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _GOOGLE_ANALYTICS_PUSH_PAGE(pageName: & CStr) { invoke_ignore!(0xD43A616AE3AC4EF6, pageName) }
@@ -1856,7 +1856,7 @@ pub mod GOOGLE_ANALYTICS {
 }
 pub mod HUD {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _ENABLE_REDUCED_MENU_TIME_SCALE() { invoke_ignore!(0x26F6BBEA2CE3E3DC) }
@@ -2050,7 +2050,7 @@ pub mod HUD {
 }
 pub mod IK {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _INVERSE_KINEMATICS_REQUEST_LOOK_AT(ped: Ped, args: &mut Any) { invoke_ignore!(0x66F9EB44342BB4C5, ped, args) }
@@ -2061,7 +2061,7 @@ pub mod IK {
 }
 pub mod INTERACTION {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn SET_MOUSE_CURSOR_THIS_FRAME() { invoke_ignore!(0xF12E4CCAF249DC10) }
@@ -2073,7 +2073,7 @@ pub mod INTERACTION {
 }
 pub mod INTERIOR {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn IS_VALID_INTERIOR(interior: Interior) -> bool { invoke!(0x017C1B3159F79F6C, interior) }
@@ -2109,7 +2109,7 @@ pub mod INTERIOR {
 }
 pub mod INVENTORY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _INVENTORY_GET_INVENTORY_ID_FROM_PED(ped: Ped) -> i32 { invoke!(0x13D234A2A3F66E63, ped) }
@@ -2198,7 +2198,7 @@ pub mod INVENTORY {
 }
 pub mod ITEMDATABASE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _ITEMDATABASE_CAN_EQUIP_ITEM_ON_CATEGORY(key: Hash, category: Hash, slotId: Hash) -> bool { invoke!(0x856FF92C57742AE5, key, category, slotId) }
@@ -2288,7 +2288,7 @@ pub mod ITEMDATABASE {
 }
 pub mod ITEMSET {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn CREATE_ITEMSET(p0: bool) -> ItemSet { invoke!(0xA1AF16083320065A, p0) }
@@ -2305,7 +2305,7 @@ pub mod ITEMSET {
 }
 pub mod LAW {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _REPORT_CRIME(player: Player, crimeType: Hash, bounty: i32, entity: Entity, isKnownSuspect: bool) { invoke_ignore!(0xF60386770878A98F, player, crimeType, bounty, entity, isKnownSuspect) }
@@ -2435,7 +2435,7 @@ pub mod LAW {
 }
 pub mod LOCALIZATION {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn LOCALIZATION_GET_SYSTEM_LANGUAGE() -> i32 { invoke!(0x3C1A05F86AE6ACB5) }
@@ -2445,7 +2445,7 @@ pub mod LOCALIZATION {
 }
 pub mod MAP {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn GET_BLIP_FROM_ENTITY(entity: Entity) -> Blip { invoke!(0x6D2C41A8BD6D6FD0, entity) }
@@ -2536,7 +2536,7 @@ pub mod MAP {
 }
 pub mod MINIGAME {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x6480723D3BE535B6(p0: Any) { invoke_ignore!(0x6480723D3BE535B6, p0) }
@@ -2590,7 +2590,7 @@ pub mod MINIGAME {
 }
 pub mod MISC {
 	use std::ffi::{CStr, CString};
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn GET_NUMBER_OF_FREE_STACKS_OF_THIS_SIZE(stackSize: i32) -> i32 { invoke!(0x40DC2907A9697EF7, stackSize) }
@@ -2884,7 +2884,7 @@ pub mod MISC {
 }
 pub mod MISSIONDATA {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn MISSIONDATA_IS_VALID(p0: Any) -> bool { invoke!(0xE54DC27571D5EDC5, p0) }
@@ -2908,7 +2908,7 @@ pub mod MISSIONDATA {
 }
 pub mod MONEY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _MONEY_GET_CASH_BALANCE() -> i32 { invoke!(0x0C02DABFA3B98176) }
@@ -2922,7 +2922,7 @@ pub mod MONEY {
 }
 pub mod NETSHOPPING {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn CASHINVENTORY_INIT_SESSION_STATUS(p0: &mut i32, p1: &mut i32) -> bool { invoke!(0xC019112F8995DC1C, p0, p1) }
@@ -2952,7 +2952,7 @@ pub mod NETSHOPPING {
 }
 pub mod NETWORK {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn NETWORK_IS_SIGNED_ONLINE() -> bool { invoke!(0x1077788E268557C2) }
@@ -3524,7 +3524,7 @@ pub mod NETWORK {
 }
 pub mod OBJECT {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn CREATE_OBJECT(modelHash: Hash, x: f32, y: f32, z: f32, isNetwork: bool, bScriptHostObj: bool, dynamic: bool, p7: bool, p8: bool) -> Object { invoke!(0x509D5878EB39E842, modelHash, x, y, z, isNetwork, bScriptHostObj, dynamic, p7, p8) }
@@ -3683,7 +3683,7 @@ pub mod OBJECT {
 }
 pub mod PAD {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _SET_CONTROL_CONTEXT(control: i32, context: Hash) { invoke_ignore!(0x2804658EB7D8A50B, control, context) }
@@ -3729,7 +3729,7 @@ pub mod PAD {
 }
 pub mod PATHFIND {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn SET_ROADS_IN_AREA(xMin: f32, yMin: f32, zMin: f32, xMax: f32, yMax: f32, zMax: f32, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0xBF1A602B5BA52FEE, xMin, yMin, zMin, xMax, yMax, zMax, p6, p7, p8) }
@@ -3811,7 +3811,7 @@ pub mod PATHFIND {
 }
 pub mod PED {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn CREATE_PED(modelHash: Hash, x: f32, y: f32, z: f32, heading: f32, isNetwork: bool, bScriptHostPed: bool, p7: bool, p8: bool) -> Ped { invoke!(0xD49F9B0955C367DE, modelHash, x, y, z, heading, isNetwork, bScriptHostPed, p7, p8) }
@@ -4827,7 +4827,7 @@ pub mod PED {
 }
 pub mod PERSCHAR {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x63AA2B8EB087886A(p0: Any, p1: Any) { invoke_ignore!(0x63AA2B8EB087886A, p0, p1) }
@@ -4884,7 +4884,7 @@ pub mod PERSCHAR {
 }
 pub mod PERSISTENCE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x7A1BD123E5CDB6E5() { invoke_ignore!(0x7A1BD123E5CDB6E5) }
@@ -4912,7 +4912,7 @@ pub mod PERSISTENCE {
 }
 pub mod PHYSICS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn ADD_ROPE(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, length: f32, ropeType: i32, maxLength: f32, minLength: f32, p10: f32, p11: bool, p12: bool, rigid: bool, p14: f32, breakWhenShot: bool, unkPtr: &mut Any, p17: bool) -> i32 { invoke!(0xE832D760399EB220, x, y, z, rotX, rotY, rotZ, length, ropeType, maxLength, minLength, p10, p11, p12, rigid, p14, breakWhenShot, unkPtr, p17) }
@@ -4990,7 +4990,7 @@ pub mod PHYSICS {
 }
 pub mod PLAYER {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn GET_PLAYER_PED(player: Player) -> Ped { invoke!(0x275F255ED201B937, player) }
@@ -5391,7 +5391,7 @@ pub mod PLAYER {
 }
 pub mod POPULATION {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn GET_NUM_MODELS_IN_POPULATION_SET(popSetHash: Hash) -> i32 { invoke!(0xA1E3171ED0E47564, popSetHash) }
@@ -5428,7 +5428,7 @@ pub mod POPULATION {
 }
 pub mod POSSE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0xC086FF658B2E51DB() -> Any { invoke!(0xC086FF658B2E51DB) }
@@ -5465,7 +5465,7 @@ pub mod POSSE {
 }
 pub mod PROPSET {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _REQUEST_PROP_SET(hash: Hash) -> bool { invoke!(0xF3DE57A46D5585E9, hash) }
@@ -5508,7 +5508,7 @@ pub mod PROPSET {
 }
 pub mod QUEUE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _EVENT_QUEUE_IS_EMPTY(hash: Hash) -> bool { invoke!(0x402B5D7D269FF796, hash) }
@@ -5516,14 +5516,14 @@ pub mod QUEUE {
 }
 pub mod RECORDING {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn REPLAY_PREVENT_RECORDING_THIS_FRAME() { invoke_ignore!(0xA8C44C13419634F2) }
 }
 pub mod REPLAY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn REPLAY_SYSTEM_HAS_REQUESTED_A_SCRIPT_CLEANUP() -> bool { invoke!(0x0F838D47DE58EDB2) }
@@ -5534,7 +5534,7 @@ pub mod REPLAY {
 }
 pub mod SCRIPTS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _SET_PLAYER_BIT_AT_INDEX(value: &mut Any, bitIndex: i32) { invoke_ignore!(0x31010318BA9897AC, value, bitIndex) }
@@ -5634,7 +5634,7 @@ pub mod SCRIPTS {
 }
 pub mod SAVE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x4FB5869E2B37FC00() { invoke_ignore!(0x4FB5869E2B37FC00) }
@@ -5664,7 +5664,7 @@ pub mod SAVE {
 }
 pub mod SHAPETEST {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn START_SHAPE_TEST_LOS_PROBE(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, flags: i32, entity: Entity, p8: i32) -> ScrHandle { invoke!(0x7EE9F5D83DD4F90E, x1, y1, z1, x2, y2, z2, flags, entity, p8) }
@@ -5678,7 +5678,7 @@ pub mod SHAPETEST {
 }
 pub mod SOCIALCLUB {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn SC_INBOX_GET_TOTAL_NUM_MESSAGES() -> i32 { invoke!(0x8EF0F633280C0663) }
@@ -5717,7 +5717,7 @@ pub mod SOCIALCLUB {
 }
 pub mod SOCIALCLUBFEED {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _SC_FEED_SUBMIT_PRESET_MESSAGE(type_: i32, subType: i32) -> i32 { invoke!(0xEFB64240F6B17817, type_, subType) }
@@ -5725,7 +5725,7 @@ pub mod SOCIALCLUBFEED {
 }
 pub mod SPACTIONPROXY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _SPACTIONPROXY_START_MANAGER() -> bool { invoke!(0x1F471B79ACC91BEE) }
@@ -5737,7 +5737,7 @@ pub mod SPACTIONPROXY {
 }
 pub mod STATS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn STAT_ID_IS_VALID(statId: &mut Any) -> bool { invoke!(0xC48FE1971C9743FF, statId) }
@@ -5831,7 +5831,7 @@ pub mod STATS {
 }
 pub mod STREAMING {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn REQUEST_MODEL(model: Hash, p1: bool) { invoke_ignore!(0xFA28FE3A6246FC30, model, p1) }
@@ -5952,7 +5952,7 @@ pub mod STREAMING {
 }
 pub mod TASK {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn TASK_PAUSE(ped: Ped, ms: i32) { invoke_ignore!(0xE73A266DB0CA9042, ped, ms) }
@@ -6598,7 +6598,7 @@ pub mod TASK {
 }
 pub mod TELEMETRY {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _TELEMETRY_SET_IS_FLOW(toggle: bool) { invoke_ignore!(0x9BEE018A63FFFAD9, toggle) }
@@ -6682,7 +6682,7 @@ pub mod TELEMETRY {
 }
 pub mod TXD {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn DOES_STREAMED_TXD_EXIST(txdHash: Hash) -> bool { invoke!(0xBA0163B277C2D2D0, txdHash) }
@@ -6696,7 +6696,7 @@ pub mod TXD {
 }
 pub mod UIAPPS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn IS_UIAPP_ACTIVE_BY_HASH(appNameHash: Hash) -> bool { invoke!(0x25B7A0206BDFAC76, appNameHash) }
@@ -6721,7 +6721,7 @@ pub mod UIAPPS {
 }
 pub mod UIDEBUG {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _BG_DISPLAY_TEXT(text: & CStr, x: f32, y: f32) { invoke_ignore!(0x16794E044C9EFB58, text, x, y) }
@@ -6730,7 +6730,7 @@ pub mod UIDEBUG {
 }
 pub mod UIEVENTS {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn EVENTS_UI_IS_PENDING(hash: Hash) -> bool { invoke!(0x67ED5A7963F2F722, hash) }
@@ -6740,7 +6740,7 @@ pub mod UIEVENTS {
 }
 pub mod UIFEED {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UI_FEED_POST_HELP_TEXT(p0: &mut Any, p1: &mut Any, p2: bool) -> i32 { invoke!(0x049D5C615BD38BAD, p0, p1, p2) }
@@ -6773,7 +6773,7 @@ pub mod UIFEED {
 }
 pub mod UILOG {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UILOG_IS_ENTRY_REGISTERED(p0: i32, p1: Hash) -> bool { invoke!(0xB8188CCF52202475, p0, p1) }
@@ -6809,14 +6809,14 @@ pub mod UILOG {
 }
 pub mod UIPINNING {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UIPINNING_GET_TOOLTIP_TEXT(hash: Hash) -> *const char { invoke!(0x3138582E0A13BFAB, hash) }
 }
 pub mod UITUTORIAL {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UITUTORIAL_GET_IS_THREAT_INDICATOR_CAPABLE_RADAR_SHOWN() -> bool { invoke!(0x2CC24A2A7A1489C4) }
@@ -6825,7 +6825,7 @@ pub mod UITUTORIAL {
 }
 pub mod UISTATEMACHINE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UIFLOWBLOCK_REQUEST(p0: Any) -> Any { invoke!(0xC0081B34E395CE48, p0) }
@@ -6843,7 +6843,7 @@ pub mod UISTATEMACHINE {
 }
 pub mod UISTICKYFEED {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UI_STICKY_FEED_CREATE_ERROR_MESSAGE(p0: &mut Any, p1: &mut Any, p2: bool) -> i32 { invoke!(0x9F2CC2439A04E7BA, p0, p1, p2) }
@@ -6857,7 +6857,7 @@ pub mod UISTICKYFEED {
 }
 pub mod UNLOCK {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _UNLOCK_IS_UNLOCK_FLAG_SET(unlockHash: Hash, flag: i32) -> bool { invoke!(0x6B6369647F26F09F, unlockHash, flag) }
@@ -6872,7 +6872,7 @@ pub mod UNLOCK {
 }
 pub mod VEHICLE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0x6355602C02EDC6DF(entity: Entity, p1: Any) { invoke_ignore!(0x6355602C02EDC6DF, entity, p1) }
@@ -7265,7 +7265,7 @@ pub mod VEHICLE {
 }
 pub mod VOICE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0xCCF71FCFA0070B1A() -> bool { invoke!(0xCCF71FCFA0070B1A) }
@@ -7295,7 +7295,7 @@ pub mod VOICE {
 }
 pub mod VOLUME {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _CREATE_VOLUME_BY_HASH(volumeType: Hash, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) -> Volume { invoke!(0x502022FA1AF9DC86, volumeType, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
@@ -7381,7 +7381,7 @@ pub mod VOLUME {
 }
 pub mod WATER {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn DISABLE_WATER_LOOKUP() { invoke_ignore!(0x754616EC6965D1FB) }
@@ -7404,7 +7404,7 @@ pub mod WATER {
 }
 pub mod WEAPON {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _GET_WEAPON_UNLOCK(weaponHash: Hash) -> Hash { invoke!(0x865F36299079FB75, weaponHash) }
@@ -7632,7 +7632,7 @@ pub mod WEAPON {
 }
 pub mod ZONE {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _GET_MAP_ZONE_AT_COORDS(x: f32, y: f32, z: f32, type_: i32) -> Hash { invoke!(0x43AD8FC02B429D33, x, y, z, type_) }
@@ -7640,7 +7640,7 @@ pub mod ZONE {
 }
 pub mod COMPAPP {
 	use std::ffi::CStr;
-	use crate::core::scripthook::native::*;
+	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
 	pub fn _0xB6FD96420C0126A1(p0: Hash, p1: bool) { invoke_ignore!(0xB6FD96420C0126A1, p0, p1) }
