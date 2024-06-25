@@ -16,10 +16,10 @@ pub mod BUILTIN {
 	pub fn SQRT(value: f32) -> f32 { invoke!(0x71D93B57D07F9804, value) }
 	pub fn POW(base: f32, exponent: f32) -> f32 { invoke!(0xE3621CC40F31FE2E, base, exponent) }
 	pub fn LOG10(value: f32) -> f32 { invoke!(0xE816E655DE37FE20, value) }
-	pub fn VMAG(x: f32, y: f32, z: f32) -> f32 { invoke!(0x652D2EEEF1D3E62C, x, y, z) }
-	pub fn VMAG2(x: f32, y: f32, z: f32) -> f32 { invoke!(0xA8CEACB4F35AE058, x, y, z) }
-	pub fn VDIST(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 { invoke!(0x2A488C176D52CCA5, x1, y1, z1, x2, y2, z2) }
-	pub fn VDIST2(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 { invoke!(0xB7A628320EFF8E47, x1, y1, z1, x2, y2, z2) }
+	pub fn VMAG(coords: Vector3) -> f32 { invoke!(0x652D2EEEF1D3E62C, coords) }
+	pub fn VMAG2(coords: Vector3) -> f32 { invoke!(0xA8CEACB4F35AE058, coords) }
+	pub fn VDIST(coords1: Vector3, coords2: Vector3) -> f32 { invoke!(0x2A488C176D52CCA5, coords1, coords2) }
+	pub fn VDIST2(coords1: Vector3, coords2: Vector3) -> f32 { invoke!(0xB7A628320EFF8E47, coords1, coords2) }
 	pub fn SHIFT_LEFT(value: i32, bitShift: i32) -> i32 { invoke!(0xEDD95A39E5544DE8, value, bitShift) }
 	pub fn SHIFT_RIGHT(value: i32, bitShift: i32) -> i32 { invoke!(0x97EF1E5BCE9DC075, value, bitShift) }
 	pub fn FLOOR(value: f32) -> i32 { invoke!(0xF34EE736CF047844, value) }
@@ -118,7 +118,7 @@ pub mod ANIMSCENE {
 	pub fn FADE_ANIM_SCENE_AUDIO_IN(animScene: AnimScene, p1: f32) { invoke_ignore!(0xA41351EA2A18A0AD, animScene, p1) }
 	pub fn FADE_ANIM_SCENE_AUDIO_OUT(animScene: AnimScene, p1: f32) { invoke_ignore!(0x323E3AD772BA5D57, animScene, p1) }
 	pub fn BLOCK_ANIM_SCENE_FADING_NEXT_FRAME(p0: bool, p1: bool) { invoke_ignore!(0x1B70811D3BF75DB9, p0, p1) }
-	pub fn SET_ANIM_SCENE_ORIGIN(animScene: AnimScene, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, order: i32) { invoke_ignore!(0x020894BF17A02EF2, animScene, posX, posY, posZ, rotX, rotY, rotZ, order) }
+	pub fn SET_ANIM_SCENE_ORIGIN(animScene: AnimScene, pos: Vector3, rot: Vector3, order: i32) { invoke_ignore!(0x020894BF17A02EF2, animScene, pos, rot, order) }
 	pub fn GET_ANIM_SCENE_ORIGIN(animScene: AnimScene, position: &mut Vector3, rotation: &mut Vector3, order: i32) { invoke_ignore!(0xADF1D53F3B1FE0A7, animScene, position, rotation, order) }
 	pub fn SET_ANIM_SCENE_PAUSED(animScene: AnimScene, toggle: bool) { invoke_ignore!(0xD6824B7D24DC0CE0, animScene, toggle) }
 	pub fn _IS_ANIM_SCENE_PAUSED(animScene: AnimScene) -> bool { invoke!(0x4B4038796F0D6566, animScene) }
@@ -277,7 +277,7 @@ pub mod AUDIO {
 	pub fn PLAY_SOUND_FRONTEND(audioName: & CStr, audioRef: & CStr, p2: bool, p3: Any) { invoke_ignore!(0x67C540AA08E4A6F5, audioName, audioRef, p2, p3) }
 	pub fn _PLAY_SOUND_FROM_ITEM(item: Hash, soundSet: Hash, p2: Any) { invoke_ignore!(0xE8EAFF7B41EDD291, item, soundSet, p2) }
 	pub fn PLAY_SOUND_FROM_ENTITY(audioName: & CStr, entity: Entity, audioRef: & CStr, isNetwork: bool, p4: Any, p5: Any) { invoke_ignore!(0x6FB1DA3CA9DA7D90, audioName, entity, audioRef, isNetwork, p4, p5) }
-	pub fn _PLAY_SOUND_FROM_POSITION(audioName: & CStr, x: f32, y: f32, z: f32, audioRef: & CStr, isNetwork: bool, p6: Any, p7: bool, p8: Any) { invoke_ignore!(0xCCE219C922737BFA, audioName, x, y, z, audioRef, isNetwork, p6, p7, p8) }
+	pub fn _PLAY_SOUND_FROM_POSITION(audioName: & CStr, coords: Vector3, audioRef: & CStr, isNetwork: bool, p6: Any, p7: bool, p8: Any) { invoke_ignore!(0xCCE219C922737BFA, audioName, coords, audioRef, isNetwork, p6, p7, p8) }
 	pub fn _STOP_SOUND_WITH_NAME(audioName: & CStr, audioRef: & CStr) { invoke_ignore!(0x0F2A2175734926D8, audioName, audioRef) }
 	pub fn _0x580D71DFE0088E34(audioName: & CStr, audioRef: & CStr) -> bool { invoke!(0x580D71DFE0088E34, audioName, audioRef) }
 	pub fn _IS_SCRIPTED_AUDIO_CUSTOM(item: Hash, soundSet: Hash) -> bool { invoke!(0x6DF942C4179BE5AB, item, soundSet) }
@@ -286,8 +286,8 @@ pub mod AUDIO {
 	pub fn _SET_SOUND_RELATIONSHIP_ON_PED(ped: Ped, p1: & CStr, p2: & CStr) { invoke_ignore!(0x2E31ACA7477CF00F, ped, p1, p2) }
 	pub fn _PLAY_SOUND_FRONTEND_WITH_SOUND_ID(soundId: i32, name: & CStr, soundSet: & CStr, p3: bool) { invoke_ignore!(0xCE5D0FFE83939AF1, soundId, name, soundSet, p3) }
 	pub fn _PLAY_SOUND_FROM_ENTITY_WITH_SET(soundId: i32, soundName: & CStr, entity: Entity, soundsetName: & CStr, p4: bool, p5: Any) { invoke_ignore!(0xF1C5310FEAA36B48, soundId, soundName, entity, soundsetName, p4, p5) }
-	pub fn _PLAY_SOUND_FROM_POSITION_WITH_ID(soundId: i32, soundName: & CStr, x: f32, y: f32, z: f32, soundsetName: & CStr, p6: bool, p7: i32, p8: bool) { invoke_ignore!(0xDCF5BA95BBF0FABA, soundId, soundName, x, y, z, soundsetName, p6, p7, p8) }
-	pub fn _UPDATE_SOUND_POSITION(soundId: i32, x: f32, y: f32, z: f32) { invoke_ignore!(0x0286617C8FC50A53, soundId, x, y, z) }
+	pub fn _PLAY_SOUND_FROM_POSITION_WITH_ID(soundId: i32, soundName: & CStr, coords: Vector3, soundsetName: & CStr, p6: bool, p7: i32, p8: bool) { invoke_ignore!(0xDCF5BA95BBF0FABA, soundId, soundName, coords, soundsetName, p6, p7, p8) }
+	pub fn _UPDATE_SOUND_POSITION(soundId: i32, coords: Vector3) { invoke_ignore!(0x0286617C8FC50A53, soundId, coords) }
 	pub fn _STOP_SOUND_WITH_ID(soundId: i32) { invoke_ignore!(0x3210BCB36AF7621B, soundId) }
 	pub fn _SET_VARIABLE_ON_SOUND_WITH_ID(soundId: i32, variableName: & CStr, variableValue: f32) { invoke_ignore!(0x503703EC1781B7D6, soundId, variableName, variableValue) }
 	pub fn PREPARE_SOUND(soundName: & CStr, soundsetName: & CStr, soundId: i32) -> bool { invoke!(0xE368E8422C860BA7, soundName, soundsetName, soundId) }
@@ -299,7 +299,7 @@ pub mod AUDIO {
 	pub fn _HAS_SOUND_AUDIO_NAME_FINISHED(audioName: & CStr, soundsetName: & CStr) -> bool { invoke!(0x714A0EA7DE1167BE, audioName, soundsetName) }
 	pub fn _HAS_SOUND_ID_FINISHED(soundId: i32) -> bool { invoke!(0x84848E1C0FC67DBB, soundId) }
 	pub fn PLAY_PED_AMBIENT_SPEECH_NATIVE(speaker: Ped, params: &mut Any) -> bool { invoke!(0x8E04FEDD28D42462, speaker, params) }
-	pub fn PLAY_AMBIENT_SPEECH_FROM_POSITION_NATIVE(x: f32, y: f32, z: f32, params: &mut Any) -> bool { invoke!(0xED640017ED337E45, x, y, z, params) }
+	pub fn PLAY_AMBIENT_SPEECH_FROM_POSITION_NATIVE(coords: Vector3, params: &mut Any) -> bool { invoke!(0xED640017ED337E45, coords, params) }
 	pub fn _0x72E4D1C4639BC465(p0: Entity, p1: Any) -> Any { invoke!(0x72E4D1C4639BC465, p0, p1) }
 	pub fn _0xB18FEC133C7C6C69(p0: Any) -> Any { invoke!(0xB18FEC133C7C6C69, p0) }
 	pub fn _0xDC93F0948F2C28F4(p0: Any) { invoke_ignore!(0xDC93F0948F2C28F4, p0) }
@@ -340,7 +340,7 @@ pub mod AUDIO {
 	pub fn SET_STATIC_EMITTER_ENABLED(emitterName: & CStr, toggle: bool) { invoke_ignore!(0x399D2D3B33F1B8EB, emitterName, toggle) }
 	pub fn PLAY_END_CREDITS_MUSIC(play: bool) { invoke_ignore!(0xCD536C4D33DCC900, play) }
 	pub fn _0x7678FE0455ED1145(p0: Any, p1: Any, p2: Any) -> Any { invoke!(0x7678FE0455ED1145, p0, p1, p2) }
-	pub fn _0xFFE9C53DEEA3DB0B(p0: Any, p1: Any, x: f32, y: f32, z: f32, isSrlLoaded: bool, p6: Any) -> Any { invoke!(0xFFE9C53DEEA3DB0B, p0, p1, x, y, z, isSrlLoaded, p6) }
+	pub fn _0xFFE9C53DEEA3DB0B(p0: Any, p1: Any, coords: Vector3, isSrlLoaded: bool, p6: Any) -> Any { invoke!(0xFFE9C53DEEA3DB0B, p0, p1, coords, isSrlLoaded, p6) }
 	pub fn _0x5E3CCF03995388B5(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0x5E3CCF03995388B5, p0, p1, p2, p3) }
 	pub fn _0x43037ABFE214A851() { invoke_ignore!(0x43037ABFE214A851) }
 	pub fn SET_AMBIENT_ZONE_STATE(zoneName: & CStr, isEnabled: bool, p2: bool) { invoke_ignore!(0xBDA07E5950085E46, zoneName, isEnabled, p2) }
@@ -349,14 +349,14 @@ pub mod AUDIO {
 	pub fn CLEAR_AMBIENT_ZONE_LIST_STATE(ambientZone: & CStr, p1: bool) { invoke_ignore!(0x120C48C614909FA4, ambientZone, p1) }
 	pub fn SET_AMBIENT_ZONE_STATE_PERSISTENT(ambientZone: & CStr, p1: bool, p2: bool) { invoke_ignore!(0x1D6650420CEC9D3B, ambientZone, p1, p2) }
 	pub fn SET_AMBIENT_ZONE_LIST_STATE_PERSISTENT(ambientZone: & CStr, p1: bool, p2: bool) { invoke_ignore!(0xF3638DAE8C4045E1, ambientZone, p1, p2) }
-	pub fn _SET_AMBIENT_ZONE_POSITION(ambientZone: & CStr, x: f32, y: f32, z: f32, heading: f32) { invoke_ignore!(0x3743CE6948194349, ambientZone, x, y, z, heading) }
+	pub fn _SET_AMBIENT_ZONE_POSITION(ambientZone: & CStr, coords: Vector3, heading: f32) { invoke_ignore!(0x3743CE6948194349, ambientZone, coords, heading) }
 	pub fn IS_HORN_ACTIVE(vehicle: Vehicle) -> bool { invoke!(0x9D6BFC12B05C6121, vehicle) }
 	pub fn _0xFD461D0ABA5559B1(p0: Any, p1: Any) { invoke_ignore!(0xFD461D0ABA5559B1, p0, p1) }
 	pub fn IS_STREAM_PLAYING(streamId: i32) -> bool { invoke!(0xD11FA52EB849D978, streamId) }
 	pub fn LOAD_STREAM(streamName: & CStr, soundSet: & CStr) -> bool { invoke!(0x1F1F957154EC51DF, streamName, soundSet) }
 	pub fn PLAY_STREAM_FROM_PED(ped: Ped, streamId: i32) { invoke_ignore!(0x89049DD63C08B5D1, ped, streamId) }
 	pub fn PLAY_STREAM_FRONTEND(streamId: i32) { invoke_ignore!(0x58FCE43488F9F5F4, streamId) }
-	pub fn PLAY_STREAM_FROM_POSITION(x: f32, y: f32, z: f32, streamId: i32) { invoke_ignore!(0x21442F412E8DE56B, x, y, z, streamId) }
+	pub fn PLAY_STREAM_FROM_POSITION(coords: Vector3, streamId: i32) { invoke_ignore!(0x21442F412E8DE56B, coords, streamId) }
 	pub fn _0x3A3BE6B920525237(p0: Any, p1: Any) { invoke_ignore!(0x3A3BE6B920525237, p0, p1) }
 	pub fn STOP_STREAM(streamId: i32) { invoke_ignore!(0xA4718A1419D18151, streamId) }
 	pub fn STOP_PED_SPEAKING(ped: Ped, shaking: bool) { invoke_ignore!(0x9D64D7405520E3D3, ped, shaking) }
@@ -440,7 +440,7 @@ pub mod AUDIO {
 	pub fn _0xE7E6CB8B713ED190() { invoke_ignore!(0xE7E6CB8B713ED190) }
 	pub fn _0x569ABC36E28DDEAA() { invoke_ignore!(0x569ABC36E28DDEAA) }
 	pub fn _0x839C9F124BE74D94(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x839C9F124BE74D94, p0, p1, p2, p3, p4) }
-	pub fn AUDIO_TRIGGER_EXPLOSION(name: & CStr, x: f32, y: f32, z: f32) { invoke_ignore!(0x374F0E716BFCDE82, name, x, y, z) }
+	pub fn AUDIO_TRIGGER_EXPLOSION(name: & CStr, coords: Vector3) { invoke_ignore!(0x374F0E716BFCDE82, name, coords) }
 	pub fn _0x3E98AC9D8C56C62C(p0: Any) { invoke_ignore!(0x3E98AC9D8C56C62C, p0) }
 	pub fn _0xCBF2BEBB468A34F3(p0: Any) { invoke_ignore!(0xCBF2BEBB468A34F3, p0) }
 	pub fn _0xA2B851605748AD0E() { invoke_ignore!(0xA2B851605748AD0E) }
@@ -517,9 +517,9 @@ pub mod CAM {
 	pub fn RENDER_SCRIPT_CAMS(render: bool, ease: bool, easeTime: i32, p3: bool, p4: bool, p5: i32) { invoke_ignore!(0x33281167E4942E4F, render, ease, easeTime, p3, p4, p5) }
 	pub fn STOP_RENDERING_SCRIPT_CAMS_USING_CATCH_UP(render: bool, distance: f32, blendBackSmoothingType: i32, p3: bool, p4: bool, p5: bool) { invoke_ignore!(0x8C7C7FF7CF0E5153, render, distance, blendBackSmoothingType, p3, p4, p5) }
 	pub fn CREATE_CAM(camName: & CStr, p1: bool) -> Cam { invoke!(0xE72CDBA7F0A02DD6, camName, p1) }
-	pub fn CREATE_CAM_WITH_PARAMS(camName: & CStr, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, fov: f32, p8: bool, p9: i32) -> Cam { invoke!(0x40C23491CE83708E, camName, posX, posY, posZ, rotX, rotY, rotZ, fov, p8, p9) }
+	pub fn CREATE_CAM_WITH_PARAMS(camName: & CStr, pos: Vector3, rot: Vector3, fov: f32, p8: bool, p9: i32) -> Cam { invoke!(0x40C23491CE83708E, camName, pos, rot, fov, p8, p9) }
 	pub fn CREATE_CAMERA(camHash: Hash, p1: bool) -> Cam { invoke!(0x57CDF879EA466C46, camHash, p1) }
-	pub fn CREATE_CAMERA_WITH_PARAMS(camHash: Hash, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, fov: f32, p8: bool, p9: Any) -> Cam { invoke!(0x98B99B9F27E2D60B, camHash, posX, posY, posZ, rotX, rotY, rotZ, fov, p8, p9) }
+	pub fn CREATE_CAMERA_WITH_PARAMS(camHash: Hash, pos: Vector3, rot: Vector3, fov: f32, p8: bool, p9: Any) -> Cam { invoke!(0x98B99B9F27E2D60B, camHash, pos, rot, fov, p8, p9) }
 	pub fn DESTROY_CAM(cam: Cam, p1: bool) { invoke_ignore!(0x4E67E0B6D7FD5145, cam, p1) }
 	pub fn DESTROY_ALL_CAMS(p0: bool) { invoke_ignore!(0x163600D6E136C9F8, p0) }
 	pub fn DOES_CAM_EXIST(cam: Cam) -> bool { invoke!(0x153AD457764FD704, cam) }
@@ -530,9 +530,9 @@ pub mod CAM {
 	pub fn GET_CAM_COORD(cam: Cam) -> Vector3 { invoke!(0x6B12F11C2A9F0344, cam) }
 	pub fn GET_CAM_ROT(cam: Cam, rotationOrder: i32) -> Vector3 { invoke!(0x9BF96B57254E7889, cam, rotationOrder) }
 	pub fn GET_CAM_FOV(cam: Cam) -> f32 { invoke!(0x8101D32A0A6B0F60, cam) }
-	pub fn SET_CAM_PARAMS(cam: Cam, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, fieldOfView: f32, p8: Any, p9: i32, p10: i32, p11: i32, p12: Any, p13: Any) { invoke_ignore!(0xA47BBFFFB83D4D0A, cam, posX, posY, posZ, rotX, rotY, rotZ, fieldOfView, p8, p9, p10, p11, p12, p13) }
-	pub fn SET_CAM_COORD(cam: Cam, posX: f32, posY: f32, posZ: f32) { invoke_ignore!(0xF9EE7D419EE49DE6, cam, posX, posY, posZ) }
-	pub fn SET_CAM_ROT(cam: Cam, rotX: f32, rotY: f32, rotZ: f32, rotationOrder: i32) { invoke_ignore!(0x63DFA6810AD78719, cam, rotX, rotY, rotZ, rotationOrder) }
+	pub fn SET_CAM_PARAMS(cam: Cam, pos: Vector3, rot: Vector3, fieldOfView: f32, p8: Any, p9: i32, p10: i32, p11: i32, p12: Any, p13: Any) { invoke_ignore!(0xA47BBFFFB83D4D0A, cam, pos, rot, fieldOfView, p8, p9, p10, p11, p12, p13) }
+	pub fn SET_CAM_COORD(cam: Cam, pos: Vector3) { invoke_ignore!(0xF9EE7D419EE49DE6, cam, pos) }
+	pub fn SET_CAM_ROT(cam: Cam, rot: Vector3, rotationOrder: i32) { invoke_ignore!(0x63DFA6810AD78719, cam, rot, rotationOrder) }
 	pub fn SET_CAM_FOV(cam: Cam, fieldOfView: f32) { invoke_ignore!(0x27666E5988D9D429, cam, fieldOfView) }
 	pub fn SET_CAM_NEAR_CLIP(cam: Cam, nearClip: f32) { invoke_ignore!(0xA924028272A61364, cam, nearClip) }
 	pub fn SET_CAM_FAR_CLIP(cam: Cam, farClip: f32) { invoke_ignore!(0x5E32817BF6302111, cam, farClip) }
@@ -540,10 +540,10 @@ pub mod CAM {
 	pub fn _0xFC3F638BE2B6BB02() { invoke_ignore!(0xFC3F638BE2B6BB02) }
 	pub fn _0xE4B7945EF4F1BFB2(cam: Cam, args: &mut Any) { invoke_ignore!(0xE4B7945EF4F1BFB2, cam, args) }
 	pub fn _0x1FC6C727D30FFDDE(p0: Any) { invoke_ignore!(0x1FC6C727D30FFDDE, p0) }
-	pub fn ATTACH_CAM_TO_ENTITY(cam: Cam, entity: Entity, xOffset: f32, yOffset: f32, zOffset: f32, isRelative: bool) { invoke_ignore!(0xFDC0DF7F6FB0A592, cam, entity, xOffset, yOffset, zOffset, isRelative) }
-	pub fn ATTACH_CAM_TO_PED_BONE(cam: Cam, ped: Ped, boneIndex: i32, x: f32, y: f32, z: f32, heading: bool) { invoke_ignore!(0xDFC1E4A44C0324CA, cam, ped, boneIndex, x, y, z, heading) }
+	pub fn ATTACH_CAM_TO_ENTITY(cam: Cam, entity: Entity, offset: Vector3, isRelative: bool) { invoke_ignore!(0xFDC0DF7F6FB0A592, cam, entity, offset, isRelative) }
+	pub fn ATTACH_CAM_TO_PED_BONE(cam: Cam, ped: Ped, boneIndex: i32, coords: Vector3, heading: bool) { invoke_ignore!(0xDFC1E4A44C0324CA, cam, ped, boneIndex, coords, heading) }
 	pub fn DETACH_CAM(cam: Cam) { invoke_ignore!(0x05B41DDBEB559556, cam) }
-	pub fn POINT_CAM_AT_COORD(cam: Cam, x: f32, y: f32, z: f32) { invoke_ignore!(0x948B39341C3A40C2, cam, x, y, z) }
+	pub fn POINT_CAM_AT_COORD(cam: Cam, coords: Vector3) { invoke_ignore!(0x948B39341C3A40C2, cam, coords) }
 	pub fn POINT_CAM_AT_ENTITY(cam: Cam, entity: Entity, p2: f32, p3: f32, p4: f32, p5: bool) { invoke_ignore!(0xFC2867E6074D3A61, cam, entity, p2, p3, p4, p5) }
 	pub fn STOP_CAM_POINTING(cam: Cam) { invoke_ignore!(0xCA1B30A3357C71F1, cam) }
 	pub fn _SET_CAM_FOCUS_DISTANCE(cam: Cam, distance: f32) { invoke_ignore!(0x11F32BB61B756732, cam, distance) }
@@ -551,7 +551,7 @@ pub mod CAM {
 	pub fn SET_CAM_AFFECTS_AIMING(cam: Cam, toggle: bool) { invoke_ignore!(0x3CB9E8BDE5E76F33, cam, toggle) }
 	pub fn SET_CAM_CONTROLS_MINI_MAP_HEADING(cam: Cam, p1: bool) { invoke_ignore!(0x1B8F3CE5A6001298, cam, p1) }
 	pub fn ALLOW_MOTION_BLUR_DECAY(cam: Cam, p1: bool) { invoke_ignore!(0x42ED56B02E05D109, cam, p1) }
-	pub fn ADD_CAM_SPLINE_NODE(camera: Cam, x: f32, y: f32, z: f32, xRot: f32, yRot: f32, zRot: f32, length: i32, p8: i32, p9: i32) { invoke_ignore!(0xF1F57F9D230F9CD1, camera, x, y, z, xRot, yRot, zRot, length, p8, p9) }
+	pub fn ADD_CAM_SPLINE_NODE(camera: Cam, coords: Vector3, rot: Vector3, length: i32, p8: i32, p9: i32) { invoke_ignore!(0xF1F57F9D230F9CD1, camera, coords, rot, length, p8, p9) }
 	pub fn SET_CAM_SPLINE_PHASE(cam: Cam, p1: f32) { invoke_ignore!(0xF1898A68E7C15636, cam, p1) }
 	pub fn GET_CAM_SPLINE_PHASE(cam: Cam) -> f32 { invoke!(0x095EDCD24D90033A, cam) }
 	pub fn SET_CAM_SPLINE_DURATION(cam: Cam, timeDuration: i32) { invoke_ignore!(0xFF6311652CA91015, cam, timeDuration) }
@@ -561,7 +561,7 @@ pub mod CAM {
 	pub fn SHAKE_CAM(cam: Cam, type_: & CStr, amplitude: f32) { invoke_ignore!(0xF9A7BCF5D050D4E7, cam, type_, amplitude) }
 	pub fn IS_CAM_SHAKING(cam: Cam) -> bool { invoke!(0x2EEB402BD7320159, cam) }
 	pub fn STOP_CAM_SHAKING(cam: Cam, p1: bool) { invoke_ignore!(0xB78CC4B4706614B0, cam, p1) }
-	pub fn PLAY_CAM_ANIM(cam: Cam, animName: & CStr, animDictionary: & CStr, x: f32, y: f32, z: f32, xRot: f32, yRot: f32, zRot: f32, animFlags: i32, rotOrder: i32) -> bool { invoke!(0xA263DDF694D563F6, cam, animName, animDictionary, x, y, z, xRot, yRot, zRot, animFlags, rotOrder) }
+	pub fn PLAY_CAM_ANIM(cam: Cam, animName: & CStr, animDictionary: & CStr, coords: Vector3, rot: Vector3, animFlags: i32, rotOrder: i32) -> bool { invoke!(0xA263DDF694D563F6, cam, animName, animDictionary, coords, rot, animFlags, rotOrder) }
 	pub fn _0xCF69EA05CD9C33C9() { invoke_ignore!(0xCF69EA05CD9C33C9) }
 	pub fn _IS_ANIM_SCENE_CAM_ACTIVE() -> bool { invoke!(0x20389408F0E93B9A) }
 	pub fn IS_SCREEN_FADED_OUT() -> bool { invoke!(0xF5472C80DF2FF847) }
@@ -613,7 +613,7 @@ pub mod CAM {
 	pub fn _0x0F1FFEF5D54AE832() { invoke_ignore!(0x0F1FFEF5D54AE832) }
 	pub fn _0x3C8F74E8FE751614() { invoke_ignore!(0x3C8F74E8FE751614) }
 	pub fn _0x06557F6D96C86881() { invoke_ignore!(0x06557F6D96C86881) }
-	pub fn IS_SPHERE_VISIBLE(x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0x2E941B5FFA2989C6, x, y, z, radius) }
+	pub fn IS_SPHERE_VISIBLE(coords: Vector3, radius: f32) -> bool { invoke!(0x2E941B5FFA2989C6, coords, radius) }
 	pub fn _0x190F7DA1AC09A8EF() -> Any { invoke!(0x190F7DA1AC09A8EF) }
 	pub fn _SET_GAMEPLAY_CAM_INITIAL_ZOOM(camInitialZoom: f32) { invoke_ignore!(0xBCDA0BA8762FACB9, camInitialZoom) }
 	pub fn _SET_GAMEPLAY_CAM_INITIAL_HEADING(camInitialHeading: f32) { invoke_ignore!(0x6C1053C433A573CF, camInitialHeading) }
@@ -649,11 +649,11 @@ pub mod CAM {
 	pub fn GET_FINAL_RENDERED_CAM_COORD() -> Vector3 { invoke!(0x5352E025EC2B416F) }
 	pub fn GET_FINAL_RENDERED_CAM_ROT(rotationOrder: i32) -> Vector3 { invoke!(0x602685BD85DD26CA, rotationOrder) }
 	pub fn GET_FINAL_RENDERED_CAM_FOV() -> f32 { invoke!(0x04AF77971E508F6A) }
-	pub fn SET_GAMEPLAY_COORD_HINT(x: f32, y: f32, z: f32, duration: i32, blendOutDuration: i32, blendInDuration: i32, p6: Hash) { invoke_ignore!(0xFA33B8C69A4A6A0F, x, y, z, duration, blendOutDuration, blendInDuration, p6) }
-	pub fn SET_GAMEPLAY_PED_HINT(p0: Ped, x1: f32, y1: f32, z1: f32, p4: bool, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x90FB951648851733, p0, x1, y1, z1, p4, p5, p6, p7) }
+	pub fn SET_GAMEPLAY_COORD_HINT(coords: Vector3, duration: i32, blendOutDuration: i32, blendInDuration: i32, p6: Hash) { invoke_ignore!(0xFA33B8C69A4A6A0F, coords, duration, blendOutDuration, blendInDuration, p6) }
+	pub fn SET_GAMEPLAY_PED_HINT(p0: Ped, coords1: Vector3, p4: bool, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x90FB951648851733, p0, coords1, p4, p5, p6, p7) }
 	pub fn SET_GAMEPLAY_VEHICLE_HINT(p0: Any, p1: f32, p2: f32, p3: f32, p4: bool, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xE2B2BB7DAC280515, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn SET_GAMEPLAY_OBJECT_HINT(p0: Any, p1: f32, p2: f32, p3: f32, p4: bool, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xC40551D65F2BF297, p0, p1, p2, p3, p4, p5, p6, p7) }
-	pub fn SET_GAMEPLAY_ENTITY_HINT(entity: Entity, xOffset: f32, yOffset: f32, zOffset: f32, p4: bool, p5: i32, p6: i32, p7: i32, p8: Any) { invoke_ignore!(0xD1F7F32640ADFD12, entity, xOffset, yOffset, zOffset, p4, p5, p6, p7, p8) }
+	pub fn SET_GAMEPLAY_ENTITY_HINT(entity: Entity, offset: Vector3, p4: bool, p5: i32, p6: i32, p7: i32, p8: Any) { invoke_ignore!(0xD1F7F32640ADFD12, entity, offset, p4, p5, p6, p7, p8) }
 	pub fn IS_GAMEPLAY_HINT_ACTIVE() -> bool { invoke!(0x2E04AB5FEE042D4A) }
 	pub fn STOP_GAMEPLAY_HINT(p0: bool) { invoke_ignore!(0x1BCEC33D54CFCA8A, p0) }
 	pub fn STOP_CODE_GAMEPLAY_HINT(p0: bool) { invoke_ignore!(0x93759A83D0D844E7, p0) }
@@ -721,7 +721,7 @@ pub mod CAM {
 	pub fn CINEMATIC_LOCATION_STOP_SCRIPTED_SHOT_EVENT(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0x6D4D25C2137FF511, p0, p1, p2) }
 	pub fn _0xC3AEBB276825A359(dictionary: & CStr, shotName: & CStr, duration: i32) -> bool { invoke!(0xC3AEBB276825A359, dictionary, shotName, duration) }
 	pub fn _0x1D931B7CC0EE3956(dictionary: & CStr, shotName: & CStr, cameraName: & CStr) -> bool { invoke!(0x1D931B7CC0EE3956, dictionary, shotName, cameraName) }
-	pub fn _CINEMATIC_LOCATION_SET_LOCATION_AND_ROTATION(name: & CStr, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32) { invoke_ignore!(0x0E94C95EC3185FA9, name, x, y, z, rotX, rotY, rotZ) }
+	pub fn _CINEMATIC_LOCATION_SET_LOCATION_AND_ROTATION(name: & CStr, coords: Vector3, rot: Vector3) { invoke_ignore!(0x0E94C95EC3185FA9, name, coords, rot) }
 	pub fn CINEMATIC_LOCATION_OVERRIDE_TARGET_ENTITY_THIS_UPDATE(name: & CStr, entity: Entity) { invoke_ignore!(0x0B0F914459731F60, name, entity) }
 	pub fn _LOAD_CAMERA_DATA_DICT(cameraDictionary: & CStr) { invoke_ignore!(0x6A4D224FC7643941, cameraDictionary) }
 	pub fn _UNLOAD_CAMERA_DATA_DICT(cameraDictionary: & CStr) { invoke_ignore!(0x798BE43C9393632B, cameraDictionary) }
@@ -857,7 +857,7 @@ pub mod COMPENDIUM {
 	pub fn COMPENDIUM_GET_ENTRY_BY_PED_INDEX(category: Hash, ped: Ped) -> i32 { invoke!(0x1CFA0219D8E1CF25, category, ped) }
 	pub fn COMPENDIUM_GET_ENTRY_BY_STAT_ITEM(category: Hash, animalType: Hash) -> i32 { invoke!(0x66EC938394D76C85, category, animalType) }
 	pub fn COMPENDIUM_GET_SUBCATEGORY_TOAST_APP_ID(category: Hash, subcategory: Hash) -> Any { invoke!(0x2BF30D9D4D680112, category, subcategory) }
-	pub fn COMPENDIUM_GET_MAP_DISCOVERABLE_FROM_STAT_ITEM(animalStatItem: Hash, x: f32, y: f32, z: f32) -> Hash { invoke!(0x729D54121A5E9E20, animalStatItem, x, y, z) }
+	pub fn COMPENDIUM_GET_MAP_DISCOVERABLE_FROM_STAT_ITEM(animalStatItem: Hash, coords: Vector3) -> Hash { invoke!(0x729D54121A5E9E20, animalStatItem, coords) }
 	pub fn COMPENDIUM_ANIMAL_OBSERVED_BY_STAT_NAME(animalType: Hash, disableCompendiumToast: bool) { invoke_ignore!(0x725D52F26A5E9E10, animalType, disableCompendiumToast) }
 	pub fn COMPENDIUM_WAS_ANIMAL_OBSERVED(ped: Ped) -> bool { invoke!(0x23B5E9C5160BC04F, ped) }
 	pub fn COMPENDIUM_ANIMAL_SET_DISCOVERED(compendiumEntry: i32) { invoke_ignore!(0x67F35C7C9F2BDCFE, compendiumEntry) }
@@ -876,7 +876,7 @@ pub mod COMPENDIUM {
 	pub fn COMPENDIUM_GANG_BOUNTY_CAPTURED(p0: Any) { invoke_ignore!(0x725D52F21A5E9E06, p0) }
 	pub fn COMPENDIUM_GANG_MEMBER_KILLED(p0: Any) { invoke_ignore!(0x725D52F21A5E9E07, p0) }
 	pub fn COMPENDIUM_GANG_HIDEOUT_FOUND(p0: Any, p1: Any) { invoke_ignore!(0x725D52F21A5E9E08, p0, p1) }
-	pub fn COMPENDIUM_HERB_PICKED(herbType: Hash, x: f32, y: f32, z: f32) { invoke_ignore!(0x725D52F21A5E9E09, herbType, x, y, z) }
+	pub fn COMPENDIUM_HERB_PICKED(herbType: Hash, coords: Vector3) { invoke_ignore!(0x725D52F21A5E9E09, herbType, coords) }
 	pub fn COMPENDIUM_HORSE_BONDING(ped: Ped, bondingLevel: i32) { invoke_ignore!(0x725D52F21A5E9E50, ped, bondingLevel) }
 	pub fn COMPENDIUM_HORSE_WILD_BROKEN(ped: Ped) { invoke_ignore!(0x725852D21A2E9E50, ped) }
 	pub fn COMPENDIUM_HORSE_OBSERVED(ped: Ped, disableCompendiumToast: bool) { invoke_ignore!(0x725D58F2125E5E50, ped, disableCompendiumToast) }
@@ -894,7 +894,7 @@ pub mod CRASHLOG {
 	pub fn _0xA67F0B039D9CD513(p0: bool) -> bool { invoke!(0xA67F0B039D9CD513, p0) }
 	pub fn _0xE72E234B30DA7B7A(p0: i32) -> bool { invoke!(0xE72E234B30DA7B7A, p0) }
 	pub fn _0x87F005C969EF1563(p0: f32) -> bool { invoke!(0x87F005C969EF1563, p0) }
-	pub fn _0x23CCAB8F40B9CBEE(x: f32, y: f32, z: f32) -> bool { invoke!(0x23CCAB8F40B9CBEE, x, y, z) }
+	pub fn _0x23CCAB8F40B9CBEE(coords: Vector3) -> bool { invoke!(0x23CCAB8F40B9CBEE, coords) }
 	pub fn _0xF0D545C1EEAD614A() -> bool { invoke!(0xF0D545C1EEAD614A) }
 	pub fn _0x33C1D63E55FA4284(p0: & CStr) -> bool { invoke!(0x33C1D63E55FA4284, p0) }
 	pub fn _0x4E42CA5BCD45444A() { invoke_ignore!(0x4E42CA5BCD45444A) }
@@ -1134,7 +1134,7 @@ pub mod ENTITY {
 	pub fn _0x3EC28DA1FFAC9DDD(entity1: Entity, entity2: Entity, p2: Any, p3: Any) -> bool { invoke!(0x3EC28DA1FFAC9DDD, entity1, entity2, p2, p3) }
 	pub fn _0xAF72EC7E1B54539B(entity: Entity) -> Entity { invoke!(0xAF72EC7E1B54539B, entity) }
 	pub fn HAS_ENTITY_CLEAR_LOS_TO_ENTITY(entity1: Entity, entity2: Entity, traceType: i32) -> bool { invoke!(0xFCDFF7B72D23A1AC, entity1, entity2, traceType) }
-	pub fn HAS_ENTITY_CLEAR_LOS_TO_COORD(entity: Entity, x: f32, y: f32, z: f32, flags: i32) -> bool { invoke!(0x0C9DBF48C6BA6E4C, entity, x, y, z, flags) }
+	pub fn HAS_ENTITY_CLEAR_LOS_TO_COORD(entity: Entity, coords: Vector3, flags: i32) -> bool { invoke!(0x0C9DBF48C6BA6E4C, entity, coords, flags) }
 	pub fn HAS_ENTITY_CLEAR_LOS_TO_ENTITY_IN_FRONT(entity1: Entity, entity2: Entity, traceType: i32) -> bool { invoke!(0xE88F19660651D566, entity1, entity2, traceType) }
 	pub fn HAS_ENTITY_COLLIDED_WITH_ANYTHING(entity: Entity) -> bool { invoke!(0xDF18751EC74F90FF, entity) }
 	pub fn _0x6D58167F62238284(vehicle: Vehicle) -> f32 { invoke!(0x6D58167F62238284, vehicle) }
@@ -1152,7 +1152,7 @@ pub mod ENTITY {
 	pub fn _CHANGE_ENTITY_HEALTH(entity: Entity, amount: f32, entity2: Entity, weaponHash: Hash) -> bool { invoke!(0x835F131E7DC8F97A, entity, amount, entity2, weaponHash) }
 	pub fn GET_ENTITY_MAX_HEALTH(entity: Entity, p1: bool) -> i32 { invoke!(0x15D757606D170C3C, entity, p1) }
 	pub fn SET_ENTITY_MAX_HEALTH(entity: Entity, value: i32) { invoke_ignore!(0x166E7CF68597D8B5, entity, value) }
-	pub fn GET_ENTITY_HEIGHT(entity: Entity, X: f32, Y: f32, Z: f32, atTop: bool, inWorldCoords: bool) -> f32 { invoke!(0x296DEBC84474B375, entity, X, Y, Z, atTop, inWorldCoords) }
+	pub fn GET_ENTITY_HEIGHT(entity: Entity, coords: Vector3, atTop: bool, inWorldCoords: bool) -> f32 { invoke!(0x296DEBC84474B375, entity, coords, atTop, inWorldCoords) }
 	pub fn GET_ENTITY_HEIGHT_ABOVE_GROUND(entity: Entity) -> f32 { invoke!(0x0D3B5BAEA08F63E9, entity) }
 	pub fn _GET_ENTITY_WORLD_POSITION_OF_DIMENSIONS(entity: Entity, minimum: &mut Vector3, maximum: &mut Vector3) { invoke_ignore!(0xF3FDA9A617A15145, entity, minimum, maximum) }
 	pub fn GET_ENTITY_MATRIX(entity: Entity, rightVector: &mut Vector3, forwardVector: &mut Vector3, upVector: &mut Vector3, position: &mut Vector3) { invoke_ignore!(0x3A9B1120AF13FBF2, entity, rightVector, forwardVector, upVector, position) }
@@ -1161,8 +1161,8 @@ pub mod ENTITY {
 	pub fn GET_IS_ANIMAL(entity: Entity) -> bool { invoke!(0x9A100F1CF4546629, entity) }
 	pub fn _GET_IS_BIRD(entity: Entity) -> bool { invoke!(0xC346A546612C49A9, entity) }
 	pub fn _GET_IS_PREDATOR(entity: Entity) -> bool { invoke!(0x5594AFE9DE0C01B7, entity) }
-	pub fn GET_OFFSET_FROM_ENTITY_GIVEN_WORLD_COORDS(entity: Entity, posX: f32, posY: f32, posZ: f32) -> Vector3 { invoke!(0x497C6B1A2C9AE69C, entity, posX, posY, posZ) }
-	pub fn GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(entity: Entity, offsetX: f32, offsetY: f32, offsetZ: f32) -> Vector3 { invoke!(0x1899F328B0E12848, entity, offsetX, offsetY, offsetZ) }
+	pub fn GET_OFFSET_FROM_ENTITY_GIVEN_WORLD_COORDS(entity: Entity, pos: Vector3) -> Vector3 { invoke!(0x497C6B1A2C9AE69C, entity, pos) }
+	pub fn GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(entity: Entity, offset: Vector3) -> Vector3 { invoke!(0x1899F328B0E12848, entity, offset) }
 	pub fn GET_ENTITY_PITCH(entity: Entity) -> f32 { invoke!(0xEF355ABEFF7F5005, entity) }
 	pub fn GET_ENTITY_ROLL(entity: Entity) -> f32 { invoke!(0xBF966536FA8B6879, entity) }
 	pub fn GET_ENTITY_ROTATION(entity: Entity, rotationOrder: i32) -> Vector3 { invoke!(0xE09CAF86C32CB48F, entity, rotationOrder) }
@@ -1188,8 +1188,8 @@ pub mod ENTITY {
 	pub fn IS_ENTITY_A_MISSION_ENTITY(entity: Entity) -> bool { invoke!(0x138190F64DB4BBD1, entity) }
 	pub fn IS_ENTITY_A_VEHICLE(entity: Entity) -> bool { invoke!(0xC3D96AF45FCCEC4C, entity) }
 	pub fn IS_ENTITY_AN_OBJECT(entity: Entity) -> bool { invoke!(0x0A27A546A375FDEF, entity) }
-	pub fn IS_ENTITY_AT_COORD(entity: Entity, xPos: f32, yPos: f32, zPos: f32, xSize: f32, ySize: f32, zSize: f32, p7: bool, p8: bool, p9: i32) -> bool { invoke!(0x5E58342602E94718, entity, xPos, yPos, zPos, xSize, ySize, zSize, p7, p8, p9) }
-	pub fn IS_ENTITY_AT_ENTITY(entity1: Entity, entity2: Entity, xSize: f32, ySize: f32, zSize: f32, p5: bool, p6: bool, p7: i32) -> bool { invoke!(0xC057F02B837A27F6, entity1, entity2, xSize, ySize, zSize, p5, p6, p7) }
+	pub fn IS_ENTITY_AT_COORD(entity: Entity, pos: Vector3, size: Vector3, p7: bool, p8: bool, p9: i32) -> bool { invoke!(0x5E58342602E94718, entity, pos, size, p7, p8, p9) }
+	pub fn IS_ENTITY_AT_ENTITY(entity1: Entity, entity2: Entity, size: Vector3, p5: bool, p6: bool, p7: i32) -> bool { invoke!(0xC057F02B837A27F6, entity1, entity2, size, p5, p6, p7) }
 	pub fn IS_ENTITY_ATTACHED(entity: Entity) -> bool { invoke!(0xEE6AD63ABF59C0B7, entity) }
 	pub fn IS_ENTITY_ATTACHED_TO_ANY_OBJECT(entity: Entity) -> bool { invoke!(0x306C1F6178F01AB3, entity) }
 	pub fn IS_ENTITY_ATTACHED_TO_ANY_PED(entity: Entity) -> bool { invoke!(0xC841153DED2CA89A, entity) }
@@ -1198,8 +1198,8 @@ pub mod ENTITY {
 	pub fn _IS_ENTITY_OWNED_BY_PERSISTENCE_SYSTEM(entity: Entity) -> bool { invoke!(0xA7E51B53309EAC97, entity) }
 	pub fn IS_ENTITY_DEAD(entity: Entity) -> bool { invoke!(0x7D5B1F88E7504BBA, entity) }
 	pub fn IS_ENTITY_IN_AIR(entity: Entity, p1: Any) -> bool { invoke!(0x886E37EC497200B6, entity, p1) }
-	pub fn IS_ENTITY_IN_ANGLED_AREA(entity: Entity, originX: f32, originY: f32, originZ: f32, edgeX: f32, edgeY: f32, edgeZ: f32, angle: f32, p8: bool, p9: bool, p10: Any) -> bool { invoke!(0xD3151E53134595E5, entity, originX, originY, originZ, edgeX, edgeY, edgeZ, angle, p8, p9, p10) }
-	pub fn IS_ENTITY_IN_AREA(entity: Entity, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, p7: bool, p8: bool, p9: Any) -> bool { invoke!(0x0C2634C40A16193E, entity, x1, y1, z1, x2, y2, z2, p7, p8, p9) }
+	pub fn IS_ENTITY_IN_ANGLED_AREA(entity: Entity, origin: Vector3, edge: Vector3, angle: f32, p8: bool, p9: bool, p10: Any) -> bool { invoke!(0xD3151E53134595E5, entity, origin, edge, angle, p8, p9, p10) }
+	pub fn IS_ENTITY_IN_AREA(entity: Entity, coords1: Vector3, coords2: Vector3, p7: bool, p8: bool, p9: Any) -> bool { invoke!(0x0C2634C40A16193E, entity, coords1, coords2, p7, p8, p9) }
 	pub fn IS_ENTITY_IN_VOLUME(entity: Entity, volume: ScrHandle, p2: bool, p3: i32) -> bool { invoke!(0x5A5526BC09C06623, entity, volume, p2, p3) }
 	pub fn IS_ENTITY_IN_WATER(entity: Entity) -> bool { invoke!(0xDDE5C125AC446723, entity) }
 	pub fn _IS_ENTITY_UNDERWATER(entity: Entity, p1: bool) -> bool { invoke!(0xD4E5C1E93C466127, entity, p1) }
@@ -1224,7 +1224,7 @@ pub mod ENTITY {
 	pub fn _0x0DB41D59E0F1502B(p0: Any) { invoke_ignore!(0x0DB41D59E0F1502B, p0) }
 	pub fn _IS_TRACKED_ENTITY_VISIBLE(entity: Entity) -> bool { invoke!(0xC8CCDB712FBCBA92, entity) }
 	pub fn IS_ENTITY_OCCLUDED(entity: Entity) -> bool { invoke!(0x140188E884645624, entity) }
-	pub fn WOULD_ENTITY_BE_OCCLUDED(entityModelHash: Hash, x: f32, y: f32, z: f32, p4: bool) -> bool { invoke!(0x3546FAB293FF2981, entityModelHash, x, y, z, p4) }
+	pub fn WOULD_ENTITY_BE_OCCLUDED(entityModelHash: Hash, coords: Vector3, p4: bool) -> bool { invoke!(0x3546FAB293FF2981, entityModelHash, coords, p4) }
 	pub fn IS_ENTITY_WAITING_FOR_WORLD_COLLISION(entity: Entity) -> bool { invoke!(0x5E1CC2E8DC3111DD, entity) }
 	pub fn _IS_ENTITY_ON_TRAIN_TRACK(entity: Entity) -> bool { invoke!(0x857ACB0AB4BD0D55, entity) }
 	pub fn _0xCDB682BB47C02F0A(entity: Entity, p1: Hash) { invoke_ignore!(0xCDB682BB47C02F0A, entity, p1) }
@@ -1268,10 +1268,10 @@ pub mod ENTITY {
 	pub fn _0xE75EEA8DB59A9F39(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0xE75EEA8DB59A9F39, p0, p1, p2, p3, p4, p5) }
 	pub fn _0x188736456D1DEDE6(p0: Any, p1: Any) -> Any { invoke!(0x188736456D1DEDE6, p0, p1) }
 	pub fn _0xC6A1A3D63F122DE7(p0: Any, p1: Any) { invoke_ignore!(0xC6A1A3D63F122DE7, p0, p1) }
-	pub fn APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity: Entity, forceType: i32, x: f32, y: f32, z: f32, component: i32, isDirectionRel: bool, isForceRel: bool, p8: bool) { invoke_ignore!(0x31DA7CEC5334DB37, entity, forceType, x, y, z, component, isDirectionRel, isForceRel, p8) }
-	pub fn APPLY_FORCE_TO_ENTITY(entity: Entity, forceFlags: i32, x: f32, y: f32, z: f32, offX: f32, offY: f32, offZ: f32, boneIndex: i32, isDirectionRel: bool, ignoreUpVec: bool, isForceRel: bool, p12: bool, p13: bool) { invoke_ignore!(0xF15E8F5D333F09C4, entity, forceFlags, x, y, z, offX, offY, offZ, boneIndex, isDirectionRel, ignoreUpVec, isForceRel, p12, p13) }
-	pub fn ATTACH_ENTITY_TO_ENTITY(entity1: Entity, entity2: Entity, boneIndex: i32, xPos: f32, yPos: f32, zPos: f32, xRot: f32, yRot: f32, zRot: f32, p9: bool, useSoftPinning: bool, collision: bool, isPed: bool, vertexIndex: i32, fixedRot: bool, p15: bool, p16: bool) { invoke_ignore!(0x6B9BBD38AB0796DF, entity1, entity2, boneIndex, xPos, yPos, zPos, xRot, yRot, zRot, p9, useSoftPinning, collision, isPed, vertexIndex, fixedRot, p15, p16) }
-	pub fn ATTACH_ENTITY_TO_ENTITY_PHYSICALLY(entity1: Entity, entity2: Entity, p2: i32, boneIndex: i32, offsetX: f32, offsetY: f32, offsetZ: f32, p7: f32, p8: f32, p9: f32, p10: f32, p11: f32, p12: f32, p13: f32, p14: bool, p15: bool, p16: bool, p17: bool, p18: i32, p19: bool, p20: f32, p21: f32) { invoke_ignore!(0xB629A43CA1643481, entity1, entity2, p2, boneIndex, offsetX, offsetY, offsetZ, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21) }
+	pub fn APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity: Entity, forceType: i32, coords: Vector3, component: i32, isDirectionRel: bool, isForceRel: bool, p8: bool) { invoke_ignore!(0x31DA7CEC5334DB37, entity, forceType, coords, component, isDirectionRel, isForceRel, p8) }
+	pub fn APPLY_FORCE_TO_ENTITY(entity: Entity, forceFlags: i32, coords: Vector3, off: Vector3, boneIndex: i32, isDirectionRel: bool, ignoreUpVec: bool, isForceRel: bool, p12: bool, p13: bool) { invoke_ignore!(0xF15E8F5D333F09C4, entity, forceFlags, coords, off, boneIndex, isDirectionRel, ignoreUpVec, isForceRel, p12, p13) }
+	pub fn ATTACH_ENTITY_TO_ENTITY(entity1: Entity, entity2: Entity, boneIndex: i32, pos: Vector3, rot: Vector3, p9: bool, useSoftPinning: bool, collision: bool, isPed: bool, vertexIndex: i32, fixedRot: bool, p15: bool, p16: bool) { invoke_ignore!(0x6B9BBD38AB0796DF, entity1, entity2, boneIndex, pos, rot, p9, useSoftPinning, collision, isPed, vertexIndex, fixedRot, p15, p16) }
+	pub fn ATTACH_ENTITY_TO_ENTITY_PHYSICALLY(entity1: Entity, entity2: Entity, p2: i32, boneIndex: i32, offset: Vector3, p7: f32, p8: f32, p9: f32, p10: f32, p11: f32, p12: f32, p13: f32, p14: bool, p15: bool, p16: bool, p17: bool, p18: i32, p19: bool, p20: f32, p21: f32) { invoke_ignore!(0xB629A43CA1643481, entity1, entity2, p2, boneIndex, offset, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21) }
 	pub fn _0x445D7D8EA66E373E(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any) { invoke_ignore!(0x445D7D8EA66E373E, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15) }
 	pub fn _0x16908E859C3AB698(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x16908E859C3AB698, p0, p1, p2, p3, p4) }
 	pub fn GET_ENTITY_BONE_INDEX_BY_NAME(entity: Entity, boneName: & CStr) -> i32 { invoke!(0xBACA8FE9C76C124E, entity, boneName) }
@@ -1301,12 +1301,12 @@ pub mod ENTITY {
 	pub fn GET_ENTITY_COLLISION_DISABLED(entity: Entity) -> bool { invoke!(0xAA2FADD30F45A9DA, entity) }
 	pub fn SET_ENTITY_COLLISION(entity: Entity, toggle: bool, keepPhysics: bool) { invoke_ignore!(0xF66F820909453B8C, entity, toggle, keepPhysics) }
 	pub fn SET_ENTITY_COMPLETELY_DISABLE_COLLISION(entity: Entity, toggle: bool, keepPhysics: bool) { invoke_ignore!(0xE0580EC84813875A, entity, toggle, keepPhysics) }
-	pub fn SET_ENTITY_COORDS(entity: Entity, xPos: f32, yPos: f32, zPos: f32, xAxis: bool, yAxis: bool, zAxis: bool, clearArea: bool) { invoke_ignore!(0x06843DA7060A026B, entity, xPos, yPos, zPos, xAxis, yAxis, zAxis, clearArea) }
-	pub fn SET_ENTITY_COORDS_NO_OFFSET(entity: Entity, xPos: f32, yPos: f32, zPos: f32, xAxis: bool, yAxis: bool, zAxis: bool) { invoke_ignore!(0x239A3351AC1DA385, entity, xPos, yPos, zPos, xAxis, yAxis, zAxis) }
+	pub fn SET_ENTITY_COORDS(entity: Entity, pos: Vector3, xAxis: bool, yAxis: bool, zAxis: bool, clearArea: bool) { invoke_ignore!(0x06843DA7060A026B, entity, pos, xAxis, yAxis, zAxis, clearArea) }
+	pub fn SET_ENTITY_COORDS_NO_OFFSET(entity: Entity, pos: Vector3, xAxis: bool, yAxis: bool, zAxis: bool) { invoke_ignore!(0x239A3351AC1DA385, entity, pos, xAxis, yAxis, zAxis) }
 	pub fn SET_ENTITY_DYNAMIC(entity: Entity, toggle: bool) { invoke_ignore!(0xFBFC4473F66CE344, entity, toggle) }
 	pub fn SET_ENTITY_HEADING(entity: Entity, heading: f32) { invoke_ignore!(0xCF2B9C0645C4651B, entity, heading) }
-	pub fn _SET_ENTITY_COORDS_AND_HEADING(entity: Entity, xPos: f32, yPos: f32, zPos: f32, heading: f32, xAxis: bool, yAxis: bool, zAxis: bool) { invoke_ignore!(0x203BEFFDBE12E96A, entity, xPos, yPos, zPos, heading, xAxis, yAxis, zAxis) }
-	pub fn _SET_ENTITY_COORDS_AND_HEADING_NO_OFFSET(entity: Entity, xPos: f32, yPos: f32, zPos: f32, heading: f32, p5: bool, p6: bool) { invoke_ignore!(0x0918E3565C20F03C, entity, xPos, yPos, zPos, heading, p5, p6) }
+	pub fn _SET_ENTITY_COORDS_AND_HEADING(entity: Entity, pos: Vector3, heading: f32, xAxis: bool, yAxis: bool, zAxis: bool) { invoke_ignore!(0x203BEFFDBE12E96A, entity, pos, heading, xAxis, yAxis, zAxis) }
+	pub fn _SET_ENTITY_COORDS_AND_HEADING_NO_OFFSET(entity: Entity, pos: Vector3, heading: f32, p5: bool, p6: bool) { invoke_ignore!(0x0918E3565C20F03C, entity, pos, heading, p5, p6) }
 	pub fn SET_ENTITY_HEALTH(entity: Entity, healthAmount: i32, entityKilledBy: Entity) { invoke_ignore!(0xAC2767ED8BDFAB15, entity, healthAmount, entityKilledBy) }
 	pub fn SET_ENTITY_INVINCIBLE(entity: Entity, toggle: bool) { invoke_ignore!(0xA5C38736C426FCB8, entity, toggle) }
 	pub fn _0xAF7F3099B9FEB535(entity: Entity, p1: f32, p2: f32, p3: f32) { invoke_ignore!(0xAF7F3099B9FEB535, entity, p1, p2, p3) }
@@ -1318,18 +1318,18 @@ pub mod ENTITY {
 	pub fn _SET_ENTITY_LIGHTS_ENABLED(entity: Entity, enabled: bool) { invoke_ignore!(0xEBDC12861D079ABA, entity, enabled) }
 	pub fn SET_ENTITY_LOAD_COLLISION_FLAG(entity: Entity, toggle: bool) { invoke_ignore!(0x9B9EE31AED48072E, entity, toggle) }
 	pub fn HAS_COLLISION_LOADED_AROUND_ENTITY(entity: Entity) -> bool { invoke!(0xBEB1600952B9CF5C, entity) }
-	pub fn HAS_COLLISION_LOADED_AROUND_POSITION(xPos: f32, yPos: f32, zPos: f32) -> bool { invoke!(0x6BFBDC46139C45AB, xPos, yPos, zPos) }
+	pub fn HAS_COLLISION_LOADED_AROUND_POSITION(pos: Vector3) -> bool { invoke!(0x6BFBDC46139C45AB, pos) }
 	pub fn SET_ENTITY_ONLY_DAMAGED_BY_PLAYER(entity: Entity, toggle: bool) { invoke_ignore!(0x473598683095D430, entity, toggle) }
 	pub fn SET_ENTITY_ONLY_DAMAGED_BY_RELATIONSHIP_GROUP(entity: Entity, p1: bool, relationshipGroup: Hash) { invoke_ignore!(0x6C1F6AA2F0ADD104, entity, p1, relationshipGroup) }
 	pub fn SET_ENTITY_PROOFS(entity: Entity, proofsBitset: i32, specialFlag: bool) { invoke_ignore!(0xFAEE099C6F890BB8, entity, proofsBitset, specialFlag) }
 	pub fn _GET_ENTITY_PROOFS(entity: Entity) -> i32 { invoke!(0x6CF0DAD7FA1088EA, entity) }
-	pub fn SET_ENTITY_QUATERNION(entity: Entity, x: f32, y: f32, z: f32, w: f32) { invoke_ignore!(0x100E7007D13E3687, entity, x, y, z, w) }
+	pub fn SET_ENTITY_QUATERNION(entity: Entity, coords: Vector3, w: f32) { invoke_ignore!(0x100E7007D13E3687, entity, coords, w) }
 	pub fn SET_ENTITY_ROTATION(entity: Entity, pitch: f32, roll: f32, yaw: f32, rotationOrder: i32, p5: bool) { invoke_ignore!(0x9CC8314DFEDE441E, entity, pitch, roll, yaw, rotationOrder, p5) }
 	pub fn _0xD45BB89B53FC0CFD(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xD45BB89B53FC0CFD, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn SET_ENTITY_VISIBLE(entity: Entity, toggle: bool) { invoke_ignore!(0x1794B4FCC84D812F, entity, toggle) }
 	pub fn _0x80FDEB3A9E9AA578(entity: Entity, p1: bool) { invoke_ignore!(0x80FDEB3A9E9AA578, entity, p1) }
 	pub fn _0x9C6906EF8CB20C5F(entity: Entity) { invoke_ignore!(0x9C6906EF8CB20C5F, entity) }
-	pub fn SET_ENTITY_VELOCITY(entity: Entity, x: f32, y: f32, z: f32) { invoke_ignore!(0x1C99BB7B6E96D16F, entity, x, y, z) }
+	pub fn SET_ENTITY_VELOCITY(entity: Entity, coords: Vector3) { invoke_ignore!(0x1C99BB7B6E96D16F, entity, coords) }
 	pub fn SET_ENTITY_HAS_GRAVITY(entity: Entity, toggle: bool) { invoke_ignore!(0x0CEDB728A1083FA7, entity, toggle) }
 	pub fn SET_ENTITY_LOD_DIST(entity: Entity, value: i32) { invoke_ignore!(0x5FB407F0A7C877BF, entity, value) }
 	pub fn GET_ENTITY_LOD_DIST(entity: Entity) -> i32 { invoke!(0xDF240D0C2A948683, entity) }
@@ -1341,20 +1341,20 @@ pub mod ENTITY {
 	pub fn SET_ENTITY_RENDER_SCORCHED(entity: Entity, toggle: bool) { invoke_ignore!(0x85B8A7534E44BC23, entity, toggle) }
 	pub fn _0x37B01666BAE8F7EF(entity: Entity) -> Any { invoke!(0x37B01666BAE8F7EF, entity) }
 	pub fn _0xA9E6D8F2DDFC4DB9(p0: Any, p1: Any) { invoke_ignore!(0xA9E6D8F2DDFC4DB9, p0, p1) }
-	pub fn CREATE_MODEL_SWAP(x: f32, y: f32, z: f32, radius: f32, originalModel: Hash, newModel: Hash, p6: bool) { invoke_ignore!(0x10B2218320B6F5AC, x, y, z, radius, originalModel, newModel, p6) }
-	pub fn REMOVE_MODEL_SWAP(x: f32, y: f32, z: f32, radius: f32, originalModel: Hash, newModel: Hash, p6: bool) { invoke_ignore!(0x824E1C26A14CB817, x, y, z, radius, originalModel, newModel, p6) }
-	pub fn CREATE_MODEL_HIDE(x: f32, y: f32, z: f32, radius: f32, model: Hash, p5: bool) { invoke_ignore!(0x069848B3FB3C4426, x, y, z, radius, model, p5) }
-	pub fn CREATE_MODEL_HIDE_EXCLUDING_SCRIPT_OBJECTS(x: f32, y: f32, z: f32, radius: f32, model: Hash, p5: bool) { invoke_ignore!(0xD136090A9AAAB17D, x, y, z, radius, model, p5) }
+	pub fn CREATE_MODEL_SWAP(coords: Vector3, radius: f32, originalModel: Hash, newModel: Hash, p6: bool) { invoke_ignore!(0x10B2218320B6F5AC, coords, radius, originalModel, newModel, p6) }
+	pub fn REMOVE_MODEL_SWAP(coords: Vector3, radius: f32, originalModel: Hash, newModel: Hash, p6: bool) { invoke_ignore!(0x824E1C26A14CB817, coords, radius, originalModel, newModel, p6) }
+	pub fn CREATE_MODEL_HIDE(coords: Vector3, radius: f32, model: Hash, p5: bool) { invoke_ignore!(0x069848B3FB3C4426, coords, radius, model, p5) }
+	pub fn CREATE_MODEL_HIDE_EXCLUDING_SCRIPT_OBJECTS(coords: Vector3, radius: f32, model: Hash, p5: bool) { invoke_ignore!(0xD136090A9AAAB17D, coords, radius, model, p5) }
 	pub fn REMOVE_MODEL_HIDE(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0x3F38A98576F6213A, p0, p1, p2, p3, p4, p5) }
 	pub fn _0xD4636C2EDB0DEA8A(p0: Any) -> Any { invoke!(0xD4636C2EDB0DEA8A, p0) }
-	pub fn CREATE_FORCED_OBJECT(x: f32, y: f32, z: f32, p3: Any, modelHash: Hash, p5: bool) { invoke_ignore!(0x0961A905AFBC34C7, x, y, z, p3, modelHash, p5) }
+	pub fn CREATE_FORCED_OBJECT(coords: Vector3, p3: Any, modelHash: Hash, p5: bool) { invoke_ignore!(0x0961A905AFBC34C7, coords, p3, modelHash, p5) }
 	pub fn REMOVE_FORCED_OBJECT(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x553FA683F2BCD814, p0, p1, p2, p3, p4) }
 	pub fn SET_ENTITY_NO_COLLISION_ENTITY(entity1: Entity, entity2: Entity, thisFrameOnly: bool) { invoke_ignore!(0xE037BF068223C38D, entity1, entity2, thisFrameOnly) }
 	pub fn SET_ENTITY_MOTION_BLUR(entity: Entity, toggle: bool) { invoke_ignore!(0x516C6ABD18322B63, entity, toggle) }
 	pub fn SET_CAN_AUTO_VAULT_ON_ENTITY(entity: Entity, toggle: bool) { invoke_ignore!(0x80646744FA88F9D7, entity, toggle) }
 	pub fn SET_CAN_CLIMB_ON_ENTITY(entity: Entity, toggle: bool) { invoke_ignore!(0x24AED2A608F93C4C, entity, toggle) }
 	pub fn SET_ENTITY_NOWEAPONDECALS(entity: Entity, toggle: bool) { invoke_ignore!(0xC64E597783BE9A1D, entity, toggle) }
-	pub fn _GET_ENTITIES_NEAR_POINT(x: f32, y: f32, z: f32, radius: f32, itemSet: ItemSet, p5: i32) -> i32 { invoke!(0x59B57C4B06531E1E, x, y, z, radius, itemSet, p5) }
+	pub fn _GET_ENTITIES_NEAR_POINT(coords: Vector3, radius: f32, itemSet: ItemSet, p5: i32) -> i32 { invoke!(0x59B57C4B06531E1E, coords, radius, itemSet, p5) }
 	pub fn GET_MATCHING_ENTITIES(volume: Volume, itemSet: ItemSet, entityType: i32, p3: Any, p4: Hash, p5: & CStr) -> i32 { invoke!(0x84CCF9A12942C83D, volume, itemSet, entityType, p3, p4, p5) }
 	pub fn _GET_ENTITIES_IN_VOLUME(volume: Volume, itemSet: ItemSet, entityType: i32) -> i32 { invoke!(0x886171A12F400B89, volume, itemSet, entityType) }
 	pub fn _SEARCH_BUILDING_POOL_FOR_ENTITY_WITH_THIS_MODEL(modelHash: Hash) -> Entity { invoke!(0x66B2B83B94B22458, modelHash) }
@@ -1382,7 +1382,7 @@ pub mod ENTITY {
 	pub fn _0x7F20092547B4DDEA(p0: Any) { invoke_ignore!(0x7F20092547B4DDEA, p0) }
 	pub fn _0xF41E2979D5BC5370(p0: Any) { invoke_ignore!(0xF41E2979D5BC5370, p0) }
 	pub fn _0xAAACB74442C1BED3(p0: Any) -> Any { invoke!(0xAAACB74442C1BED3, p0) }
-	pub fn PIN_CLOSEST_MAP_ENTITY(modelHash: Hash, x: f32, y: f32, z: f32, flags: i32) -> Any { invoke!(0x6F3068258A499E52, modelHash, x, y, z, flags) }
+	pub fn PIN_CLOSEST_MAP_ENTITY(modelHash: Hash, coords: Vector3, flags: i32) -> Any { invoke!(0x6F3068258A499E52, modelHash, coords, flags) }
 	pub fn _UNPIN_MAP_ENTITY(entity: Entity) { invoke_ignore!(0xD2B9C78537ED5759, entity) }
 	pub fn IS_MAP_ENTITY_PINNED(p0: Any) -> bool { invoke!(0x1FF441D7954F8709, p0) }
 	pub fn _GET_PINNED_MAP_ENTITY(p0: Any) -> Entity { invoke!(0x4735E2A4BB83D9DA, p0) }
@@ -1400,13 +1400,13 @@ pub mod EVENT {
 	pub fn SET_DECISION_MAKER(ped: Ped, name: Hash) { invoke_ignore!(0x8AE2F981CDDB8FA4, ped, name) }
 	pub fn SET_DECISION_MAKER_TO_DEFAULT(ped: Ped) { invoke_ignore!(0x6B9C5C38838FB6E6, ped) }
 	pub fn _CREATE_SHOCKING_EVENT(args: &mut Any) -> ScrHandle { invoke!(0xCA1315C33B9A2847, args) }
-	pub fn ADD_SHOCKING_EVENT_AT_POSITION(eventType: Hash, x: f32, y: f32, z: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: i32, p10: i32) -> ScrHandle { invoke!(0xD9F8455409B525E9, eventType, x, y, z, p4, p5, p6, p7, p8, p9, p10) }
+	pub fn ADD_SHOCKING_EVENT_AT_POSITION(eventType: Hash, coords: Vector3, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: i32, p10: i32) -> ScrHandle { invoke!(0xD9F8455409B525E9, eventType, coords, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn ADD_SHOCKING_EVENT_FOR_ENTITY(eventType: Hash, entity: Entity, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: bool, p9: bool, p10: i32, p11: i32) -> ScrHandle { invoke!(0x7FD8F3BE76F89422, eventType, entity, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) }
-	pub fn IS_SHOCKING_EVENT_IN_SPHERE(eventType: Hash, x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0x9DB47E16060D6354, eventType, x, y, z, radius) }
+	pub fn IS_SHOCKING_EVENT_IN_SPHERE(eventType: Hash, coords: Vector3, radius: f32) -> bool { invoke!(0x9DB47E16060D6354, eventType, coords, radius) }
 	pub fn REMOVE_SHOCKING_EVENT(event: ScrHandle) -> bool { invoke!(0xE8BB3CC253A34559, event) }
 	pub fn REMOVE_ALL_SHOCKING_EVENTS(p0: bool) { invoke_ignore!(0xD47A168C2AB90DC4, p0) }
-	pub fn _REMOVE_ALL_SHOCKING_EVENTS_IN_AREA(x: f32, y: f32, z: f32, radius: f32, p4: bool) { invoke_ignore!(0xB4C71BA9CAB097BD, x, y, z, radius, p4) }
-	pub fn _REMOVE_ALL_SHOCKING_EVENTS_OF_TYPE_IN_AREA(eventType: Hash, x: f32, y: f32, z: f32, radius: f32, p5: bool) { invoke_ignore!(0x6A648D42BF271DC7, eventType, x, y, z, radius, p5) }
+	pub fn _REMOVE_ALL_SHOCKING_EVENTS_IN_AREA(coords: Vector3, radius: f32, p4: bool) { invoke_ignore!(0xB4C71BA9CAB097BD, coords, radius, p4) }
+	pub fn _REMOVE_ALL_SHOCKING_EVENTS_OF_TYPE_IN_AREA(eventType: Hash, coords: Vector3, radius: f32, p5: bool) { invoke_ignore!(0x6A648D42BF271DC7, eventType, coords, radius, p5) }
 	pub fn REMOVE_ALL_SHOCKING_EVENTS_OF_TYPE(eventType: Hash, p1: bool) { invoke_ignore!(0x118873DD538490B4, eventType, p1) }
 	pub fn REMOVE_SHOCKING_EVENT_SPAWN_BLOCKING_AREAS() { invoke_ignore!(0xDB249021652420C5) }
 	pub fn _0x36D0F2BA2C0D9BDE(entity: Entity, p1: i32) -> Any { invoke!(0x36D0F2BA2C0D9BDE, entity, p1) }
@@ -1441,32 +1441,32 @@ pub mod FIRE {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn START_SCRIPT_FIRE(x: f32, y: f32, z: f32, p3: i32, p4: f32, p5: bool, soundsetName: & CStr, p7: f32, p8: i32) -> FireId { invoke!(0x6B83617E04503888, x, y, z, p3, p4, p5, soundsetName, p7, p8) }
+	pub fn START_SCRIPT_FIRE(coords: Vector3, p3: i32, p4: f32, p5: bool, soundsetName: & CStr, p7: f32, p8: i32) -> FireId { invoke!(0x6B83617E04503888, coords, p3, p4, p5, soundsetName, p7, p8) }
 	pub fn REMOVE_SCRIPT_FIRE(fireHandle: FireId) { invoke_ignore!(0x790125C36E194069, fireHandle) }
 	pub fn START_ENTITY_FIRE(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0xC4DC7418A44D6822, p0, p1, p2, p3) }
 	pub fn STOP_ENTITY_FIRE(p0: Any, p1: Any) { invoke_ignore!(0x8390751DC40C1E98, p0, p1) }
 	pub fn IS_ENTITY_ON_FIRE(entity: Entity) -> bool { invoke!(0x1BD7C371CE257C3E, entity) }
 	pub fn _0x754937C28271BC65(p0: Any) { invoke_ignore!(0x754937C28271BC65, p0) }
-	pub fn GET_NUMBER_OF_FIRES_IN_RANGE(x: f32, y: f32, z: f32, radius: f32) -> i32 { invoke!(0xF9617BC6FAE61E08, x, y, z, radius) }
-	pub fn STOP_FIRE_IN_RANGE(x: f32, y: f32, z: f32, radius: f32) { invoke_ignore!(0xDB38F247BD421708, x, y, z, radius) }
-	pub fn _STOP_FIRE_IN_BOX(posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) { invoke_ignore!(0xB7C7BDC375AEA9A4, posX, posY, posZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
-	pub fn GET_CLOSEST_FIRE_POS(outPosition: &mut Vector3, x: f32, y: f32, z: f32) -> bool { invoke!(0xB646FB657F448261, outPosition, x, y, z) }
+	pub fn GET_NUMBER_OF_FIRES_IN_RANGE(coords: Vector3, radius: f32) -> i32 { invoke!(0xF9617BC6FAE61E08, coords, radius) }
+	pub fn STOP_FIRE_IN_RANGE(coords: Vector3, radius: f32) { invoke_ignore!(0xDB38F247BD421708, coords, radius) }
+	pub fn _STOP_FIRE_IN_BOX(pos: Vector3, rot: Vector3, scale: Vector3) { invoke_ignore!(0xB7C7BDC375AEA9A4, pos, rot, scale) }
+	pub fn GET_CLOSEST_FIRE_POS(outPosition: &mut Vector3, coords: Vector3) -> bool { invoke!(0xB646FB657F448261, outPosition, coords) }
 	pub fn _0x559FC1D310813031(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any) -> Any { invoke!(0x559FC1D310813031, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn _0x41B87A6495EE13DD(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any) -> Any { invoke!(0x41B87A6495EE13DD, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn _0xA4454592DCF7C992(p0: Any) -> Any { invoke!(0xA4454592DCF7C992, p0) }
 	pub fn _IS_ENTITY_CONSUMED_BY_FIRE(entity: Entity) -> bool { invoke!(0xCDC25355C0D65963, entity) }
-	pub fn ADD_EXPLOSION(x: f32, y: f32, z: f32, explosionType: i32, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0x7D6F58F69DA92530, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) }
-	pub fn ADD_OWNED_EXPLOSION(ped: Ped, x: f32, y: f32, z: f32, explosionType: i32, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0xD84A917A64D4D016, ped, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) }
-	pub fn _0xB7DF150605EEDC9B(entity: Entity, p1: i32, x: f32, y: f32, z: f32, explosionType: i32, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0xB7DF150605EEDC9B, entity, p1, x, y, z, explosionType, damageScale, isAudible, isInvisible, cameraShake) }
-	pub fn ADD_EXPLOSION_WITH_USER_VFX(x: f32, y: f32, z: f32, explosionType: i32, explosionFx: Hash, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0x53BA259F3A67A99E, x, y, z, explosionType, explosionFx, damageScale, isAudible, isInvisible, cameraShake) }
+	pub fn ADD_EXPLOSION(coords: Vector3, explosionType: i32, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0x7D6F58F69DA92530, coords, explosionType, damageScale, isAudible, isInvisible, cameraShake) }
+	pub fn ADD_OWNED_EXPLOSION(ped: Ped, coords: Vector3, explosionType: i32, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0xD84A917A64D4D016, ped, coords, explosionType, damageScale, isAudible, isInvisible, cameraShake) }
+	pub fn _0xB7DF150605EEDC9B(entity: Entity, p1: i32, coords: Vector3, explosionType: i32, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0xB7DF150605EEDC9B, entity, p1, coords, explosionType, damageScale, isAudible, isInvisible, cameraShake) }
+	pub fn ADD_EXPLOSION_WITH_USER_VFX(coords: Vector3, explosionType: i32, explosionFx: Hash, damageScale: f32, isAudible: bool, isInvisible: bool, cameraShake: f32) { invoke_ignore!(0x53BA259F3A67A99E, coords, explosionType, explosionFx, damageScale, isAudible, isInvisible, cameraShake) }
 	pub fn _0x34AE85C7CA4857AA(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0x34AE85C7CA4857AA, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
-	pub fn IS_EXPLOSION_IN_AREA(explosionType: i32, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> bool { invoke!(0x8391BA4313A25AD3, explosionType, x1, y1, z1, x2, y2, z2) }
-	pub fn IS_EXPLOSION_ACTIVE_IN_AREA(explosionType: i32, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> bool { invoke!(0xD96E82AEBFFAAFF0, explosionType, x1, y1, z1, x2, y2, z2) }
-	pub fn IS_EXPLOSION_IN_SPHERE(explosionType: i32, x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0xD62DD846D82CBB90, explosionType, x, y, z, radius) }
-	pub fn IS_EXPLOSION_IN_ANGLED_AREA(explosionType: i32, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, angle: f32) -> bool { invoke!(0x5AE661ECD18524C9, explosionType, x1, y1, z1, x2, y2, z2, angle) }
+	pub fn IS_EXPLOSION_IN_AREA(explosionType: i32, coords1: Vector3, coords2: Vector3) -> bool { invoke!(0x8391BA4313A25AD3, explosionType, coords1, coords2) }
+	pub fn IS_EXPLOSION_ACTIVE_IN_AREA(explosionType: i32, coords1: Vector3, coords2: Vector3) -> bool { invoke!(0xD96E82AEBFFAAFF0, explosionType, coords1, coords2) }
+	pub fn IS_EXPLOSION_IN_SPHERE(explosionType: i32, coords: Vector3, radius: f32) -> bool { invoke!(0xD62DD846D82CBB90, explosionType, coords, radius) }
+	pub fn IS_EXPLOSION_IN_ANGLED_AREA(explosionType: i32, coords1: Vector3, coords2: Vector3, angle: f32) -> bool { invoke!(0x5AE661ECD18524C9, explosionType, coords1, coords2, angle) }
 	pub fn _IS_EXPLOSION_IN_VOLUME(explosionType: i32, volume: Volume) -> bool { invoke!(0xE24822A4CFC9107A, explosionType, volume) }
-	pub fn GET_OWNER_OF_EXPLOSION_IN_ANGLED_AREA(explosionType: i32, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, radius: f32) -> Entity { invoke!(0x8002DDAB58594D78, explosionType, x1, y1, z1, x2, y2, z2, radius) }
-	pub fn _0x68F6A75FDF5A70D6(x: f32, y: f32, z: f32, p3: f32) { invoke_ignore!(0x68F6A75FDF5A70D6, x, y, z, p3) }
+	pub fn GET_OWNER_OF_EXPLOSION_IN_ANGLED_AREA(explosionType: i32, coords1: Vector3, coords2: Vector3, radius: f32) -> Entity { invoke!(0x8002DDAB58594D78, explosionType, coords1, coords2, radius) }
+	pub fn _0x68F6A75FDF5A70D6(coords: Vector3, p3: f32) { invoke_ignore!(0x68F6A75FDF5A70D6, coords, p3) }
 	pub fn _0x24DB6B9F2B719043(p0: f32) { invoke_ignore!(0x24DB6B9F2B719043, p0) }
 	pub fn _IS_PED_SHOCKING_EVENT_ACTIVE(ped: Ped, p1: i32) -> bool { invoke!(0xAB7993BA61A4674F, ped, p1) }
 }
@@ -1489,7 +1489,7 @@ pub mod FLOCK {
 	pub fn _0x19870C40C7EE15BE(p0: Any, p1: Any) -> Any { invoke!(0x19870C40C7EE15BE, p0, p1) }
 	pub fn _0x0816C31480764AB0(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0x0816C31480764AB0, p0, p1, p2, p3) }
 	pub fn _0xC3D581A34BC0A1F0(p0: Any, p1: Any) { invoke_ignore!(0xC3D581A34BC0A1F0, p0, p1) }
-	pub fn _0xF2CCA7B68CFAB2B9(species: Hash, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, x3: f32, y3: f32, z3: f32, p10: f32, p11: f32, p12: f32, p13: f32) { invoke_ignore!(0xF2CCA7B68CFAB2B9, species, x1, y1, z1, x2, y2, z2, x3, y3, z3, p10, p11, p12, p13) }
+	pub fn _0xF2CCA7B68CFAB2B9(species: Hash, coords1: Vector3, coords2: Vector3, coords3: Vector3, p10: f32, p11: f32, p12: f32, p13: f32) { invoke_ignore!(0xF2CCA7B68CFAB2B9, species, coords1, coords2, coords3, p10, p11, p12, p13) }
 	pub fn _0xFB16F08F47B83B4C(p0: Any) { invoke_ignore!(0xFB16F08F47B83B4C, p0) }
 	pub fn _GET_ANIMAL_IS_WILD(ped: Ped) -> bool { invoke!(0x3B005FF0538ED2A9, ped) }
 	pub fn _SET_ANIMAL_IS_WILD(ped: Ped, toggle: bool) { invoke_ignore!(0xAEB97D84CDF3C00B, ped, toggle) }
@@ -1527,7 +1527,6 @@ pub mod GRAPHICS {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn DRAW_LINE(fromX: f32, fromY: f32, fromZ: f32, toX: f32, toY: f32, toZ: f32, r: i32, g: i32, b: i32, a: i32) { invoke_ignore!(0xec2ab68b,fromX,fromY, fromZ, toX, toY, toZ, r, g, b, a) }
 	pub fn FREE_MEMORY_FOR_MISSION_CREATOR_PHOTO() { invoke_ignore!(0x7DFF8F94937D2659) }
 	pub fn LOAD_MISSION_CREATOR_PHOTO(p0: &mut Any, p1: Any, p2: Any, p3: Any) -> bool { invoke!(0x84F0BA7462FF8D58, p0, p1, p2, p3) }
 	pub fn GET_STATUS_OF_LOAD_MISSION_CREATOR_PHOTO(contentId: & CStr) -> i32 { invoke!(0xC71B50AE58D07369, contentId) }
@@ -1556,12 +1555,12 @@ pub mod GRAPHICS {
 	pub fn _GET_CURRENT_NUMBER_OF_LOCAL_PHOTOS() -> i32 { invoke!(0x78C56B8A7B1D000C) }
 	pub fn QUEUE_OPERATION_TO_CREATE_SORTED_LIST_OF_PHOTOS() -> Any { invoke!(0xA42EDF1E88734A7E) }
 	pub fn GET_STATUS_OF_SORTED_LIST_OPERATION() -> i32 { invoke!(0xB28894CD7408BD0C) }
-	pub fn DRAW_LIGHT_WITH_RANGE(posX: f32, posY: f32, posZ: f32, colorR: i32, colorG: i32, colorB: i32, range: f32, intensity: f32) { invoke_ignore!(0xD2D9E04C0DF927F4, posX, posY, posZ, colorR, colorG, colorB, range, intensity) }
+	pub fn DRAW_LIGHT_WITH_RANGE(pos: Vector3, colorR: i32, colorG: i32, colorB: i32, range: f32, intensity: f32) { invoke_ignore!(0xD2D9E04C0DF927F4, pos, colorR, colorG, colorB, range, intensity) }
 	pub fn UPDATE_LIGHTS_ON_ENTITY(entity: Entity) { invoke_ignore!(0xBDBACB52A03CC760, entity) }
 	pub fn _SET_LIGHTS_COLOR_FOR_ENTITY(entity: Entity, red: i32, green: i32, blue: i32) { invoke_ignore!(0x6EC2A67962296F49, entity, red, green, blue) }
 	pub fn _SET_LIGHTS_INTENSITY_FOR_ENTITY(entity: Entity, intensity: f32) { invoke_ignore!(0x07C0F87AAC57F2E4, entity, intensity) }
 	pub fn _SET_LIGHTS_TYPE_FOR_ENTITY(entity: Entity, type_: i32) { invoke_ignore!(0xAB72C67163DC4DB4, entity, type_) }
-	pub fn _DRAW_MARKER(type_: Hash, posX: f32, posY: f32, posZ: f32, dirX: f32, dirY: f32, dirZ: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32, red: i32, green: i32, blue: i32, alpha: i32, bobUpAndDown: bool, faceCamera: bool, p19: i32, rotate: bool, textureDict: Option<&CStr>, textureName: Option<&CStr>, drawOnEnts: bool) { invoke_ignore!(0x2A32FAA57B937173, type_, posX, posY, posZ, dirX, dirY, dirZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, red, green, blue, alpha, bobUpAndDown, faceCamera, p19, rotate, textureDict, textureName, drawOnEnts) }
+	pub fn _DRAW_MARKER(type_: Hash, pos: Vector3, dir: Vector3, rot: Vector3, scale: Vector3, red: i32, green: i32, blue: i32, alpha: i32, bobUpAndDown: bool, faceCamera: bool, p19: i32, rotate: bool, textureDict: & CStr, textureName: & CStr, drawOnEnts: bool) { invoke_ignore!(0x2A32FAA57B937173, type_, pos, dir, rot, scale, red, green, blue, alpha, bobUpAndDown, faceCamera, p19, rotate, textureDict, textureName, drawOnEnts) }
 	pub fn CREATE_CHECKPOINT_WITH_NAMEHASH(typeHash: Hash, posX1: f32, posY1: f32, posZ1: f32, posX2: f32, posY2: f32, posZ2: f32, radius: f32, red: i32, green: i32, blue: i32, alpha: i32, reserved: i32) -> i32 { invoke!(0x175668836B44CBB0, typeHash, posX1, posY1, posZ1, posX2, posY2, posZ2, radius, red, green, blue, alpha, reserved) }
 	pub fn _DOES_CHECKPOINT_HAVE_FX(checkpoint: i32) -> bool { invoke!(0x4C11CCACB7C02B6E, checkpoint) }
 	pub fn SET_CHECKPOINT_RGBA(checkpoint: i32, red: i32, green: i32, blue: i32, alpha: i32) { invoke_ignore!(0xCAAFC225E33B1D15, checkpoint, red, green, blue, alpha) }
@@ -1580,21 +1579,21 @@ pub mod GRAPHICS {
 	pub fn _0xA21AF60C9F99CCC5() { invoke_ignore!(0xA21AF60C9F99CCC5) }
 	pub fn _0xC28F62AC9774FC1B() -> Any { invoke!(0xC28F62AC9774FC1B) }
 	pub fn _0xEB48CE48EEC41FD4(p0: Any) { invoke_ignore!(0xEB48CE48EEC41FD4, p0) }
-	pub fn GET_SCREEN_COORD_FROM_WORLD_COORD(worldX: f32, worldY: f32, worldZ: f32, screenX: &mut f32, screenY: &mut f32) -> bool { invoke!(0xCB50D7AFCC8B0EC6, worldX, worldY, worldZ, screenX, screenY) }
+	pub fn GET_SCREEN_COORD_FROM_WORLD_COORD(world: Vector3, screenX: &mut f32, screenY: &mut f32) -> bool { invoke!(0xCB50D7AFCC8B0EC6, world, screenX, screenY) }
 	pub fn _IS_TEXTURE_IN_DICT(txdHash: Hash, dict: Hash) -> bool { invoke!(0xA2A51869BDED733B, txdHash, dict) }
 	pub fn SET_ARTIFICIAL_LIGHTS_STATE(state: bool) { invoke_ignore!(0xB2797619A7C7747B, state) }
 	pub fn DISABLE_HDTEX_THIS_FRAME() { invoke_ignore!(0x98A7CD5EA379A854) }
 	pub fn _0x1A9F09AB458D49C6(p0: bool) { invoke_ignore!(0x1A9F09AB458D49C6, p0) }
 	pub fn CREATE_TRACKED_POINT() -> i32 { invoke!(0xFB405CB357C69CB9) }
-	pub fn SET_TRACKED_POINT_INFO(point: i32, x: f32, y: f32, z: f32, radius: f32) { invoke_ignore!(0xF6FDA3D4404D4F2C, point, x, y, z, radius) }
+	pub fn SET_TRACKED_POINT_INFO(point: i32, coords: Vector3, radius: f32) { invoke_ignore!(0xF6FDA3D4404D4F2C, point, coords, radius) }
 	pub fn IS_TRACKED_POINT_VISIBLE(point: i32) -> bool { invoke!(0xCBB056BA159FB48D, point) }
 	pub fn _0xDFE332A5DA6FE7C9(iTrackedPoint: i32) -> i32 { invoke!(0xDFE332A5DA6FE7C9, iTrackedPoint) }
 	pub fn DESTROY_TRACKED_POINT(point: i32) { invoke_ignore!(0x37A59922109F8F1C, point) }
 	pub fn _IS_TRACKED_POINT_VALID(point: i32) -> bool { invoke!(0xF2FDDCC8C6BAE1B3, point) }
-	pub fn SET_GRASS_CULL_SPHERE(x: f32, y: f32, z: f32, p3: f32, p4: i32) -> i32 { invoke!(0x27219300C36A8D40, x, y, z, p3, p4) }
+	pub fn SET_GRASS_CULL_SPHERE(coords: Vector3, p3: f32, p4: i32) -> i32 { invoke!(0x27219300C36A8D40, coords, p3, p4) }
 	pub fn REMOVE_GRASS_CULL_SPHERE(handle: i32) { invoke_ignore!(0xAE7BF7CA9E4BA48D, handle) }
 	pub fn _ADD_VEG_MODIFIER_ZONE(volume: Volume, p1: i32, flags: i32, p3: i32) -> i32 { invoke!(0xBD3324281E8B9933, volume, p1, flags, p3) }
-	pub fn ADD_VEG_MODIFIER_SPHERE(x: f32, y: f32, z: f32, radius: f32, modType: i32, flags: i32, p6: i32) -> i32 { invoke!(0xFA50F79257745E74, x, y, z, radius, modType, flags, p6) }
+	pub fn ADD_VEG_MODIFIER_SPHERE(coords: Vector3, radius: f32, modType: i32, flags: i32, p6: i32) -> i32 { invoke!(0xFA50F79257745E74, coords, radius, modType, flags, p6) }
 	pub fn REMOVE_VEG_MODIFIER_SPHERE(vegModifierHandle: i32, p1: i32) { invoke_ignore!(0x9CF1836C03FB67A2, vegModifierHandle, p1) }
 	pub fn _ENABLE_STATIC_VEG_MODIFIER(p0: Hash) { invoke_ignore!(0xDFEA23EC90113657, p0) }
 	pub fn _DISABLE_STATIC_VEG_MODIFIER(p0: Hash) { invoke_ignore!(0xDD0BC0EDCB2162F6, p0) }
@@ -1628,24 +1627,24 @@ pub mod GRAPHICS {
 	pub fn _0x62B9F9A1272AED80(p0: Any) { invoke_ignore!(0x62B9F9A1272AED80, p0) }
 	pub fn _GET_PHOTO_MODE_CONTRAST() -> f32 { invoke!(0x98F4154989B81EC6) }
 	pub fn _0x9229ED770975BD9E() { invoke_ignore!(0x9229ED770975BD9E) }
-	pub fn START_PARTICLE_FX_NON_LOOPED_AT_COORD(effectName: & CStr, xPos: f32, yPos: f32, zPos: f32, xRot: f32, yRot: f32, zRot: f32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> bool { invoke!(0x2E80BF72EF7C87AC, effectName, xPos, yPos, zPos, xRot, yRot, zRot, scale, xAxis, yAxis, zAxis) }
-	pub fn START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD(effectName: & CStr, xPos: f32, yPos: f32, zPos: f32, xRot: f32, yRot: f32, zRot: f32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> bool { invoke!(0xFB97618457994A62, effectName, xPos, yPos, zPos, xRot, yRot, zRot, scale, xAxis, yAxis, zAxis) }
-	pub fn START_PARTICLE_FX_NON_LOOPED_ON_PED_BONE(effectName: & CStr, ped: Ped, offsetX: f32, offsetY: f32, offsetZ: f32, rotX: f32, rotY: f32, rotZ: f32, boneIndex: i32, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0x3FAA72BD940C3AC0, effectName, ped, offsetX, offsetY, offsetZ, rotX, rotY, rotZ, boneIndex, scale, axisX, axisY, axisZ) }
-	pub fn START_PARTICLE_FX_NON_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, offsetX: f32, offsetY: f32, offsetZ: f32, rotX: f32, rotY: f32, rotZ: f32, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0xFF4C64C513388C12, effectName, entity, offsetX, offsetY, offsetZ, rotX, rotY, rotZ, scale, axisX, axisY, axisZ) }
-	pub fn START_NETWORKED_PARTICLE_FX_NON_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, offsetX: f32, offsetY: f32, offsetZ: f32, rotX: f32, rotY: f32, rotZ: f32, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0xE6CFE43937061143, effectName, entity, offsetX, offsetY, offsetZ, rotX, rotY, rotZ, scale, axisX, axisY, axisZ) }
-	pub fn _START_PARTICLE_FX_NON_LOOPED_ON_PED_BONE_2(effectName: & CStr, ped: Ped, offsetX: f32, offsetY: f32, offsetZ: f32, rotX: f32, rotY: f32, rotZ: f32, boneIndex: i32, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0xC695870B8A149B96, effectName, ped, offsetX, offsetY, offsetZ, rotX, rotY, rotZ, boneIndex, scale, axisX, axisY, axisZ) }
+	pub fn START_PARTICLE_FX_NON_LOOPED_AT_COORD(effectName: & CStr, pos: Vector3, rot: Vector3, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> bool { invoke!(0x2E80BF72EF7C87AC, effectName, pos, rot, scale, xAxis, yAxis, zAxis) }
+	pub fn START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD(effectName: & CStr, pos: Vector3, rot: Vector3, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> bool { invoke!(0xFB97618457994A62, effectName, pos, rot, scale, xAxis, yAxis, zAxis) }
+	pub fn START_PARTICLE_FX_NON_LOOPED_ON_PED_BONE(effectName: & CStr, ped: Ped, offset: Vector3, rot: Vector3, boneIndex: i32, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0x3FAA72BD940C3AC0, effectName, ped, offset, rot, boneIndex, scale, axisX, axisY, axisZ) }
+	pub fn START_PARTICLE_FX_NON_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, offset: Vector3, rot: Vector3, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0xFF4C64C513388C12, effectName, entity, offset, rot, scale, axisX, axisY, axisZ) }
+	pub fn START_NETWORKED_PARTICLE_FX_NON_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, offset: Vector3, rot: Vector3, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0xE6CFE43937061143, effectName, entity, offset, rot, scale, axisX, axisY, axisZ) }
+	pub fn _START_PARTICLE_FX_NON_LOOPED_ON_PED_BONE_2(effectName: & CStr, ped: Ped, offset: Vector3, rot: Vector3, boneIndex: i32, scale: f32, axisX: bool, axisY: bool, axisZ: bool) -> bool { invoke!(0xC695870B8A149B96, effectName, ped, offset, rot, boneIndex, scale, axisX, axisY, axisZ) }
 	pub fn SET_PARTICLE_FX_NON_LOOPED_COLOUR(r: f32, g: f32, b: f32) { invoke_ignore!(0x60B85BED6577A35B, r, g, b) }
 	pub fn SET_PARTICLE_FX_NON_LOOPED_ALPHA(alpha: f32) { invoke_ignore!(0xE8A35938A7026CEA, alpha) }
 	pub fn _SET_PARTICLE_FX_NON_LOOPED_EMITTER_SCALE(p0: f32, p1: f32, p2: f32) { invoke_ignore!(0x56C392C2BD78B024, p0, p1, p2) }
-	pub fn START_PARTICLE_FX_LOOPED_AT_COORD(effectName: & CStr, x: f32, y: f32, z: f32, xRot: f32, yRot: f32, zRot: f32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool, p11: bool) -> i32 { invoke!(0xBA32867E86125D3A, effectName, x, y, z, xRot, yRot, zRot, scale, xAxis, yAxis, zAxis, p11) }
-	pub fn START_PARTICLE_FX_LOOPED_ON_PED_BONE(effectName: & CStr, ped: Ped, xOffset: f32, yOffset: f32, zOffset: f32, xRot: f32, yRot: f32, zRot: f32, boneIndex: i32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0xE689C1B1432BB8AF, effectName, ped, xOffset, yOffset, zOffset, xRot, yRot, zRot, boneIndex, scale, xAxis, yAxis, zAxis) }
-	pub fn START_PARTICLE_FX_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, xOffset: f32, yOffset: f32, zOffset: f32, xRot: f32, yRot: f32, zRot: f32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0xBD41E1440CE39800, effectName, entity, xOffset, yOffset, zOffset, xRot, yRot, zRot, scale, xAxis, yAxis, zAxis) }
-	pub fn START_PARTICLE_FX_LOOPED_ON_ENTITY_BONE(effectName: & CStr, entity: Entity, xOffset: f32, yOffset: f32, zOffset: f32, xRot: f32, yRot: f32, zRot: f32, boneIndex: i32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0xD3BA6EC7F2FBD5E9, effectName, entity, xOffset, yOffset, zOffset, xRot, yRot, zRot, boneIndex, scale, xAxis, yAxis, zAxis) }
-	pub fn START_NETWORKED_PARTICLE_FX_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, xOffset: f32, yOffset: f32, zOffset: f32, xRot: f32, yRot: f32, zRot: f32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0x8F90AB32E1944BDE, effectName, entity, xOffset, yOffset, zOffset, xRot, yRot, zRot, scale, xAxis, yAxis, zAxis) }
-	pub fn START_NETWORKED_PARTICLE_FX_LOOPED_ON_ENTITY_BONE(effectName: & CStr, entity: Entity, xOffset: f32, yOffset: f32, zOffset: f32, xRot: f32, yRot: f32, zRot: f32, boneIndex: i32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0x9C56621462FFE7A6, effectName, entity, xOffset, yOffset, zOffset, xRot, yRot, zRot, boneIndex, scale, xAxis, yAxis, zAxis) }
+	pub fn START_PARTICLE_FX_LOOPED_AT_COORD(effectName: & CStr, coords: Vector3, rot: Vector3, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool, p11: bool) -> i32 { invoke!(0xBA32867E86125D3A, effectName, coords, rot, scale, xAxis, yAxis, zAxis, p11) }
+	pub fn START_PARTICLE_FX_LOOPED_ON_PED_BONE(effectName: & CStr, ped: Ped, offset: Vector3, rot: Vector3, boneIndex: i32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0xE689C1B1432BB8AF, effectName, ped, offset, rot, boneIndex, scale, xAxis, yAxis, zAxis) }
+	pub fn START_PARTICLE_FX_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, offset: Vector3, rot: Vector3, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0xBD41E1440CE39800, effectName, entity, offset, rot, scale, xAxis, yAxis, zAxis) }
+	pub fn START_PARTICLE_FX_LOOPED_ON_ENTITY_BONE(effectName: & CStr, entity: Entity, offset: Vector3, rot: Vector3, boneIndex: i32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0xD3BA6EC7F2FBD5E9, effectName, entity, offset, rot, boneIndex, scale, xAxis, yAxis, zAxis) }
+	pub fn START_NETWORKED_PARTICLE_FX_LOOPED_ON_ENTITY(effectName: & CStr, entity: Entity, offset: Vector3, rot: Vector3, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0x8F90AB32E1944BDE, effectName, entity, offset, rot, scale, xAxis, yAxis, zAxis) }
+	pub fn START_NETWORKED_PARTICLE_FX_LOOPED_ON_ENTITY_BONE(effectName: & CStr, entity: Entity, offset: Vector3, rot: Vector3, boneIndex: i32, scale: f32, xAxis: bool, yAxis: bool, zAxis: bool) -> i32 { invoke!(0x9C56621462FFE7A6, effectName, entity, offset, rot, boneIndex, scale, xAxis, yAxis, zAxis) }
 	pub fn STOP_PARTICLE_FX_LOOPED(ptfxHandle: i32, p1: bool) { invoke_ignore!(0x22970F3A088B133B, ptfxHandle, p1) }
 	pub fn DOES_PARTICLE_FX_LOOPED_EXIST(ptfxHandle: i32) -> bool { invoke!(0x9DD5AFF561E88F2A, ptfxHandle) }
-	pub fn SET_PARTICLE_FX_LOOPED_OFFSETS(ptfxHandle: i32, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32) { invoke_ignore!(0xD3A4A95FC94FE83B, ptfxHandle, x, y, z, rotX, rotY, rotZ) }
+	pub fn SET_PARTICLE_FX_LOOPED_OFFSETS(ptfxHandle: i32, coords: Vector3, rot: Vector3) { invoke_ignore!(0xD3A4A95FC94FE83B, ptfxHandle, coords, rot) }
 	pub fn SET_PARTICLE_FX_LOOPED_EVOLUTION(ptfxHandle: i32, propertyName: & CStr, amount: f32, noNetwork: bool) { invoke_ignore!(0x3674F389B0FACD80, ptfxHandle, propertyName, amount, noNetwork) }
 	pub fn SET_PARTICLE_FX_LOOPED_COLOUR(ptfxHandle: i32, r: f32, g: f32, b: f32, p4: bool) { invoke_ignore!(0x239879FC61C610CC, ptfxHandle, r, g, b, p4) }
 	pub fn SET_PARTICLE_FX_LOOPED_ALPHA(ptfxHandle: i32, alpha: f32) { invoke_ignore!(0x88786E76234F7054, ptfxHandle, alpha) }
@@ -1654,7 +1653,7 @@ pub mod GRAPHICS {
 	pub fn _SET_PARTICLE_FX_LOOPED_UPDATE_DISTANT_SMOKE(ptfxHandle: i32, scalar: f32) { invoke_ignore!(0x9DDC222D85D5AF2A, ptfxHandle, scalar) }
 	pub fn REMOVE_PARTICLE_FX(ptfxHandle: i32, p1: bool) { invoke_ignore!(0x459598F579C98929, ptfxHandle, p1) }
 	pub fn REMOVE_PARTICLE_FX_FROM_ENTITY(entity: Entity) { invoke_ignore!(0x92884B4A49D81325, entity) }
-	pub fn REMOVE_PARTICLE_FX_IN_RANGE(X: f32, Y: f32, Z: f32, radius: f32) { invoke_ignore!(0x87B5905ECA623B68, X, Y, Z, radius) }
+	pub fn REMOVE_PARTICLE_FX_IN_RANGE(coords: Vector3, radius: f32) { invoke_ignore!(0x87B5905ECA623B68, coords, radius) }
 	pub fn USE_PARTICLE_FX_ASSET(fxName: & CStr) { invoke_ignore!(0xA10DB07FC234DD12, fxName) }
 	pub fn SET_PARTICLE_FX_OVERRIDE(oldAsset: & CStr, newAsset: & CStr) { invoke_ignore!(0xBE711A169E9C7E95, oldAsset, newAsset) }
 	pub fn RESET_PARTICLE_FX_OVERRIDE(name: & CStr) { invoke_ignore!(0x274B3DABF7E72DEF, name) }
@@ -1671,15 +1670,15 @@ pub mod GRAPHICS {
 	pub fn BLOCK_PICKUP_PLACEMENT_LIGHT(pickup: Pickup, toggle: bool) { invoke_ignore!(0x0552AA3FFC5B87AA, pickup, toggle) }
 	pub fn ALLOW_PICKUP_LIGHT_SYNC(pickupObject: Object, allow: bool) { invoke_ignore!(0x7C348310A6E2FB91, pickupObject, allow) }
 	pub fn _SET_PEARLESCENT_FX_ENABLED(object: Object, toggle: bool) { invoke_ignore!(0x72E30372E7CC4415, object, toggle) }
-	pub fn REMOVE_DECALS_IN_RANGE(x: f32, y: f32, z: f32, range: f32) { invoke_ignore!(0x86DE59FA02902B40, x, y, z, range) }
+	pub fn REMOVE_DECALS_IN_RANGE(coords: Vector3, range: f32) { invoke_ignore!(0x86DE59FA02902B40, coords, range) }
 	pub fn REMOVE_DECALS_FROM_OBJECT(obj: Object) { invoke_ignore!(0xFB8972BAE0013140, obj) }
 	pub fn ADD_DECAL(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any, p16: Any, p17: Any, p18: Any, p19: Any, p20: Any, p21: Any) -> i32 { invoke!(0x57CB267624EF85C0, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21) }
-	pub fn _ADD_BLOOD_POOL(x: f32, y: f32, z: f32, unused: bool) { invoke_ignore!(0xFA2ECC78A6014D4F, x, y, z, unused) }
-	pub fn _ADD_BLOOD_POOL_2(x: f32, y: f32, z: f32, p3: f32, size: f32, p5: f32, permanent: bool, p7: f32, p8: bool) { invoke_ignore!(0xF708298675ABDC6A, x, y, z, p3, size, p5, permanent, p7, p8) }
+	pub fn _ADD_BLOOD_POOL(coords: Vector3, unused: bool) { invoke_ignore!(0xFA2ECC78A6014D4F, coords, unused) }
+	pub fn _ADD_BLOOD_POOL_2(coords: Vector3, p3: f32, size: f32, p5: f32, permanent: bool, p7: f32, p8: bool) { invoke_ignore!(0xF708298675ABDC6A, coords, p3, size, p5, permanent, p7, p8) }
 	pub fn _ADD_BLOOD_POOLS_FOR_PED(ped: Ped) { invoke_ignore!(0xDFCE8CE9F3EBE93F, ped) }
 	pub fn _ADD_BLOOD_POOLS_FOR_PED_WITH_PARAMS(ped: Ped, p1: f32, size: f32, p3: f32) { invoke_ignore!(0xC349EE1E6EFA494B, ped, p1, size, p3) }
 	pub fn START_PETROL_TRAIL_DECALS(p0: Any, p1: Any) { invoke_ignore!(0x46F246D6504F0031, p0, p1) }
-	pub fn ADD_PETROL_TRAIL_DECAL_INFO(x: f32, y: f32, z: f32, p3: f32) { invoke_ignore!(0x73354FB6D03D2E8A, x, y, z, p3) }
+	pub fn ADD_PETROL_TRAIL_DECAL_INFO(coords: Vector3, p3: f32) { invoke_ignore!(0x73354FB6D03D2E8A, coords, p3) }
 	pub fn END_PETROL_TRAIL_DECALS() { invoke_ignore!(0x0E126AAE933F3B56) }
 	pub fn _0xE63D68F455CA0B47(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) -> Any { invoke!(0xE63D68F455CA0B47, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn REMOVE_DECAL(decal: i32) { invoke_ignore!(0x49A720552EB0BB88, decal) }
@@ -1689,10 +1688,10 @@ pub mod GRAPHICS {
 	pub fn _0xFB680A9B33D0EDBE(p0: bool) { invoke_ignore!(0xFB680A9B33D0EDBE, p0) }
 	pub fn _0x41F88A85A579A61D(p0: f32) { invoke_ignore!(0x41F88A85A579A61D, p0) }
 	pub fn _BLOOD_TRAIL_FOR_WAYPOINT(waypointRecording: & CStr, p1: f32) { invoke_ignore!(0xB9C92616929CC25D, waypointRecording, p1) }
-	pub fn _ADD_BLOOD_TRAIL_POINT(x: f32, y: f32, z: f32) { invoke_ignore!(0xDD9DC1AB63D513CE, x, y, z) }
+	pub fn _ADD_BLOOD_TRAIL_POINT(coords: Vector3) { invoke_ignore!(0xDD9DC1AB63D513CE, coords) }
 	pub fn _0x812C1563185C6FB2() { invoke_ignore!(0x812C1563185C6FB2) }
 	pub fn _0x4BD66B4E3427689B(p0: & CStr) { invoke_ignore!(0x4BD66B4E3427689B, p0) }
-	pub fn _ADD_BLOOD_TRAIL_SPLAT(x: f32, y: f32, z: f32) { invoke_ignore!(0xF5E45CB1CF965D2D, x, y, z) }
+	pub fn _ADD_BLOOD_TRAIL_SPLAT(coords: Vector3) { invoke_ignore!(0xF5E45CB1CF965D2D, coords) }
 	pub fn _0xF2F543D48F319A3A() { invoke_ignore!(0xF2F543D48F319A3A) }
 	pub fn _0x1460B644397453EB() { invoke_ignore!(0x1460B644397453EB) }
 	pub fn _DISABLE_FAR_ARTIFICIAL_LIGHTS(disable: bool) { invoke_ignore!(0xCD284E2F6AC27EE9, disable) }
@@ -1766,7 +1765,7 @@ pub mod GRAPHICS {
 	pub fn _PEDSHOT_GENERATE_PERSONA_PHOTO(texture: & CStr, ped: Ped, playerSlot: i32) -> bool { invoke!(0xD9C24F53631F2372, texture, ped, playerSlot) }
 	pub fn _PEDSHOT_SET_PERSONA_PHOTO_TYPE(personaPhotoLocalCacheType: i32) { invoke_ignore!(0x196D3ACBEBA4A44B, personaPhotoLocalCacheType) }
 	pub fn _0xA1A86055792FB249(personaPhotoLocalCacheType: i32) { invoke_ignore!(0xA1A86055792FB249, personaPhotoLocalCacheType) }
-	pub fn _0x402E1A61D2587FCD(p0: Any, x: f32, y: f32, z: f32, p4: f32, p5: f32, heading: f32) -> bool { invoke!(0x402E1A61D2587FCD, p0, x, y, z, p4, p5, heading) }
+	pub fn _0x402E1A61D2587FCD(p0: Any, coords: Vector3, p4: f32, p5: f32, heading: f32) -> bool { invoke!(0x402E1A61D2587FCD, p0, coords, p4, p5, heading) }
 	pub fn _0x5C9C3A466B3296A8(p0: Any) -> Any { invoke!(0x5C9C3A466B3296A8, p0) }
 	pub fn _0xA15CCAB8AD038291(p0: Any, p1: Any, p2: Any, p3: Any) -> Any { invoke!(0xA15CCAB8AD038291, p0, p1, p2, p3) }
 	pub fn _0x285438C26C732F9D() -> Any { invoke!(0x285438C26C732F9D) }
@@ -1776,8 +1775,8 @@ pub mod GRAPHICS {
 	pub fn _0x9D1B0B5066205692() { invoke_ignore!(0x9D1B0B5066205692) }
 	pub fn _0xC489FE31AC726512(p0: Any, p1: Any) { invoke_ignore!(0xC489FE31AC726512, p0, p1) }
 	pub fn _SET_CLOUD_LAYER(x: f32, y: f32, p2: i32) { invoke_ignore!(0xB8C984C0D47F4F07, x, y, p2) }
-	pub fn _SET_CLOUD_NOISE(x: f32, y: f32, z: f32) { invoke_ignore!(0xFE7966DF01452F32, x, y, z) }
-	pub fn _SET_CLOUD_POSITION(x: f32, y: f32, z: f32) { invoke_ignore!(0x10C1767B93257480, x, y, z) }
+	pub fn _SET_CLOUD_NOISE(coords: Vector3) { invoke_ignore!(0xFE7966DF01452F32, coords) }
+	pub fn _SET_CLOUD_POSITION(coords: Vector3) { invoke_ignore!(0x10C1767B93257480, coords) }
 	pub fn _SET_CLOUD_HEIGHT(height: f32) { invoke_ignore!(0xC332C91388F5580B, height) }
 	pub fn _0x085C5B61A0114F32(p0: Any, p1: Any) { invoke_ignore!(0x085C5B61A0114F32, p0, p1) }
 	pub fn _0x1FF8731BE1DFC0C0(p0: Any, p1: Any) { invoke_ignore!(0x1FF8731BE1DFC0C0, p0, p1) }
@@ -1914,7 +1913,7 @@ pub mod HUD {
 	pub fn SET_MISSION_NAME(p0: bool, name: & CStr) { invoke_ignore!(0x402669A4BDAA72DA, p0, name) }
 	pub fn SET_MISSION_NAME_FOR_UGC_MISSION(p0: bool, name: & CStr) { invoke_ignore!(0xD98630CE73C61E98, p0, name) }
 	pub fn _0xCE0D2F5586627CCE(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0xCE0D2F5586627CCE, p0, p1, p2, p3, p4) }
-	pub fn GET_HUD_SCREEN_POSITION_FROM_WORLD_POSITION(worldX: f32, worldY: f32, worldZ: f32, screenX: &mut f32, screenY: &mut f32) -> i32 { invoke!(0xB39C81628EF10B42, worldX, worldY, worldZ, screenX, screenY) }
+	pub fn GET_HUD_SCREEN_POSITION_FROM_WORLD_POSITION(world: Vector3, screenX: &mut f32, screenY: &mut f32) -> i32 { invoke!(0xB39C81628EF10B42, world, screenX, screenY) }
 	pub fn _HIDE_HUD_THIS_FRAME() { invoke_ignore!(0xBF4F34A85CA2970D) }
 	pub fn DISABLE_FRONTEND_THIS_FRAME() { invoke_ignore!(0x56CE42A528156A67) }
 	pub fn _0x5651516D947ABC53() { invoke_ignore!(0x5651516D947ABC53) }
@@ -2011,7 +2010,7 @@ pub mod HUD {
 	pub fn _0x53CE46C01A089DA1(prompt: Prompt, p1: bool) { invoke_ignore!(0x53CE46C01A089DA1, prompt, p1) }
 	pub fn _UI_PROMPT_SET_MANUAL_RESOLVED(prompt: Prompt, p1: Any) { invoke_ignore!(0xA520C7B05FA4EB2A, prompt, p1) }
 	pub fn _UI_PROMPT_CONTEXT_SET_VOLUME(prompt: Prompt, volume: Volume) { invoke_ignore!(0x4D107406667423BE, prompt, volume) }
-	pub fn _UI_PROMPT_CONTEXT_SET_POINT(prompt: Prompt, x: f32, y: f32, z: f32) { invoke_ignore!(0xAE84C5EE2C384FB3, prompt, x, y, z) }
+	pub fn _UI_PROMPT_CONTEXT_SET_POINT(prompt: Prompt, coords: Vector3) { invoke_ignore!(0xAE84C5EE2C384FB3, prompt, coords) }
 	pub fn _UI_PROMPT_CONTEXT_SET_RADIUS(prompt: Prompt, radius: f32) { invoke_ignore!(0x0C718001B77CA468, prompt, radius) }
 	pub fn _UI_PROMPT_IS_PRESSED(prompt: Prompt) -> bool { invoke!(0x21E60E230086697F, prompt) }
 	pub fn _UI_PROMPT_IS_JUST_PRESSED(prompt: Prompt) -> bool { invoke!(0x2787CC611D3FACC5, prompt) }
@@ -2090,15 +2089,15 @@ pub mod INTERIOR {
 	pub fn FORCE_ROOM_FOR_GAME_VIEWPORT(interiorID: i32, roomHashKey: Hash) { invoke_ignore!(0x115B4AA8FB28AB43, interiorID, roomHashKey) }
 	pub fn CLEAR_ROOM_FOR_GAME_VIEWPORT() { invoke_ignore!(0x951A049765E0D450) }
 	pub fn GET_INTERIOR_FROM_PRIMARY_VIEW() -> Interior { invoke!(0xBC8A281FF125C655) }
-	pub fn GET_INTERIOR_AT_COORDS(x: f32, y: f32, z: f32) -> Interior { invoke!(0xCDD36C9E5C469070, x, y, z) }
+	pub fn GET_INTERIOR_AT_COORDS(coords: Vector3) -> Interior { invoke!(0xCDD36C9E5C469070, coords) }
 	pub fn PIN_INTERIOR_IN_MEMORY(interior: Interior) { invoke_ignore!(0xBD3D33EABF680168, interior) }
 	pub fn UNPIN_INTERIOR(interior: Interior) { invoke_ignore!(0x07FD1A0B814F6055, interior) }
 	pub fn IS_INTERIOR_READY(interior: Interior) -> bool { invoke!(0x941560D2D45DBFC8, interior) }
 	pub fn SET_INTERIOR_IN_USE(interior: Interior) -> bool { invoke!(0xB5EF6FEF2DC9EBED, interior) }
-	pub fn GET_INTERIOR_AT_COORDS_WITH_TYPE(x: f32, y: f32, z: f32, interiorType: & CStr) -> Interior { invoke!(0xAAD6170AA33B13C0, x, y, z, interiorType) }
-	pub fn GET_INTERIOR_AT_COORDS_WITH_TYPEHASH(x: f32, y: f32, z: f32, typeHash: Hash) -> Interior { invoke!(0x3543AEA1816D1D2B, x, y, z, typeHash) }
-	pub fn IS_COLLISION_MARKED_OUTSIDE(x: f32, y: f32, z: f32) -> bool { invoke!(0xF291396B517E25B2, x, y, z) }
-	pub fn GET_INTERIOR_FROM_COLLISION(x: f32, y: f32, z: f32) -> i32 { invoke!(0x5054D1A5218FA696, x, y, z) }
+	pub fn GET_INTERIOR_AT_COORDS_WITH_TYPE(coords: Vector3, interiorType: & CStr) -> Interior { invoke!(0xAAD6170AA33B13C0, coords, interiorType) }
+	pub fn GET_INTERIOR_AT_COORDS_WITH_TYPEHASH(coords: Vector3, typeHash: Hash) -> Interior { invoke!(0x3543AEA1816D1D2B, coords, typeHash) }
+	pub fn IS_COLLISION_MARKED_OUTSIDE(coords: Vector3) -> bool { invoke!(0xF291396B517E25B2, coords) }
+	pub fn GET_INTERIOR_FROM_COLLISION(coords: Vector3) -> i32 { invoke!(0x5054D1A5218FA696, coords) }
 	pub fn ACTIVATE_INTERIOR_ENTITY_SET(interior: Interior, entitySetName: & CStr, p2: i32) { invoke_ignore!(0x174D0AAB11CED739, interior, entitySetName, p2) }
 	pub fn DEACTIVATE_INTERIOR_ENTITY_SET(interior: Interior, entitySetName: & CStr, p2: bool) { invoke_ignore!(0x33B81A2C07A51FFF, interior, entitySetName, p2) }
 	pub fn IS_INTERIOR_ENTITY_SET_ACTIVE(interior: Interior, entitySetName: & CStr) -> bool { invoke!(0x32810CA2125F5842, interior, entitySetName) }
@@ -2337,10 +2336,10 @@ pub mod LAW {
 	pub fn IS_LAW_INCIDENT_ACTIVE(player: Player) -> bool { invoke!(0xAD401C63158ACBAA, player) }
 	pub fn _0x148E7AC8141C9E64(player: Player) -> Hash { invoke!(0x148E7AC8141C9E64, player) }
 	pub fn _0xEDFC6C1FD1C964F5(player: Player, crimeType: Hash, bounty: i32, p3: f32, p4: f32, p5: bool, p6: f32, p7: f32, p8: Any) { invoke_ignore!(0xEDFC6C1FD1C964F5, player, crimeType, bounty, p3, p4, p5, p6, p7, p8) }
-	pub fn _LAW_WITNESS_RESPONSE_TASK(pedGroup1: Ped, ped: Ped, pedGroup2: Ped, x: f32, y: f32, z: f32, crimeType: Hash) -> bool { invoke!(0xF0B67BAD53C35BD9, pedGroup1, ped, pedGroup2, x, y, z, crimeType) }
+	pub fn _LAW_WITNESS_RESPONSE_TASK(pedGroup1: Ped, ped: Ped, pedGroup2: Ped, coords: Vector3, crimeType: Hash) -> bool { invoke!(0xF0B67BAD53C35BD9, pedGroup1, ped, pedGroup2, coords, crimeType) }
 	pub fn _0x018F30D762E62DF8(ped: Ped, p1: &mut Any) -> Any { invoke!(0x018F30D762E62DF8, ped, p1) }
 	pub fn _0x318F0F9A4426CFA2(ped: Ped, p1: &mut Any) -> Any { invoke!(0x318F0F9A4426CFA2, ped, p1) }
-	pub fn _0x95878B13E272EF1F(entity: Entity, ped: Ped, p2: bool, x: f32, y: f32, z: f32, crimeType: Hash) -> Any { invoke!(0x95878B13E272EF1F, entity, ped, p2, x, y, z, crimeType) }
+	pub fn _0x95878B13E272EF1F(entity: Entity, ped: Ped, p2: bool, coords: Vector3, crimeType: Hash) -> Any { invoke!(0x95878B13E272EF1F, entity, ped, p2, coords, crimeType) }
 	pub fn _ADD_WITNESS_RESPONSE(player: Player, crimeType: Hash, pedGroup: Ped) { invoke_ignore!(0x10827B5A0AAC56A7, player, crimeType, pedGroup) }
 	pub fn _0xD7494DED50C6EF52(player: Player, crimeType: Hash, p2: i32) { invoke_ignore!(0xD7494DED50C6EF52, player, crimeType, p2) }
 	pub fn ARE_WITNESSES_ACTIVE(player: Player) -> bool { invoke!(0x69E181772886F48B, player) }
@@ -2370,7 +2369,7 @@ pub mod LAW {
 	pub fn _0x3738B784DDD35CC6(player: Player, p1: i32, p2: i32) -> bool { invoke!(0x3738B784DDD35CC6, player, p1, p2) }
 	pub fn _0x0BDFEBCF40A5F7E3(crimeType: Hash) -> i32 { invoke!(0x0BDFEBCF40A5F7E3, crimeType) }
 	pub fn _SET_CUSTOM_LAW_DISPATCH_RESPONSE(dispatchResponseHash: Hash) { invoke_ignore!(0x009CF9A29972C298, dispatchResponseHash) }
-	pub fn _CREATE_LAW_DISPATCH_RESPONSE_FOR_COORDS(x: f32, y: f32, z: f32, dispatchResponseHash: Hash) -> Any { invoke!(0x75CBF20BA47E4F89, x, y, z, dispatchResponseHash) }
+	pub fn _CREATE_LAW_DISPATCH_RESPONSE_FOR_COORDS(coords: Vector3, dispatchResponseHash: Hash) -> Any { invoke!(0x75CBF20BA47E4F89, coords, dispatchResponseHash) }
 	pub fn _SET_BOUNTY_HUNTER_PURSUIT_CLEARED() { invoke_ignore!(0x55F37F5F3F2475E1) }
 	pub fn _0xBD944A3D36E992DE() { invoke_ignore!(0xBD944A3D36E992DE) }
 	pub fn _0x987BE590FB9D41E5(p0: bool) { invoke_ignore!(0x987BE590FB9D41E5, p0) }
@@ -2403,7 +2402,7 @@ pub mod LAW {
 	pub fn _0xCBFB4951F2E3934C(player: Player, data: &mut Any) { invoke_ignore!(0xCBFB4951F2E3934C, player, data) }
 	pub fn _SET_PED_LAW_BEHAVIOUR(ped: Ped, behaviour: i32) { invoke_ignore!(0x819ADD5EF1742F47, ped, behaviour) }
 	pub fn _0x00DB0BC05E3FAA4E(ped: Ped, bitset: i32) { invoke_ignore!(0x00DB0BC05E3FAA4E, ped, bitset) }
-	pub fn _0x0C392DB374655176(x: f32, y: f32, z: f32, p3: f32, itemSet: ItemSet) { invoke_ignore!(0x0C392DB374655176, x, y, z, p3, itemSet) }
+	pub fn _0x0C392DB374655176(coords: Vector3, p3: f32, itemSet: ItemSet) { invoke_ignore!(0x0C392DB374655176, coords, p3, itemSet) }
 	pub fn _0xC687A23E166DCF68(p0: &mut Any) -> Any { invoke!(0xC687A23E166DCF68, p0) }
 	pub fn _SET_DISPATCH_MULTIPLIER_OVERRIDE(multiplier: f32) { invoke_ignore!(0x002BABE0B7D53136, multiplier) }
 	pub fn _0x26934083D3F2579C(player: Player) -> bool { invoke!(0x26934083D3F2579C, player) }
@@ -2424,14 +2423,14 @@ pub mod LAW {
 	pub fn _DISABLE_GUARD_ZONE(name: & CStr) { invoke_ignore!(0x26D558692B25DD95, name) }
 	pub fn _0x0DBACA9C38C9A686(name: & CStr) -> bool { invoke!(0x0DBACA9C38C9A686, name) }
 	pub fn _IS_GUARD_PED_INVESTIGATING(ped: Ped) -> bool { invoke!(0xD743C4293F47AFAD, ped) }
-	pub fn _CREATE_GUARD_ZONE_FOR_ENTITY(guardZoneName: & CStr, entity: Entity, x: f32, y: f32, z: f32) -> bool { invoke!(0x0D4B77E862475ED3, guardZoneName, entity, x, y, z) }
+	pub fn _CREATE_GUARD_ZONE_FOR_ENTITY(guardZoneName: & CStr, entity: Entity, coords: Vector3) -> bool { invoke!(0x0D4B77E862475ED3, guardZoneName, entity, coords) }
 	pub fn _SET_GUARD_ZONE_VOLUME_REGISTRATION_START(name: & CStr, volume: Volume) { invoke_ignore!(0x8C598A930F471938, name, volume) }
 	pub fn _SET_GUARD_ZONE_VOLUME_RESTRICTED(name: & CStr, volume: Volume) { invoke_ignore!(0x35815F372D43E1E5, name, volume) }
 	pub fn _SET_GUARD_ZONE_VOLUME_THREAT(name: & CStr, volume: Volume) { invoke_ignore!(0xA1B0E6301E2E02A6, name, volume) }
 	pub fn _SET_GUARD_ZONE_VOLUME_WARNING(name: & CStr, volume: Volume) { invoke_ignore!(0xAD3E07C37A7C1ADC, name, volume) }
 	pub fn _SET_GUARD_ZONE_VOLUME_REGISTRATION_END(name: & CStr, volume: Volume) { invoke_ignore!(0xA8A74AA79FB67159, name, volume) }
-	pub fn _SET_GUARD_ZONE_POSITION(name: & CStr, x: f32, y: f32, z: f32) { invoke_ignore!(0x7E7BF59F89FC6C6D, name, x, y, z) }
-	pub fn _SET_GUARD_ZONE_POSITION_2(name: & CStr, x: f32, y: f32, z: f32) { invoke_ignore!(0x2F9005E2EA4E5EE4, name, x, y, z) }
+	pub fn _SET_GUARD_ZONE_POSITION(name: & CStr, coords: Vector3) { invoke_ignore!(0x7E7BF59F89FC6C6D, name, coords) }
+	pub fn _SET_GUARD_ZONE_POSITION_2(name: & CStr, coords: Vector3) { invoke_ignore!(0x2F9005E2EA4E5EE4, name, coords) }
 }
 pub mod LOCALIZATION {
 	use std::ffi::CStr;
@@ -2451,11 +2450,11 @@ pub mod MAP {
 	pub fn GET_BLIP_FROM_ENTITY(entity: Entity) -> Blip { invoke!(0x6D2C41A8BD6D6FD0, entity) }
 	pub fn GET_MAIN_PLAYER_BLIP_ID() -> Blip { invoke!(0x5CD2889B2B381D45) }
 	pub fn _BLIP_ADD_FOR_STYLE(styleHash: Hash) -> Blip { invoke!(0x3E593DF9C2962EC6, styleHash) }
-	pub fn BLIP_ADD_FOR_COORDS(blipHash: Hash, x: f32, y: f32, z: f32) -> Blip { invoke!(0x554D9D53F696D002, blipHash, x, y, z) }
+	pub fn BLIP_ADD_FOR_COORDS(blipHash: Hash, coords: Vector3) -> Blip { invoke!(0x554D9D53F696D002, blipHash, coords) }
 	pub fn BLIP_ADD_FOR_ENTITY(blipHash: Hash, entity: Entity) -> Blip { invoke!(0x23F74C2FDA6E7C61, blipHash, entity) }
 	pub fn BLIP_ADD_FOR_PICKUP_PLACEMENT(blipHash: Hash, pickup: Pickup) -> Blip { invoke!(0xA486008892065FB9, blipHash, pickup) }
-	pub fn BLIP_ADD_FOR_RADIUS(blipHash: Hash, x: f32, y: f32, z: f32, radius: f32) -> Blip { invoke!(0x45F13B7E0A15C880, blipHash, x, y, z, radius) }
-	pub fn _BLIP_ADD_FOR_AREA(blipHash: Hash, x: f32, y: f32, z: f32, scaleX: f32, scaleY: f32, scaleZ: f32, p7: i32) -> Blip { invoke!(0xEC174ADBCB611ECC, blipHash, x, y, z, scaleX, scaleY, scaleZ, p7) }
+	pub fn BLIP_ADD_FOR_RADIUS(blipHash: Hash, coords: Vector3, radius: f32) -> Blip { invoke!(0x45F13B7E0A15C880, blipHash, coords, radius) }
+	pub fn _BLIP_ADD_FOR_AREA(blipHash: Hash, coords: Vector3, scale: Vector3, p7: i32) -> Blip { invoke!(0xEC174ADBCB611ECC, blipHash, coords, scale, p7) }
 	pub fn _BLIP_ADD_FOR_VOLUME(blipHash: Hash, volume: Volume) -> Blip { invoke!(0xA6EF0C54A3443E70, blipHash, volume) }
 	pub fn _BLIP_SET_STYLE(blip: Blip, styleHash: Hash) -> bool { invoke!(0xEDD964B7984AC291, blip, styleHash) }
 	pub fn _BLIP_ADD_STYLE(blip: Blip, styleHash: Hash) -> bool { invoke!(0xBD62D98799A3DAF0, blip, styleHash) }
@@ -2464,10 +2463,10 @@ pub mod MAP {
 	pub fn _0x250C75EB1728CC0D(blip: Blip) { invoke_ignore!(0x250C75EB1728CC0D, blip) }
 	pub fn SET_BLIP_FLASH_TIMER(blip: Blip, blipType: i32, blipHash: Hash) { invoke_ignore!(0x02FF4CF43B7209D1, blip, blipType, blipHash) }
 	pub fn SET_BLIP_FLASHES(blip: Blip, p1: &mut i32, p2: &mut Hash) -> bool { invoke!(0x0DF2B55F717DDB10, blip, p1, p2) }
-	pub fn TRIGGER_SONAR_BLIP(typeHash: Hash, x: f32, y: f32, z: f32) { invoke_ignore!(0x72DD432F3CDFC0EE, typeHash, x, y, z) }
+	pub fn TRIGGER_SONAR_BLIP(typeHash: Hash, coords: Vector3) { invoke_ignore!(0x72DD432F3CDFC0EE, typeHash, coords) }
 	pub fn _TRIGGER_SONAR_BLIP_ON_ENTITY(typeHash: Hash, entity: Entity) { invoke_ignore!(0x0C7A2289A5C4D7C9, typeHash, entity) }
 	pub fn ALLOW_SONAR_BLIPS(toggle: bool) { invoke_ignore!(0x6E6E64788C07D2E0, toggle) }
-	pub fn SET_BLIP_COORDS(blip: Blip, posX: f32, posY: f32, posZ: f32) { invoke_ignore!(0x4FF674F5E23D49CE, blip, posX, posY, posZ) }
+	pub fn SET_BLIP_COORDS(blip: Blip, pos: Vector3) { invoke_ignore!(0x4FF674F5E23D49CE, blip, pos) }
 	pub fn GET_BLIP_COORDS(blip: Blip) -> Vector3 { invoke!(0x201C319797BDA603, blip) }
 	pub fn SET_BLIP_SPRITE(blip: Blip, hash: Hash, p2: bool) { invoke_ignore!(0x74F74D3207ED525C, blip, hash, p2) }
 	pub fn _0x01B928CA2E198B01(p0: Any) -> Any { invoke!(0x01B928CA2E198B01, p0) }
@@ -2489,7 +2488,7 @@ pub mod MAP {
 	pub fn SET_GPS_CUSTOM_ROUTE_RENDER(p0: bool, p1: i32, p2: i32) { invoke_ignore!(0xF6CEF599FC470B33, p0, p1, p2) }
 	pub fn CLEAR_GPS_CUSTOM_ROUTE() { invoke_ignore!(0x1EAA5674B4D181C5) }
 	pub fn START_GPS_MULTI_ROUTE(colorNameHash: Hash, onFoot: bool, inVehicle: bool) { invoke_ignore!(0x3D3D15AF7BCAAF83, colorNameHash, onFoot, inVehicle) }
-	pub fn ADD_POINT_TO_GPS_MULTI_ROUTE(x: f32, y: f32, z: f32, p3: bool) { invoke_ignore!(0x64C59DD6834FA942, x, y, z, p3) }
+	pub fn ADD_POINT_TO_GPS_MULTI_ROUTE(coords: Vector3, p3: bool) { invoke_ignore!(0x64C59DD6834FA942, coords, p3) }
 	pub fn SET_GPS_MULTI_ROUTE_RENDER(toggle: bool) { invoke_ignore!(0x4426D65E029A4DC0, toggle) }
 	pub fn CLEAR_GPS_MULTI_ROUTE() { invoke_ignore!(0x9E0AB9AAEE87CE28) }
 	pub fn _START_GPS_CUSTOM_ROUTE_FROM_WAYPOINT_RECORDING_ROUTE(waypointRecording: & CStr, point: i32, numPoints: i32, colorNameHash: Hash, p4: bool, p5: bool) { invoke_ignore!(0x6B44F13D888F770D, waypointRecording, point, numPoints, colorNameHash, p4, p5) }
@@ -2502,7 +2501,7 @@ pub mod MAP {
 	pub fn _HIDE_ACTIVE_POINTS_OF_INTEREST() { invoke_ignore!(0xA1B4052C2A3DCC1E) }
 	pub fn _SHOW_ACTIVE_POINTS_OF_INTEREST() { invoke_ignore!(0x3FBB838AEA30C1D8) }
 	pub fn _0xF47A1EB2A538A3A3() -> Any { invoke!(0xF47A1EB2A538A3A3) }
-	pub fn _FIND_CLOSEST_GPS_POSITION(x: f32, y: f32, z: f32, outPosition: &mut Vector3) -> bool { invoke!(0x3FDA2B79AEEE351C, x, y, z, outPosition) }
+	pub fn _FIND_CLOSEST_GPS_POSITION(coords: Vector3, outPosition: &mut Vector3) -> bool { invoke!(0x3FDA2B79AEEE351C, coords, outPosition) }
 	pub fn DISPLAY_RADAR(toggle: bool) { invoke_ignore!(0x1B3DA717B9AFF828, toggle) }
 	pub fn _SET_RADAR_CONFIG_TYPE(configHash: Hash, p1: Hash) { invoke_ignore!(0x9C113883487FD53C, configHash, p1) }
 	pub fn _ADD_PROP_TO_MINIMAP(minimapProp: Hash, x: f32, y: f32, rotation: f32, p4: i32) { invoke_ignore!(0x1392105DA88BBFFB, minimapProp, x, y, rotation, p4) }
@@ -2512,7 +2511,7 @@ pub mod MAP {
 	pub fn _SET_FOW_UPDATE_PLAYER_OVERRIDE(toggle: bool, p1: Hash) { invoke_ignore!(0x63E7279D04160477, toggle, p1) }
 	pub fn _SET_MINIMAP_FOW_OVERRIDE_REVEAL_SCALE(scale: f32, p1: Hash) { invoke_ignore!(0xE5A7F70B7C0F3271, scale, p1) }
 	pub fn _SET_MINIMAP_FOW_SHOULD_UPDATE(toggle: bool, p1: Hash) { invoke_ignore!(0x632AA10BF7EA53D3, toggle, p1) }
-	pub fn SET_MINIMAP_FOW_REVEAL_COORDINATE(x: f32, y: f32, z: f32, p3: Hash) { invoke_ignore!(0x73348402566ECB6E, x, y, z, p3) }
+	pub fn SET_MINIMAP_FOW_REVEAL_COORDINATE(coords: Vector3, p3: Hash) { invoke_ignore!(0x73348402566ECB6E, coords, p3) }
 	pub fn SET_MINIMAP_FOW_REVEAL_VOLUME(volume: Volume, p1: Hash) { invoke_ignore!(0x63CBBD6CA6F321F9, volume, p1) }
 	pub fn RESET_MINIMAP_FOW(hash: Hash) { invoke_ignore!(0xEB3CB3386C775D72, hash) }
 	pub fn _REVEAL_MINIMAP_FOW(hash: Hash) { invoke_ignore!(0xF8096DF9B87246E3, hash) }
@@ -2525,7 +2524,7 @@ pub mod MAP {
 	pub fn _MAP_DISCOVER_REGION(discoveryHash: Hash) { invoke_ignore!(0xD8C7162AB2E2AF45, discoveryHash) }
 	pub fn _MAP_DISCOVERY_SET_ENABLED(discoveryHash: Hash) { invoke_ignore!(0xDA98246C7A3C2189, discoveryHash) }
 	pub fn _MAP_IS_DISCOVERY_ACTIVE(discoveryHash: Hash) -> bool { invoke!(0x3F81EA4275D39D6F, discoveryHash) }
-	pub fn _SET_PAUSEMAP_COORDS_WITH_RADIUS(x: f32, y: f32, z: f32, radius: f32) { invoke_ignore!(0xE0884C184728C75B, x, y, z, radius) }
+	pub fn _SET_PAUSEMAP_COORDS_WITH_RADIUS(coords: Vector3, radius: f32) { invoke_ignore!(0xE0884C184728C75B, coords, radius) }
 	pub fn _0x7C9F4CDF402CA82A() { invoke_ignore!(0x7C9F4CDF402CA82A) }
 	pub fn _0x44813684F72B563C(entity: Entity, p1: Any) { invoke_ignore!(0x44813684F72B563C, entity, p1) }
 	pub fn _0x97F6F158CC5B5CA2(entity: Entity, p1: Any) { invoke_ignore!(0x97F6F158CC5B5CA2, entity, p1) }
@@ -2589,7 +2588,7 @@ pub mod MINIGAME {
 	pub fn _0x9DD95B405AB4983E(p0: Any, p1: Any) -> Any { invoke!(0x9DD95B405AB4983E, p0, p1) }
 }
 pub mod MISC {
-	use std::ffi::{CStr, CString};
+	use std::ffi::CStr;
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
@@ -2641,7 +2640,7 @@ pub mod MISC {
 	pub fn _CLEAR_WEATHER_VARIATION(weatherType: & CStr, p1: bool) { invoke_ignore!(0x0E71C80FA4EC8147, weatherType, p1) }
 	pub fn WATER_OVERRIDE_SET_SHOREWAVEAMPLITUDE(amplitude: f32) { invoke_ignore!(0x55123D5A7D9D3C42, amplitude) }
 	pub fn WATER_OVERRIDE_SET_OCEANWAVEMAXAMPLITUDE(maxAmplitude: f32) { invoke_ignore!(0xF06C5B66DE20B2B8, maxAmplitude) }
-	pub fn _GET_TEMPERATURE_AT_COORDS(x: f32, y: f32, z: f32) -> f32 { invoke!(0xB98B78C3768AF6E0, x, y, z) }
+	pub fn _GET_TEMPERATURE_AT_COORDS(coords: Vector3) -> f32 { invoke!(0xB98B78C3768AF6E0, coords) }
 	pub fn SET_WIND_SPEED(speed: f32) { invoke_ignore!(0xD00C2D82DC04A99F, speed) }
 	pub fn GET_WIND_SPEED() -> f32 { invoke!(0xFFB7E74E041150A4) }
 	pub fn SET_WIND_DIRECTION(direction: f32) { invoke_ignore!(0xB56C4F5F57A45600, direction) }
@@ -2652,7 +2651,7 @@ pub mod MISC {
 	pub fn _SET_SNOW_LEVEL(level: f32) { invoke_ignore!(0xF6BEE7E80EC5CA40, level) }
 	pub fn GET_SNOW_LEVEL() -> f32 { invoke!(0x1E5D727041BE1709) }
 	pub fn FORCE_LIGHTNING_FLASH() { invoke_ignore!(0x369DB5B2510FA080) }
-	pub fn _FORCE_LIGHTNING_FLASH_AT_COORDS(x: f32, y: f32, z: f32, p3: f32) { invoke_ignore!(0x67943537D179597C, x, y, z, p3) }
+	pub fn _FORCE_LIGHTNING_FLASH_AT_COORDS(coords: Vector3, p3: f32) { invoke_ignore!(0x67943537D179597C, coords, p3) }
 	pub fn _0xA9342743B634A462(p0: Any) { invoke_ignore!(0xA9342743B634A462, p0) }
 	pub fn GET_GAME_TIMER() -> i32 { invoke!(0x4F67E8ECA7D3F667) }
 	pub fn _GET_GAME_TIMER_NON_SCALED_CLIPPED() -> i32 { invoke!(0x483B8C542103AD72) }
@@ -2667,15 +2666,15 @@ pub mod MISC {
 	pub fn _READ_INT_AS_FLOAT(value: i32) -> f32 { invoke!(0xD2C9126410DFA1B2, value) }
 	pub fn GET_RANDOM_FLOAT_IN_RANGE(startRange: f32, endRange: f32) -> f32 { invoke!(0xE29F927A961F8AAA, startRange, endRange) }
 	pub fn GET_RANDOM_INT_IN_RANGE(startRange: i32, endRange: i32) -> i32 { invoke!(0xD53343AA4FB7DD28, startRange, endRange) }
-	pub fn GET_GROUND_Z_FOR_3D_COORD(x: f32, y: f32, z: f32, groundZ: &mut f32, p4: bool) -> bool { invoke!(0x24FA4267BB8D2431, x, y, z, groundZ, p4) }
-	pub fn GET_GROUND_Z_AND_NORMAL_FOR_3D_COORD(x: f32, y: f32, z: f32, groundZ: &mut f32, normal: &mut Vector3) -> bool { invoke!(0x2A29CA9A6319E6AB, x, y, z, groundZ, normal) }
+	pub fn GET_GROUND_Z_FOR_3D_COORD(coords: Vector3, groundZ: &mut f32, p4: bool) -> bool { invoke!(0x24FA4267BB8D2431, coords, groundZ, p4) }
+	pub fn GET_GROUND_Z_AND_NORMAL_FOR_3D_COORD(coords: Vector3, groundZ: &mut f32, normal: &mut Vector3) -> bool { invoke!(0x2A29CA9A6319E6AB, coords, groundZ, normal) }
 	pub fn _0xBBE5B63EFFB08E68(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) -> Any { invoke!(0xBBE5B63EFFB08E68, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn ASIN(p0: f32) -> f32 { invoke!(0x6E3C15D296C15583, p0) }
 	pub fn ACOS(p0: f32) -> f32 { invoke!(0x586690F0176DC575, p0) }
 	pub fn TAN(p0: f32) -> f32 { invoke!(0x8C13DB96497B7ABF, p0) }
 	pub fn ATAN(p0: f32) -> f32 { invoke!(0x503054DED0B78027, p0) }
 	pub fn ATAN2(p0: f32, p1: f32) -> f32 { invoke!(0x965B220A066E3F07, p0, p1) }
-	pub fn GET_DISTANCE_BETWEEN_COORDS(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, useZ: bool) -> f32 { invoke!(0x0BE7F4E3CDBAFB28, x1, y1, z1, x2, y2, z2, useZ) }
+	pub fn GET_DISTANCE_BETWEEN_COORDS(coords1: Vector3, coords2: Vector3, useZ: bool) -> f32 { invoke!(0x0BE7F4E3CDBAFB28, coords1, coords2, useZ) }
 	pub fn GET_ANGLE_BETWEEN_2D_VECTORS(x1: f32, y1: f32, x2: f32, y2: f32) -> f32 { invoke!(0xD0DFE1C486097BBB, x1, y1, x2, y2) }
 	pub fn GET_HEADING_FROM_VECTOR_2D(dx: f32, dy: f32) -> f32 { invoke!(0x38D5202FF9271C62, dx, dy) }
 	pub fn GET_CLOSEST_POINT_ON_LINE(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: bool) -> Vector3 { invoke!(0x83ACC65D9ACEC5EF, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
@@ -2690,8 +2689,8 @@ pub mod MISC {
 	pub fn _CLEAR_ALL_BIT_FLAGS(bitFlags: &mut Any) { invoke_ignore!(0xD2D74F89DF844A50, bitFlags) }
 	pub fn GET_HASH_KEY(string: & CStr) -> Hash { invoke!(0xFD340785ADF8CFB7, string) }
 	pub fn _GET_EASING_CURVE_VALUE(t: f32, b: f32, d: f32, easingCurveType: i32) -> f32 { invoke!(0xEF50E344A8F93784, t, b, d, easingCurveType) }
-	pub fn IS_POSITION_OCCUPIED(x: f32, y: f32, z: f32, range: f32, p4: bool, p5: bool, p6: bool, p7: bool, p8: bool, p9: Any, p10: bool) -> bool { invoke!(0x825CA3ED43831015, x, y, z, range, p4, p5, p6, p7, p8, p9, p10) }
-	pub fn CLEAR_AREA(x: f32, y: f32, z: f32, radius: f32, flag: i32) { invoke_ignore!(0x3B882A96EA77D5B1, x, y, z, radius, flag) }
+	pub fn IS_POSITION_OCCUPIED(coords: Vector3, range: f32, p4: bool, p5: bool, p6: bool, p7: bool, p8: bool, p9: Any, p10: bool) -> bool { invoke!(0x825CA3ED43831015, coords, range, p4, p5, p6, p7, p8, p9, p10) }
+	pub fn CLEAR_AREA(coords: Vector3, radius: f32, flag: i32) { invoke_ignore!(0x3B882A96EA77D5B1, coords, radius, flag) }
 	pub fn _CLEAR_VOLUME_AREA(volume: Volume, flag: i32) { invoke_ignore!(0x2FCD528A397E5C88, volume, flag) }
 	pub fn CLEAR_ANGLED_AREA_OF_VEHICLES(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xA4D83115C1E02F8A, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn SET_CREDITS_ACTIVE(toggle: bool) { invoke_ignore!(0xD37BECF862DA726F, toggle) }
@@ -2700,8 +2699,8 @@ pub mod MISC {
 	pub fn IGNORE_NEXT_RESTART(toggle: bool) { invoke_ignore!(0x6C9FF40FF1B69F8F, toggle) }
 	pub fn SET_FADE_IN_AFTER_DEATH_ARREST(toggle: bool) { invoke_ignore!(0xDF3B5846DE5904AF, toggle) }
 	pub fn SET_FADE_IN_AFTER_LOAD(toggle: bool) { invoke_ignore!(0xAC806C4CAB973517, toggle) }
-	pub fn OVERRIDE_SAVE_HOUSE(override_: bool, x: f32, y: f32, z: f32, heading: f32, isAutosave: bool, returnCoords: &mut Vector3, returnHeading: &mut f32) -> bool { invoke!(0xB2C69E11A37B5AF0, override_, x, y, z, heading, isAutosave, returnCoords, returnHeading) }
-	pub fn SHOOT_SINGLE_BULLET_BETWEEN_COORDS(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, damage: i32, p7: bool, weaponHash: Hash, ownerPed: Ped, isAudible: bool, isInvisible: bool, speed: f32, p13: bool) { invoke_ignore!(0x867654CBC7606F2C, x1, y1, z1, x2, y2, z2, damage, p7, weaponHash, ownerPed, isAudible, isInvisible, speed, p13) }
+	pub fn OVERRIDE_SAVE_HOUSE(override_: bool, coords: Vector3, heading: f32, isAutosave: bool, returnCoords: &mut Vector3, returnHeading: &mut f32) -> bool { invoke!(0xB2C69E11A37B5AF0, override_, coords, heading, isAutosave, returnCoords, returnHeading) }
+	pub fn SHOOT_SINGLE_BULLET_BETWEEN_COORDS(coords1: Vector3, coords2: Vector3, damage: i32, p7: bool, weaponHash: Hash, ownerPed: Ped, isAudible: bool, isInvisible: bool, speed: f32, p13: bool) { invoke_ignore!(0x867654CBC7606F2C, coords1, coords2, damage, p7, weaponHash, ownerPed, isAudible, isInvisible, speed, p13) }
 	pub fn FIRE_SINGLE_BULLET(args: &mut Any) { invoke_ignore!(0xCBC9A21F6A2A679C, args) }
 	pub fn GET_MODEL_DIMENSIONS(modelHash: Hash, minimum: &mut Vector3, maximum: &mut Vector3) { invoke_ignore!(0xDCB8DDD5D054A7E7, modelHash, minimum, maximum) }
 	pub fn IS_BIT_SET(address: i32, offset: i32) -> bool { invoke!(0x4ED6CFDFE8D4131A, address, offset) }
@@ -2715,8 +2714,8 @@ pub mod MISC {
 	pub fn COMPARE_STRINGS(str1: & CStr, str2: & CStr, matchCase: bool, maxLength: i32) -> i32 { invoke!(0xBFBB74A15EFC149B, str1, str2, matchCase, maxLength) }
 	pub fn ABSI(value: i32) -> i32 { invoke!(0x0C214D5B8A38C828, value) }
 	pub fn ABSF(value: f32) -> f32 { invoke!(0x134549B388167CBF, value) }
-	pub fn IS_PROJECTILE_IN_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, ownedByPlayer: bool) -> bool { invoke!(0x05B0061EFDFC8941, x1, y1, z1, x2, y2, z2, ownedByPlayer) }
-	pub fn IS_PROJECTILE_TYPE_IN_AREA(xMin: f32, yMin: f32, zMin: f32, xMax: f32, yMax: f32, zMax: f32, weaponType: Hash, isPlayer: bool) -> bool { invoke!(0x04965FB9E14235C7, xMin, yMin, zMin, xMax, yMax, zMax, weaponType, isPlayer) }
+	pub fn IS_PROJECTILE_IN_AREA(coords1: Vector3, coords2: Vector3, ownedByPlayer: bool) -> bool { invoke!(0x05B0061EFDFC8941, coords1, coords2, ownedByPlayer) }
+	pub fn IS_PROJECTILE_TYPE_IN_AREA(min: Vector3, max: Vector3, weaponType: Hash, isPlayer: bool) -> bool { invoke!(0x04965FB9E14235C7, min, max, weaponType, isPlayer) }
 	pub fn IS_PROJECTILE_TYPE_IN_ANGLED_AREA(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: Any, p8: bool) -> bool { invoke!(0x928431F4133CD3D4, p0, p1, p2, p3, p4, p5, p6, p7, p8) }
 	pub fn IS_PROJECTILE_TYPE_WITHIN_DISTANCE(p0: f32, p1: f32, p2: f32, p3: Any, p4: f32, p5: bool) -> bool { invoke!(0xF51C9BAAD9ED64C4, p0, p1, p2, p3, p4, p5) }
 	pub fn GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE(ped: Ped, weaponHash: Hash, distance: f32, outCoords: &mut Vector3, p4: bool, mustBeOwnedByThisPed: bool) -> bool { invoke!(0xD73C960A681052DF, ped, weaponHash, distance, outCoords, p4, mustBeOwnedByThisPed) }
@@ -2724,7 +2723,7 @@ pub mod MISC {
 	pub fn IS_BULLET_IN_ANGLED_AREA(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: bool) -> bool { invoke!(0x9D09D8493747CF02, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn IS_BULLET_IN_AREA(p0: f32, p1: f32, p2: f32, p3: f32, p4: bool) -> bool { invoke!(0xC652FD308772D79E, p0, p1, p2, p3, p4) }
 	pub fn IS_BULLET_IN_BOX(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: bool) -> bool { invoke!(0xC128137C52152741, p0, p1, p2, p3, p4, p5, p6) }
-	pub fn HAS_BULLET_IMPACTED_IN_AREA(x: f32, y: f32, z: f32, p3: f32, p4: bool, p5: bool) -> bool { invoke!(0xC153E5BCCF411814, x, y, z, p3, p4, p5) }
+	pub fn HAS_BULLET_IMPACTED_IN_AREA(coords: Vector3, p3: f32, p4: bool, p5: bool) -> bool { invoke!(0xC153E5BCCF411814, coords, p3, p4, p5) }
 	pub fn HAS_BULLET_IMPACTED_IN_BOX(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: bool, p7: bool) -> bool { invoke!(0x3B6A4C05FB2B33AC, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn _0x7A76104CC2CC69E8(entity: Entity, p1: i32, p2: i32) -> Any { invoke!(0x7A76104CC2CC69E8, entity, p1, p2) }
 	pub fn _0xDC416CA762BC4F43(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) -> Any { invoke!(0xDC416CA762BC4F43, p0, p1, p2, p3, p4, p5) }
@@ -2747,9 +2746,9 @@ pub mod MISC {
 	pub fn _0x49C44FE78A135A1D(p0: Any) { invoke_ignore!(0x49C44FE78A135A1D, p0) }
 	pub fn _0xF650DCF5D6F312C1(p0: Any) { invoke_ignore!(0xF650DCF5D6F312C1, p0) }
 	pub fn _GET_STRING_FROM_FLOAT(value: f32, digits: i32) -> *const char { invoke!(0x2B6846401D68E563, value, digits) }
-	pub fn _GET_STRING_FROM_VECTOR(x: f32, y: f32, z: f32) -> *const char { invoke!(0x6C4DBF553885F9EB, x, y, z) }
+	pub fn _GET_STRING_FROM_VECTOR(coords: Vector3) -> *const char { invoke!(0x6C4DBF553885F9EB, coords) }
 	pub fn _GET_STRING_FROM_BOOL(value: bool) -> *const char { invoke!(0xF216F74101968DB0, value) }
-	pub fn VAR_STRING<'a>(flags: i32, string_type: &CStr, string: &CStr) -> &'a CStr { invoke!(0xFA925AC00EB830B9, flags) }
+	pub fn VAR_STRING(flags: i32) -> *const char { invoke!(0xFA925AC00EB830B9, flags) }
 	pub fn _CREATE_COLOR_STRING(rgb: i32) -> *const char { invoke!(0xBCC2CFADEA1AEA6C, rgb) }
 	pub fn SET_BITS_IN_RANGE(var: &mut i32, rangeStart: i32, rangeEnd: i32, p3: i32) { invoke_ignore!(0x324DC1CEF57F31E6, var, rangeStart, rangeEnd, p3) }
 	pub fn GET_BITS_IN_RANGE(var: i32, rangeStart: i32, rangeEnd: i32) -> i32 { invoke!(0x68E1352AF48F905D, var, rangeStart, rangeEnd) }
@@ -2768,12 +2767,12 @@ pub mod MISC {
 	pub fn COPY_SCRIPT_STRUCT(dst: &mut Any, src: &mut Any, size: i32) { invoke_ignore!(0xF7AC7DC0DEE7C9BE, dst, src, size) }
 	pub fn ENABLE_DISPATCH_SERVICE(dispatchService: i32, toggle: bool) { invoke_ignore!(0x50E52637EF70EF77, dispatchService, toggle) }
 	pub fn BLOCK_DISPATCH_SERVICE_RESOURCE_CREATION(dispatchService: i32, toggle: bool) { invoke_ignore!(0x66947E61A44DE2C6, dispatchService, toggle) }
-	pub fn CREATE_INCIDENT(dispatchService: i32, x: f32, y: f32, z: f32, numUnits: i32, radius: f32, outIncidentID: &mut i32, p7: Any, p8: Any) -> bool { invoke!(0x3F892CAF67444AE7, dispatchService, x, y, z, numUnits, radius, outIncidentID, p7, p8) }
-	pub fn _CREATE_INCIDENT_WITH_ENTITIES(dispatchService: i32, x: f32, y: f32, z: f32, itemSet: ItemSet, radius: f32, outIncidentID: &mut i32) -> bool { invoke!(0xAB3D3F45436DB1D8, dispatchService, x, y, z, itemSet, radius, outIncidentID) }
+	pub fn CREATE_INCIDENT(dispatchService: i32, coords: Vector3, numUnits: i32, radius: f32, outIncidentID: &mut i32, p7: Any, p8: Any) -> bool { invoke!(0x3F892CAF67444AE7, dispatchService, coords, numUnits, radius, outIncidentID, p7, p8) }
+	pub fn _CREATE_INCIDENT_WITH_ENTITIES(dispatchService: i32, coords: Vector3, itemSet: ItemSet, radius: f32, outIncidentID: &mut i32) -> bool { invoke!(0xAB3D3F45436DB1D8, dispatchService, coords, itemSet, radius, outIncidentID) }
 	pub fn DELETE_INCIDENT(incidentId: i32) { invoke_ignore!(0x5CFD0F0D6AAE0AEE, incidentId) }
 	pub fn IS_INCIDENT_VALID(incidentId: i32) -> bool { invoke!(0x39F2B1BAD412246A, incidentId) }
 	pub fn _SET_INCIDENT_UNK(incidentId: i32) { invoke_ignore!(0x9617B6E5F6537B63, incidentId) }
-	pub fn ADD_POP_MULTIPLIER_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, pedDensity: f32, trafficDensity: f32, p8: bool, p9: bool) -> i32 { invoke!(0x5EBDA1A3B8CB5EF7, x1, y1, z1, x2, y2, z2, pedDensity, trafficDensity, p8, p9) }
+	pub fn ADD_POP_MULTIPLIER_AREA(coords1: Vector3, coords2: Vector3, pedDensity: f32, trafficDensity: f32, p8: bool, p9: bool) -> i32 { invoke!(0x5EBDA1A3B8CB5EF7, coords1, coords2, pedDensity, trafficDensity, p8, p9) }
 	pub fn DOES_POP_MULTIPLIER_AREA_EXIST(id: i32) -> bool { invoke!(0x03BA619C81A646B3, id) }
 	pub fn REMOVE_POP_MULTIPLIER_AREA(id: i32, p1: bool) { invoke_ignore!(0x88CB484364EFB37A, id, p1) }
 	pub fn _ADD_POP_MULTIPLIER_VOLUME(volume: Volume, pedDensity: f32, vehicleDensity: f32, p3: bool, p4: bool) -> i32 { invoke!(0x3233C4EC0514C7EC, volume, pedDensity, vehicleDensity, p3, p4) }
@@ -2791,7 +2790,7 @@ pub mod MISC {
 	pub fn _ADD_DISPATCH_SPAWN_BLOCKING_AREA(volume: Volume) -> Any { invoke!(0xA2D5A26208421426, volume) }
 	pub fn REMOVE_DISPATCH_SPAWN_BLOCKING_AREA(p0: Any) { invoke_ignore!(0x49F751F6868DDC5B, p0) }
 	pub fn RESET_WANTED_RESPONSE_NUM_PEDS_TO_SPAWN() { invoke_ignore!(0xEF42F56F69877125) }
-	pub fn ADD_TACTICAL_NAV_MESH_POINT(x: f32, y: f32, z: f32, p3: i32) { invoke_ignore!(0xE4EE55E63FA9AF45, x, y, z, p3) }
+	pub fn ADD_TACTICAL_NAV_MESH_POINT(coords: Vector3, p3: i32) { invoke_ignore!(0xE4EE55E63FA9AF45, coords, p3) }
 	pub fn CLEAR_TACTICAL_NAV_MESH_POINTS() { invoke_ignore!(0xD93B6516C6878267) }
 	pub fn DISPLAY_ONSCREEN_KEYBOARD(textType: i32, windowTitle: & CStr, p2: & CStr, defaultText: & CStr, defaultConcat1: & CStr, defaultConcat2: & CStr, defaultConcat3: & CStr, maxInputLength: i32) { invoke_ignore!(0x044131118D8DB3CD, textType, windowTitle, p2, defaultText, defaultConcat1, defaultConcat2, defaultConcat3, maxInputLength) }
 	pub fn UPDATE_ONSCREEN_KEYBOARD() -> i32 { invoke!(0x37DF360F235A3893) }
@@ -3130,7 +3129,7 @@ pub mod NETWORK {
 	pub fn _0x236321F1178A5446(player: Player, ped: Ped, p2: &mut Any) -> bool { invoke!(0x236321F1178A5446, player, ped, p2) }
 	pub fn NETWORK_GET_ASSISTED_DAMAGE_OF_ENTITY(player: Player, entity: Entity, p2: &mut i32) -> bool { invoke!(0x4CACA84440FA26F6, player, entity, p2) }
 	pub fn NETWORK_GET_ENTITY_KILLER_OF_PLAYER(player: Player, weaponHash: &mut Hash) -> Entity { invoke!(0x42B2DAA6B596F5F8, player, weaponHash) }
-	pub fn NETWORK_RESURRECT_LOCAL_PLAYER(x: f32, y: f32, z: f32, heading: f32, p4: i32, p5: bool, p6: Any, p7: bool) { invoke_ignore!(0xEA23C49EAA83ACFB, x, y, z, heading, p4, p5, p6, p7) }
+	pub fn NETWORK_RESURRECT_LOCAL_PLAYER(coords: Vector3, heading: f32, p4: i32, p5: bool, p6: Any, p7: bool) { invoke_ignore!(0xEA23C49EAA83ACFB, coords, heading, p4, p5, p6, p7) }
 	pub fn _NETWORK_RESURRECT_LOCAL_PLAYER_2(args: &mut Any) { invoke_ignore!(0x4154B7D8C75E5DCF, args) }
 	pub fn NETWORK_SET_LOCAL_PLAYER_INVINCIBLE_TIME(time: i32) { invoke_ignore!(0x2D95C7E2D7E07307, time) }
 	pub fn NETWORK_SET_LOCAL_PLAYER_SYNC_LOOK_AT(toggle: bool) { invoke_ignore!(0x524FF0AEFF9C3973, toggle) }
@@ -3204,7 +3203,7 @@ pub mod NETWORK {
 	pub fn NETWORK_SET_RICH_PRESENCE(p0: i32, p1: &mut Any, p2: i32, p3: i32) { invoke_ignore!(0x1DCCACDCFC569362, p0, p1, p2, p3) }
 	pub fn NETWORK_GET_TIMEOUT_TIME() -> i32 { invoke!(0x5ED0356A0CE3A34F) }
 	pub fn _0xBC7D36946D19E60E(p0: bool) { invoke_ignore!(0xBC7D36946D19E60E, p0) }
-	pub fn _0x880A7202301E282B(p0: &mut Any, p1: &mut Any, x: f32, y: f32, z: f32, p5: f32, p6: Any) -> bool { invoke!(0x880A7202301E282B, p0, p1, x, y, z, p5, p6) }
+	pub fn _0x880A7202301E282B(p0: &mut Any, p1: &mut Any, coords: Vector3, p5: f32, p6: Any) -> bool { invoke!(0x880A7202301E282B, p0, p1, coords, p5, p6) }
 	pub fn _0xC964FCD3D1720697() -> Any { invoke!(0xC964FCD3D1720697) }
 	pub fn _0xEC089F84A9C16C62() -> Any { invoke!(0xEC089F84A9C16C62) }
 	pub fn PREVENT_NETWORK_ID_MIGRATION(netId: i32) { invoke_ignore!(0x7182EDDA1EE7DB5A, netId) }
@@ -3253,7 +3252,7 @@ pub mod NETWORK {
 	pub fn GET_NUM_CREATED_MISSION_VEHICLES(p0: bool) -> i32 { invoke!(0x0CD9AB83489430EA, p0) }
 	pub fn _GET_NUM_CREATED_MISSION_PICKUPS(p0: bool) -> i32 { invoke!(0xD2BA051B94CA9BCC, p0) }
 	pub fn _GET_RESERVED_MISSION_ENTITIES_FOR_THREAD(threadId: i32, pedMax: &mut i32, vehicleMax: &mut i32, unkMax: &mut i32, pedMin: &mut i32, vehicleMin: &mut i32, unkMin: &mut i32) { invoke_ignore!(0x99AAC89C510DEB0D, threadId, pedMax, vehicleMax, unkMax, pedMin, vehicleMin, unkMin) }
-	pub fn GET_RESERVED_MISSION_ENTITIES_IN_AREA(x: f32, y: f32, z: f32, p3: bool, peds: &mut i32, vehicles: &mut i32, objects: &mut i32, pickups: &mut i32) { invoke_ignore!(0x5E71E72A94985214, x, y, z, p3, peds, vehicles, objects, pickups) }
+	pub fn GET_RESERVED_MISSION_ENTITIES_IN_AREA(coords: Vector3, p3: bool, peds: &mut i32, vehicles: &mut i32, objects: &mut i32, pickups: &mut i32) { invoke_ignore!(0x5E71E72A94985214, coords, p3, peds, vehicles, objects, pickups) }
 	pub fn _0x5F328FC909F0E0FF(p0: i32, p1: i32, p2: i32, p3: i32) -> bool { invoke!(0x5F328FC909F0E0FF, p0, p1, p2, p3) }
 	pub fn GET_MAX_NUM_NETWORK_OBJECTS() -> i32 { invoke!(0xC7BE335216B5EC7C) }
 	pub fn GET_MAX_NUM_NETWORK_PEDS() -> i32 { invoke!(0x0C1F7D49C39D2289) }
@@ -3281,7 +3280,7 @@ pub mod NETWORK {
 	pub fn GET_CLOUD_TIME_AS_INT() -> i32 { invoke!(0x9A73240B49945C76) }
 	pub fn CONVERT_POSIX_TIME(posixTime: i32, timeStructure: &mut Any) { invoke_ignore!(0xAC97AF97FA68E5D5, posixTime, timeStructure) }
 	pub fn NETWORK_SET_IN_SPECTATOR_MODE(toggle: bool, playerPed: Ped) { invoke_ignore!(0x423DE3854BB50894, toggle, playerPed) }
-	pub fn _NETWORK_SET_IN_STATIC_SPECTATOR_MODE(toggle: bool, x: f32, y: f32, z: f32) { invoke_ignore!(0xFBF1ECFB39A77B5F, toggle, x, y, z) }
+	pub fn _NETWORK_SET_IN_STATIC_SPECTATOR_MODE(toggle: bool, coords: Vector3) { invoke_ignore!(0xFBF1ECFB39A77B5F, toggle, coords) }
 	pub fn NETWORK_IS_IN_SPECTATOR_MODE() -> bool { invoke!(0x048746E388762E11) }
 	pub fn _NETWORK_IS_PLAYER_IN_SPECTATOR_MODE(player: Player) -> bool { invoke!(0x5B709519997ECF0F, player) }
 	pub fn NETWORK_SET_IN_MP_CUTSCENE(p0: bool, p1: bool, p2: i32, p3: bool) { invoke_ignore!(0x9CA5DE655269FEC4, p0, p1, p2, p3) }
@@ -3301,7 +3300,7 @@ pub mod NETWORK {
 	pub fn _NETWORK_DEBUG_REQUEST_ENTITY_POSITION(p0: &mut Any) { invoke_ignore!(0xFA38B52F91B59075, p0) }
 	pub fn NETWORK_GET_NETWORK_ID_FROM_ROPE_ID(ropeId: i32) -> i32 { invoke!(0x42871327315EDAE8, ropeId) }
 	pub fn NETWORK_GET_ROPE_ID_FROM_NETWORK_ID(netId: i32) -> i32 { invoke!(0xEB1A4DD8352EC828, netId) }
-	pub fn _NETWORK_SPAWN_CONFIG_ADD_SPAWN_POINT(x: f32, y: f32, z: f32, heading: f32) { invoke_ignore!(0xFD1AC0B3858F224C, x, y, z, heading) }
+	pub fn _NETWORK_SPAWN_CONFIG_ADD_SPAWN_POINT(coords: Vector3, heading: f32) { invoke_ignore!(0xFD1AC0B3858F224C, coords, heading) }
 	pub fn _0xA63E4F050F20021F() { invoke_ignore!(0xA63E4F050F20021F) }
 	pub fn _NETWORK_SPAWN_CONFIG_ADD_EXCLUSION_VOLUME(volume: Volume) { invoke_ignore!(0xEEB7818B1D307212, volume) }
 	pub fn _NETWORK_SPAWN_CONFIG_REMOVE_EXCLUSION_VOLUME(volume: Volume) { invoke_ignore!(0xA35E7BF20FA269E0, volume) }
@@ -3322,7 +3321,7 @@ pub mod NETWORK {
 	pub fn _NETWORK_SPAWN_CONFIG_SET_LEVEL_WATER_DEPTH(waterDepthLevel: i32) { invoke_ignore!(0xBDCC671B911040F9, waterDepthLevel) }
 	pub fn NETWORK_SPAWN_CONFIG_SET_TUNING_FLOAT(p0: Hash, p1: f32) { invoke_ignore!(0x0608326F7B98C08D, p0, p1) }
 	pub fn _0x5D3C528B7A7DF836(nsctf: Hash) { invoke_ignore!(0x5D3C528B7A7DF836, nsctf) }
-	pub fn _0x2686BD9566B65EDA(x: f32, y: f32, z: f32) { invoke_ignore!(0x2686BD9566B65EDA, x, y, z) }
+	pub fn _0x2686BD9566B65EDA(coords: Vector3) { invoke_ignore!(0x2686BD9566B65EDA, coords) }
 	pub fn _0xBB1EC8C2EEF33BAA(entity: Entity) { invoke_ignore!(0xBB1EC8C2EEF33BAA, entity) }
 	pub fn _0x67CCDF74C4DF7169() -> bool { invoke!(0x67CCDF74C4DF7169) }
 	pub fn _0xC8B6D18E22484643() { invoke_ignore!(0xC8B6D18E22484643) }
@@ -3527,21 +3526,21 @@ pub mod OBJECT {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn CREATE_OBJECT(modelHash: Hash, x: f32, y: f32, z: f32, isNetwork: bool, bScriptHostObj: bool, dynamic: bool, p7: bool, p8: bool) -> Object { invoke!(0x509D5878EB39E842, modelHash, x, y, z, isNetwork, bScriptHostObj, dynamic, p7, p8) }
-	pub fn CREATE_OBJECT_NO_OFFSET(modelHash: Hash, x: f32, y: f32, z: f32, isNetwork: bool, bScriptHostObj: bool, dynamic: bool, p7: bool) -> Object { invoke!(0x9A294B2138ABB884, modelHash, x, y, z, isNetwork, bScriptHostObj, dynamic, p7) }
+	pub fn CREATE_OBJECT(modelHash: Hash, coords: Vector3, isNetwork: bool, bScriptHostObj: bool, dynamic: bool, p7: bool, p8: bool) -> Object { invoke!(0x509D5878EB39E842, modelHash, coords, isNetwork, bScriptHostObj, dynamic, p7, p8) }
+	pub fn CREATE_OBJECT_NO_OFFSET(modelHash: Hash, coords: Vector3, isNetwork: bool, bScriptHostObj: bool, dynamic: bool, p7: bool) -> Object { invoke!(0x9A294B2138ABB884, modelHash, coords, isNetwork, bScriptHostObj, dynamic, p7) }
 	pub fn DELETE_OBJECT(object: &mut Object) { invoke_ignore!(0x931914268722C263, object) }
 	pub fn PLACE_OBJECT_ON_GROUND_PROPERLY(object: Object, p1: bool) -> bool { invoke!(0x58A850EAEE20FAA3, object, p1) }
-	pub fn SLIDE_OBJECT(object: Object, toX: f32, toY: f32, toZ: f32, speedX: f32, speedY: f32, speedZ: f32, collision: bool) -> bool { invoke!(0x2FDFF4107B8C1147, object, toX, toY, toZ, speedX, speedY, speedZ, collision) }
+	pub fn SLIDE_OBJECT(object: Object, to: Vector3, speed: Vector3, collision: bool) -> bool { invoke!(0x2FDFF4107B8C1147, object, to, speed, collision) }
 	pub fn SET_OBJECT_TARGETTABLE(object: Object, targettable: bool) { invoke_ignore!(0x8A7391690F5AFD81, object, targettable) }
 	pub fn _SET_OBJECT_TARGETTABLE_2(object: Object, targettable: bool) { invoke_ignore!(0x581EDBE56E8D62C9, object, targettable) }
 	pub fn _SET_OBJECT_TARGETTABLE_FOCUS(object: Object, p1: bool, p2: bool) { invoke_ignore!(0xA22712E8471AA08E, object, p1, p2) }
 	pub fn _0xF6E88489B4E6EBE5(p0: Any, p1: Any) { invoke_ignore!(0xF6E88489B4E6EBE5, p0, p1) }
 	pub fn _0xE157A8A336C7F04A(p0: Any, p1: Any) { invoke_ignore!(0xE157A8A336C7F04A, p0, p1) }
 	pub fn _0x46CBCF0E98A4E156(p0: Any, p1: Any) { invoke_ignore!(0x46CBCF0E98A4E156, p0, p1) }
-	pub fn GET_CLOSEST_OBJECT_OF_TYPE(x: f32, y: f32, z: f32, radius: f32, modelHash: Hash, missionScriptObject: bool, scriptHostObject: bool, networkObject: bool) -> Object { invoke!(0xE143FA2249364369, x, y, z, radius, modelHash, missionScriptObject, scriptHostObject, networkObject) }
+	pub fn GET_CLOSEST_OBJECT_OF_TYPE(coords: Vector3, radius: f32, modelHash: Hash, missionScriptObject: bool, scriptHostObject: bool, networkObject: bool) -> Object { invoke!(0xE143FA2249364369, coords, radius, modelHash, missionScriptObject, scriptHostObject, networkObject) }
 	pub fn HAS_OBJECT_BEEN_BROKEN(p0: Any) -> bool { invoke!(0x8ABFB70C49CC43E2, p0) }
 	pub fn HAS_CLOSEST_OBJECT_OF_TYPE_BEEN_BROKEN(p0: f32, p1: f32, p2: f32, p3: f32, modelHash: Hash, p5: Any) -> bool { invoke!(0x761B0E69AC4D007E, p0, p1, p2, p3, modelHash, p5) }
-	pub fn GET_OFFSET_FROM_COORD_AND_HEADING_IN_WORLD_COORDS(xPos: f32, yPos: f32, zPos: f32, heading: f32, xOffset: f32, yOffset: f32, zOffset: f32) -> Vector3 { invoke!(0x163E252DE035A133, xPos, yPos, zPos, heading, xOffset, yOffset, zOffset) }
+	pub fn GET_OFFSET_FROM_COORD_AND_HEADING_IN_WORLD_COORDS(pos: Vector3, heading: f32, offset: Vector3) -> Vector3 { invoke!(0x163E252DE035A133, pos, heading, offset) }
 	pub fn _ADD_DOOR_TO_SYSTEM_NEW(doorHash: Hash, p1: bool, p2: bool, p3: bool, threadId: i32, p5: i32, p6: bool) { invoke_ignore!(0xD99229FE93B46286, doorHash, p1, p2, p3, threadId, p5, p6) }
 	pub fn _IS_DOOR_REGISTERED_WITH_NETWORK(doorHash: Hash) -> bool { invoke!(0xB5DED7B65C604FDF, doorHash) }
 	pub fn REMOVE_DOOR_FROM_SYSTEM(doorHash: Hash) { invoke_ignore!(0x464D8E1427156FE4, doorHash) }
@@ -3575,7 +3574,7 @@ pub mod OBJECT {
 	pub fn _DOOR_SYSTEM_FORCE_SHUT(doorHash: Hash, p1: bool) { invoke_ignore!(0x276AAF0F1C7F2494, doorHash, p1) }
 	pub fn _0xEBA314768FB35D58(p0: Any) -> Any { invoke!(0xEBA314768FB35D58, p0) }
 	pub fn _0x5230BF34EB0EC645(p0: Any) { invoke_ignore!(0x5230BF34EB0EC645, p0) }
-	pub fn DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS(x: f32, y: f32, z: f32, radius: f32, hash: Hash, p5: bool) -> bool { invoke!(0xBFA48E2FF417213F, x, y, z, radius, hash, p5) }
+	pub fn DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS(coords: Vector3, radius: f32, hash: Hash, p5: bool) -> bool { invoke!(0xBFA48E2FF417213F, coords, radius, hash, p5) }
 	pub fn IS_POINT_IN_ANGLED_AREA(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: f32, p10: bool, p11: bool) -> bool { invoke!(0x2A70BAE8883E4C81, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) }
 	pub fn SET_OBJECT_ALLOW_LOW_LOD_BUOYANCY(object: Object, toggle: bool) { invoke_ignore!(0x4D89D607CB3DD1D2, object, toggle) }
 	pub fn SET_OBJECT_PHYSICS_PARAMS(object: Object, weight: f32, p2: f32, p3: f32, p4: f32, p5: f32, gravity: f32, p7: f32, p8: f32, p9: f32, p10: f32, buoyancy: f32) { invoke_ignore!(0xF6DF6E90DE7DF90F, object, weight, p2, p3, p4, p5, gravity, p7, p8, p9, p10, buoyancy) }
@@ -3603,15 +3602,15 @@ pub mod OBJECT {
 	pub fn _SET_LIGHT_SCATTERING_DISABLED_FOR_OBJECT(object: Object, disable: bool) { invoke_ignore!(0x04D1D4E411CE52D0, object, disable) }
 	pub fn _0x7FCD49388BC9B775(p0: Any, p1: Any) { invoke_ignore!(0x7FCD49388BC9B775, p0, p1) }
 	pub fn _0xFA99E8E575F2FEF8(p0: Any) -> Any { invoke!(0xFA99E8E575F2FEF8, p0) }
-	pub fn GET_RAYFIRE_MAP_OBJECT(x: f32, y: f32, z: f32, radius: f32, name: & CStr) -> Object { invoke!(0xB48FCED898292E52, x, y, z, radius, name) }
+	pub fn GET_RAYFIRE_MAP_OBJECT(coords: Vector3, radius: f32, name: & CStr) -> Object { invoke!(0xB48FCED898292E52, coords, radius, name) }
 	pub fn SET_STATE_OF_RAYFIRE_MAP_OBJECT(object: Object, state: i32) { invoke_ignore!(0x5C29F698D404C5E1, object, state) }
 	pub fn GET_STATE_OF_RAYFIRE_MAP_OBJECT(object: Object) -> i32 { invoke!(0x899BA936634A322E, object) }
 	pub fn DOES_RAYFIRE_MAP_OBJECT_EXIST(object: Object) -> bool { invoke!(0x52AF537A0C5B8AAD, object) }
 	pub fn GET_RAYFIRE_MAP_OBJECT_ANIM_PHASE(object: Object) -> f32 { invoke!(0x260EE4FDBDF4DB01, object) }
-	pub fn CREATE_PICKUP(pickupHash: Hash, x: f32, y: f32, z: f32, flags: i32, p5: i32, p6: bool, modelHash: Hash, p8: i32, p9: f32, p10: Any) -> Pickup { invoke!(0xFBA08C503DD5FA58, pickupHash, x, y, z, flags, p5, p6, modelHash, p8, p9, p10) }
-	pub fn CREATE_PICKUP_ROTATE(pickupHash: Hash, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, flags: i32, p8: i32, p9: i32, p10: bool, modelHash: Hash, p12: i32, p13: f32, p14: Any) -> Pickup { invoke!(0x891804727E0A98B7, pickupHash, posX, posY, posZ, rotX, rotY, rotZ, flags, p8, p9, p10, modelHash, p12, p13, p14) }
-	pub fn CREATE_AMBIENT_PICKUP(pickupHash: Hash, x: f32, y: f32, z: f32, flags: i32, value: i32, modelHash: Hash, p7: bool, p8: bool, p9: i32, p10: f32) -> Object { invoke!(0x673966A0C0FD7171, pickupHash, x, y, z, flags, value, modelHash, p7, p8, p9, p10) }
-	pub fn CREATE_PORTABLE_PICKUP(pickupHash: Hash, x: f32, y: f32, z: f32, placeOnGround: bool, modelHash: Hash) -> Object { invoke!(0x2EAF1FDB2FB55698, pickupHash, x, y, z, placeOnGround, modelHash) }
+	pub fn CREATE_PICKUP(pickupHash: Hash, coords: Vector3, flags: i32, p5: i32, p6: bool, modelHash: Hash, p8: i32, p9: f32, p10: Any) -> Pickup { invoke!(0xFBA08C503DD5FA58, pickupHash, coords, flags, p5, p6, modelHash, p8, p9, p10) }
+	pub fn CREATE_PICKUP_ROTATE(pickupHash: Hash, pos: Vector3, rot: Vector3, flags: i32, p8: i32, p9: i32, p10: bool, modelHash: Hash, p12: i32, p13: f32, p14: Any) -> Pickup { invoke!(0x891804727E0A98B7, pickupHash, pos, rot, flags, p8, p9, p10, modelHash, p12, p13, p14) }
+	pub fn CREATE_AMBIENT_PICKUP(pickupHash: Hash, coords: Vector3, flags: i32, value: i32, modelHash: Hash, p7: bool, p8: bool, p9: i32, p10: f32) -> Object { invoke!(0x673966A0C0FD7171, pickupHash, coords, flags, value, modelHash, p7, p8, p9, p10) }
+	pub fn CREATE_PORTABLE_PICKUP(pickupHash: Hash, coords: Vector3, placeOnGround: bool, modelHash: Hash) -> Object { invoke!(0x2EAF1FDB2FB55698, pickupHash, coords, placeOnGround, modelHash) }
 	pub fn ATTACH_PORTABLE_PICKUP_TO_PED(pickupObject: Object, ped: Ped) { invoke_ignore!(0x8DC39368BDD57755, pickupObject, ped) }
 	pub fn DETACH_PORTABLE_PICKUP_FROM_PED(pickupObject: Object) { invoke_ignore!(0xCF463D1E9A0AECB1, pickupObject) }
 	pub fn _HIDE_PICKUP_OBJECT(pickupObject: Object, toggle: bool) { invoke_ignore!(0x2777150CC7D9365E, pickupObject, toggle) }
@@ -3629,7 +3628,7 @@ pub mod OBJECT {
 	pub fn GET_PICKUP_OBJECT(pickup: Pickup) -> Object { invoke!(0x5099BC55630B25AE, pickup) }
 	pub fn IS_OBJECT_A_PORTABLE_PICKUP(object: Object) -> bool { invoke!(0x0378C08504160D0D, object) }
 	pub fn _IS_PICKUP_TYPE_VALID(pickupHash: Hash) -> bool { invoke!(0x007BD043587F7C82, pickupHash) }
-	pub fn DOES_PICKUP_OF_TYPE_EXIST_IN_AREA(pickupHash: Hash, x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0xF9C36251F6E48E33, pickupHash, x, y, z, radius) }
+	pub fn DOES_PICKUP_OF_TYPE_EXIST_IN_AREA(pickupHash: Hash, coords: Vector3, radius: f32) -> bool { invoke!(0xF9C36251F6E48E33, pickupHash, coords, radius) }
 	pub fn SET_PICKUP_REGENERATION_TIME(pickup: Pickup, duration: i32) { invoke_ignore!(0x78015C9B4B3ECC9D, pickup, duration) }
 	pub fn FORCE_PICKUP_REGENERATE(p0: Any) { invoke_ignore!(0x758A5C1B3B1E1990, p0) }
 	pub fn _SET_NETWORK_PICKUP_USABLE_FOR_PLAYER(player: Player, pickupHash: Hash, isUsable: bool) { invoke_ignore!(0x94F3D956BFAEAE18, player, pickupHash, isUsable) }
@@ -3662,7 +3661,7 @@ pub mod OBJECT {
 	pub fn _SET_OBJECT_BURN_SPEED(object: Object, speed: f32, p2: f32) { invoke_ignore!(0x646564A3B7DF68F8, object, speed, p2) }
 	pub fn _0xCBFBD38F2E0A263B(p0: Any, p1: Any) { invoke_ignore!(0xCBFBD38F2E0A263B, p0, p1) }
 	pub fn CONVERT_OLD_PICKUP_TYPE_TO_NEW(pickupHash: Hash) -> Hash { invoke!(0x5EAAD83F8CFB4575, pickupHash) }
-	pub fn SET_FORCE_OBJECT_THIS_FRAME(x: f32, y: f32, z: f32, p3: f32) { invoke_ignore!(0xF538081986E49E9D, x, y, z, p3) }
+	pub fn SET_FORCE_OBJECT_THIS_FRAME(coords: Vector3, p3: f32) { invoke_ignore!(0xF538081986E49E9D, coords, p3) }
 	pub fn _0xD91E55B6C005EB09(p0: Any, p1: Any) -> Any { invoke!(0xD91E55B6C005EB09, p0, p1) }
 	pub fn ONLY_CLEAN_UP_OBJECT_WHEN_OUT_OF_RANGE(object: Object) { invoke_ignore!(0xADBE4809F19F927A, object) }
 	pub fn _0xCAAF2BCCFEF37F77(object: Object, p1: Any) { invoke_ignore!(0xCAAF2BCCFEF37F77, object, p1) }
@@ -3732,41 +3731,41 @@ pub mod PATHFIND {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn SET_ROADS_IN_AREA(xMin: f32, yMin: f32, zMin: f32, xMax: f32, yMax: f32, zMax: f32, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0xBF1A602B5BA52FEE, xMin, yMin, zMin, xMax, yMax, zMax, p6, p7, p8) }
+	pub fn SET_ROADS_IN_AREA(min: Vector3, max: Vector3, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0xBF1A602B5BA52FEE, min, max, p6, p7, p8) }
 	pub fn SET_ROADS_IN_ANGLED_AREA(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0x1A5AA1208AF5DB59, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn SET_ROADS_IN_VOLUME(volume: Volume, p1: bool, p2: bool, p3: bool) { invoke_ignore!(0xC1799FAFD2FDF52B, volume, p1, p2, p3) }
 	pub fn RESET_ROADS_IN_VOLUME(volume: Volume, p1: bool) { invoke_ignore!(0xD17672447692478E, volume, p1) }
-	pub fn SET_ROADS_BACK_TO_ORIGINAL(xMin: f32, yMin: f32, zMin: f32, xMax: f32, yMax: f32, zMax: f32, p6: Any, p7: Any) { invoke_ignore!(0x1EE7063B80FFC77C, xMin, yMin, zMin, xMax, yMax, zMax, p6, p7) }
+	pub fn SET_ROADS_BACK_TO_ORIGINAL(min: Vector3, max: Vector3, p6: Any, p7: Any) { invoke_ignore!(0x1EE7063B80FFC77C, min, max, p6, p7) }
 	pub fn SET_ROADS_BACK_TO_ORIGINAL_IN_ANGLED_AREA(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0x0027501B9F3B407E, p0, p1, p2, p3, p4, p5, p6, p7, p8) }
-	pub fn _0xAFE2AE66F6251C66(xMin: f32, yMin: f32, zMin: f32, xMax: f32, yMax: f32, zMax: f32, p6: i32, p7: Any) { invoke_ignore!(0xAFE2AE66F6251C66, xMin, yMin, zMin, xMax, yMax, zMax, p6, p7) }
+	pub fn _0xAFE2AE66F6251C66(min: Vector3, max: Vector3, p6: i32, p7: Any) { invoke_ignore!(0xAFE2AE66F6251C66, min, max, p6, p7) }
 	pub fn _0x4358BCF14C91761C(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any) { invoke_ignore!(0x4358BCF14C91761C, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn _0xB03944057FD735BA(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0xB03944057FD735BA, p0, p1, p2) }
-	pub fn _0x6C3F12ECEB6D2E2A(xMin: f32, yMin: f32, zMin: f32, xMax: f32, yMax: f32, zMax: f32, p6: Any, p7: Any) { invoke_ignore!(0x6C3F12ECEB6D2E2A, xMin, yMin, zMin, xMax, yMax, zMax, p6, p7) }
+	pub fn _0x6C3F12ECEB6D2E2A(min: Vector3, max: Vector3, p6: Any, p7: Any) { invoke_ignore!(0x6C3F12ECEB6D2E2A, min, max, p6, p7) }
 	pub fn _0x5A4E1A41E3A02AD0(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0x5A4E1A41E3A02AD0, p0, p1, p2) }
-	pub fn GET_CLOSEST_VEHICLE_NODE(x: f32, y: f32, z: f32, outPosition: &mut Vector3, nodeType: i32, p5: f32, p6: f32) -> bool { invoke!(0x240A18690AE96513, x, y, z, outPosition, nodeType, p5, p6) }
+	pub fn GET_CLOSEST_VEHICLE_NODE(coords: Vector3, outPosition: &mut Vector3, nodeType: i32, p5: f32, p6: f32) -> bool { invoke!(0x240A18690AE96513, coords, outPosition, nodeType, p5, p6) }
 	pub fn _0xCA27A86CAA4E98ED(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) -> Any { invoke!(0xCA27A86CAA4E98ED, p0, p1, p2, p3, p4, p5, p6) }
-	pub fn GET_CLOSEST_VEHICLE_NODE_WITH_HEADING(x: f32, y: f32, z: f32, outPosition: &mut Vector3, outHeading: &mut f32, nodeType: i32, p6: f32, p7: f32) -> bool { invoke!(0x23CFFD4CCB243354, x, y, z, outPosition, outHeading, nodeType, p6, p7) }
-	pub fn GET_NTH_CLOSEST_VEHICLE_NODE(x: f32, y: f32, z: f32, nthClosest: i32, outPosition: &mut Vector3, unknown1: i32, unknown2: f32, unknown3: Any) -> bool { invoke!(0x5A6D8DF6FBC5D0C4, x, y, z, nthClosest, outPosition, unknown1, unknown2, unknown3) }
-	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_ID(x: f32, y: f32, z: f32, nth: i32, nodetype: i32, p5: f32, p6: f32) -> i32 { invoke!(0x116443008E5CEFC3, x, y, z, nth, nodetype, p5, p6) }
-	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING(x: f32, y: f32, z: f32, nthClosest: i32, outPosition: &mut Vector3, heading: &mut f32, unknown1: &mut Any, unknown2: i32, unknown3: f32, unknown4: f32) -> bool { invoke!(0x591B40D4390DB54A, x, y, z, nthClosest, outPosition, heading, unknown1, unknown2, unknown3, unknown4) }
-	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_ID_WITH_HEADING(x: f32, y: f32, z: f32, nthClosest: i32, returnHeading: &mut f32, returnNumLanes: &mut i32, nodeFlags: i32, zMeasureMult: f32, zTolerance: f32) -> i32 { invoke!(0x4114EAA8A7F7766D, x, y, z, nthClosest, returnHeading, returnNumLanes, nodeFlags, zMeasureMult, zTolerance) }
-	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_FAVOUR_DIRECTION(x: f32, y: f32, z: f32, desiredX: f32, desiredY: f32, desiredZ: f32, nthClosest: i32, outPosition: &mut Vector3, outHeading: &mut f32, nodetype: i32, p10: Any, p11: Any) -> bool { invoke!(0x2FAC235A6062F14A, x, y, z, desiredX, desiredY, desiredZ, nthClosest, outPosition, outHeading, nodetype, p10, p11) }
+	pub fn GET_CLOSEST_VEHICLE_NODE_WITH_HEADING(coords: Vector3, outPosition: &mut Vector3, outHeading: &mut f32, nodeType: i32, p6: f32, p7: f32) -> bool { invoke!(0x23CFFD4CCB243354, coords, outPosition, outHeading, nodeType, p6, p7) }
+	pub fn GET_NTH_CLOSEST_VEHICLE_NODE(coords: Vector3, nthClosest: i32, outPosition: &mut Vector3, unknown1: i32, unknown2: f32, unknown3: Any) -> bool { invoke!(0x5A6D8DF6FBC5D0C4, coords, nthClosest, outPosition, unknown1, unknown2, unknown3) }
+	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_ID(coords: Vector3, nth: i32, nodetype: i32, p5: f32, p6: f32) -> i32 { invoke!(0x116443008E5CEFC3, coords, nth, nodetype, p5, p6) }
+	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING(coords: Vector3, nthClosest: i32, outPosition: &mut Vector3, heading: &mut f32, unknown1: &mut Any, unknown2: i32, unknown3: f32, unknown4: f32) -> bool { invoke!(0x591B40D4390DB54A, coords, nthClosest, outPosition, heading, unknown1, unknown2, unknown3, unknown4) }
+	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_ID_WITH_HEADING(coords: Vector3, nthClosest: i32, returnHeading: &mut f32, returnNumLanes: &mut i32, nodeFlags: i32, zMeasureMult: f32, zTolerance: f32) -> i32 { invoke!(0x4114EAA8A7F7766D, coords, nthClosest, returnHeading, returnNumLanes, nodeFlags, zMeasureMult, zTolerance) }
+	pub fn GET_NTH_CLOSEST_VEHICLE_NODE_FAVOUR_DIRECTION(coords: Vector3, desired: Vector3, nthClosest: i32, outPosition: &mut Vector3, outHeading: &mut f32, nodetype: i32, p10: Any, p11: Any) -> bool { invoke!(0x2FAC235A6062F14A, coords, desired, nthClosest, outPosition, outHeading, nodetype, p10, p11) }
 	pub fn IS_VEHICLE_NODE_ID_VALID(vehicleNodeId: i32) -> bool { invoke!(0x5829A02AF4F0B3CB, vehicleNodeId) }
 	pub fn GET_VEHICLE_NODE_POSITION(nodeId: i32, outPosition: &mut Vector3) { invoke_ignore!(0x8E8D72FF24DEE1FB, nodeId, outPosition) }
 	pub fn GET_VEHICLE_NODE_IS_SWITCHED_OFF(nodeID: i32) -> bool { invoke!(0x28533DBDDF7C2C97, nodeID) }
-	pub fn GET_CLOSEST_ROAD(x: f32, y: f32, z: f32, p3: f32, p4: i32, p5: &mut Vector3, p6: &mut Vector3, p7: &mut Any, p8: &mut Any, p9: &mut f32, p10: bool) -> Any { invoke!(0x132F52BBA570FE92, x, y, z, p3, p4, p5, p6, p7, p8, p9, p10) }
+	pub fn GET_CLOSEST_ROAD(coords: Vector3, p3: f32, p4: i32, p5: &mut Vector3, p6: &mut Vector3, p7: &mut Any, p8: &mut Any, p9: &mut f32, p10: bool) -> Any { invoke!(0x132F52BBA570FE92, coords, p3, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn ARE_NODES_LOADED_FOR_AREA(x1: f32, y1: f32, x2: f32, y2: f32) -> bool { invoke!(0xF7B79A50B905A30D, x1, y1, x2, y2) }
 	pub fn REQUEST_PATH_NODES_IN_AREA_THIS_FRAME(x1: f32, y1: f32, x2: f32, y2: f32) -> bool { invoke!(0x07FB139B592FA687, x1, y1, x2, y2) }
-	pub fn GET_RANDOM_VEHICLE_NODE(x: f32, y: f32, z: f32, radius: f32, minLanes: i32, avoidDeadEnds: bool, avoidHighways: bool, outPosition: &mut Vector3, nodeId: &mut i32) -> bool { invoke!(0x93E0DB8440B73A7D, x, y, z, radius, minLanes, avoidDeadEnds, avoidHighways, outPosition, nodeId) }
-	pub fn _GET_SPAWN_DATA_FOR_ROAD_NODE(nodeId: i32, x: f32, y: f32, z: f32, outCoords: &mut Vector3, heading: &mut f32) { invoke_ignore!(0xA3791B915B8B84C6, nodeId, x, y, z, outCoords, heading) }
-	pub fn IS_POINT_ON_ROAD(x: f32, y: f32, z: f32, vehicle: Vehicle) -> bool { invoke!(0x125BF4ABFC536B09, x, y, z, vehicle) }
-	pub fn SET_PED_PATHS_IN_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, unknown: bool, p7: Any) { invoke_ignore!(0x34F060F4BF92E018, x1, y1, z1, x2, y2, z2, unknown, p7) }
+	pub fn GET_RANDOM_VEHICLE_NODE(coords: Vector3, radius: f32, minLanes: i32, avoidDeadEnds: bool, avoidHighways: bool, outPosition: &mut Vector3, nodeId: &mut i32) -> bool { invoke!(0x93E0DB8440B73A7D, coords, radius, minLanes, avoidDeadEnds, avoidHighways, outPosition, nodeId) }
+	pub fn _GET_SPAWN_DATA_FOR_ROAD_NODE(nodeId: i32, coords: Vector3, outCoords: &mut Vector3, heading: &mut f32) { invoke_ignore!(0xA3791B915B8B84C6, nodeId, coords, outCoords, heading) }
+	pub fn IS_POINT_ON_ROAD(coords: Vector3, vehicle: Vehicle) -> bool { invoke!(0x125BF4ABFC536B09, coords, vehicle) }
+	pub fn SET_PED_PATHS_IN_AREA(coords1: Vector3, coords2: Vector3, unknown: bool, p7: Any) { invoke_ignore!(0x34F060F4BF92E018, coords1, coords2, unknown, p7) }
 	pub fn _0xE5EF9DE716FF737E(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0xE5EF9DE716FF737E, p0, p1, p2) }
-	pub fn GET_SAFE_COORD_FOR_PED(x: f32, y: f32, z: f32, onGround: bool, outPosition: &mut Vector3, flags: i32) -> bool { invoke!(0xB61C8E878A4199CA, x, y, z, onGround, outPosition, flags) }
+	pub fn GET_SAFE_COORD_FOR_PED(coords: Vector3, onGround: bool, outPosition: &mut Vector3, flags: i32) -> bool { invoke!(0xB61C8E878A4199CA, coords, onGround, outPosition, flags) }
 	pub fn SET_PED_PATHS_BACK_TO_ORIGINAL(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xE04B48F2CC926253, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn _0xCF213A5FC3ABFC08(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0xCF213A5FC3ABFC08, p0, p1, p2) }
 	pub fn ADD_NAVMESH_REQUIRED_REGION(x: f32, y: f32, radius: f32) { invoke_ignore!(0x387EAD7EE42F6685, x, y, radius) }
-	pub fn IS_NAVMESH_LOADED_IN_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> bool { invoke!(0xF813C7E63F9062A5, x1, y1, z1, x2, y2, z2) }
+	pub fn IS_NAVMESH_LOADED_IN_AREA(coords1: Vector3, coords2: Vector3) -> bool { invoke!(0xF813C7E63F9062A5, coords1, coords2) }
 	pub fn GET_NUM_NAVMESHES_EXISTING_IN_AREA(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32) -> i32 { invoke!(0x01708E8DD3FF8C65, p0, p1, p2, p3, p4, p5) }
 	pub fn _NAVMESH_ACTIVATE_SWAP(name: & CStr) -> bool { invoke!(0x7C334FF4D9215912, name) }
 	pub fn _NAVMESH_DEACTIVATE_SWAP(name: & CStr) -> bool { invoke!(0x527B97C203BB8606, name) }
@@ -3782,7 +3781,7 @@ pub mod PATHFIND {
 	pub fn _REMOVE_NAVMESH_BLOCKING_VOLUME(volume: Volume) { invoke_ignore!(0x2C87C3E1C7B96EE2, volume) }
 	pub fn _DOES_NAVMESH_BLOCKING_VOLUME_EXIST(volume: Volume) -> bool { invoke!(0xDE0EA444735C1368, volume) }
 	pub fn _0x6DAD6630AE4A74CB(p0: Any, p1: Any) { invoke_ignore!(0x6DAD6630AE4A74CB, p0, p1) }
-	pub fn NAVMESH_REQUEST_PATH(ped: Ped, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, bitFlag: i32) -> i32 { invoke!(0x348F211CA2404039, ped, x1, y1, z1, x2, y2, z2, bitFlag) }
+	pub fn NAVMESH_REQUEST_PATH(ped: Ped, coords1: Vector3, coords2: Vector3, bitFlag: i32) -> i32 { invoke!(0x348F211CA2404039, ped, coords1, coords2, bitFlag) }
 	pub fn _NAVMESH_CLEAR_REQUESTED_PATH(path: i32) -> bool { invoke!(0x661BB1E1FF77742D, path) }
 	pub fn _NAVMESH_REQUESTED_QUERY_STATUS(path: i32) -> i32 { invoke!(0x3A0F82F6EE2291C8, path) }
 	pub fn _NAVMESH_REQUESTED_PATH_WAYPOINTS_FOUND(path: i32) -> bool { invoke!(0x8800776E410EB669, path) }
@@ -3802,7 +3801,7 @@ pub mod PATHFIND {
 	pub fn _0x4BDEBEA5702B97A9(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0x4BDEBEA5702B97A9, p0, p1, p2, p3, p4, p5) }
 	pub fn _0x264E9A5CD78C338F(p0: Any) { invoke_ignore!(0x264E9A5CD78C338F, p0) }
 	pub fn _0x869A7015BD4606E9(p0: Any) { invoke_ignore!(0x869A7015BD4606E9, p0) }
-	pub fn _SIMULATED_ROUTE_CREATE(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, p6: i32) -> Any { invoke!(0xFD5BB35AAB83FD48, x1, y1, z1, x2, y2, z2, p6) }
+	pub fn _SIMULATED_ROUTE_CREATE(coords1: Vector3, coords2: Vector3, p6: i32) -> Any { invoke!(0xFD5BB35AAB83FD48, coords1, coords2, p6) }
 	pub fn _SIMULATED_ROUTE_DELETE(p0: Any) { invoke_ignore!(0x4907D0E4FB26EE65, p0) }
 	pub fn _SIMULATED_ROUTE_EXISTS(p0: Any) -> bool { invoke!(0x65A8196B8D7F5E0B, p0) }
 	pub fn SIMULATED_ROUTE_IS_LOADED(p0: Any) -> bool { invoke!(0x240915043CB799D7, p0) }
@@ -3814,7 +3813,7 @@ pub mod PED {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn CREATE_PED(modelHash: Hash, x: f32, y: f32, z: f32, heading: f32, isNetwork: bool, bScriptHostPed: bool, p7: bool, p8: bool) -> Ped { invoke!(0xD49F9B0955C367DE, modelHash, x, y, z, heading, isNetwork, bScriptHostPed, p7, p8) }
+	pub fn CREATE_PED(modelHash: Hash, coords: Vector3, heading: f32, isNetwork: bool, bScriptHostPed: bool, p7: bool, p8: bool) -> Ped { invoke!(0xD49F9B0955C367DE, modelHash, coords, heading, isNetwork, bScriptHostPed, p7, p8) }
 	pub fn DELETE_PED(ped: &mut Ped) { invoke_ignore!(0xCC0EF140F99365C5, ped) }
 	pub fn _SET_REMOVE_PED_NETWORKED(ped: Ped, p1: i32) { invoke_ignore!(0x39A2FC5AF55A52B1, ped, p1) }
 	pub fn _0x7C08E7CB8D951B70(ped: Ped, p1: f32) { invoke_ignore!(0x7C08E7CB8D951B70, ped, p1) }
@@ -3824,7 +3823,7 @@ pub mod PED {
 	pub fn IS_PED_IN_VEHICLE(ped: Ped, vehicle: Vehicle, atGetIn: bool) -> bool { invoke!(0xA3EE4A07279BB9DB, ped, vehicle, atGetIn) }
 	pub fn IS_PED_IN_MODEL(ped: Ped, modelHash: Hash) -> bool { invoke!(0x796D90EFB19AA332, ped, modelHash) }
 	pub fn IS_PED_IN_ANY_VEHICLE(ped: Ped, atGetIn: bool) -> bool { invoke!(0x997ABD671D25CA0B, ped, atGetIn) }
-	pub fn _0x9851DE7AEC10B4E1(x: f32, y: f32, z: f32, p3: f32, p4: i32, p5: Any) { invoke_ignore!(0x9851DE7AEC10B4E1, x, y, z, p3, p4, p5) }
+	pub fn _0x9851DE7AEC10B4E1(coords: Vector3, p3: f32, p4: i32, p5: Any) { invoke_ignore!(0x9851DE7AEC10B4E1, coords, p3, p4, p5) }
 	pub fn IS_PED_INJURED(ped: Ped) -> bool { invoke!(0x84A2DD9AC37C35C1, ped) }
 	pub fn IS_PED_FATALLY_INJURED(ped: Ped) -> bool { invoke!(0xD839450756ED5A80, ped) }
 	pub fn IS_PED_DEAD_OR_DYING(ped: Ped, p1: bool) -> bool { invoke!(0x3317DEDB88C95038, ped, p1) }
@@ -3845,7 +3844,7 @@ pub mod PED {
 	pub fn _0x9C81338B2E62CE0A(player: Player, ped: Ped, shotNearRecentlyTime: i32) -> bool { invoke!(0x9C81338B2E62CE0A, player, ped, shotNearRecentlyTime) }
 	pub fn _0xB7DBB2986B87E230(ped: Ped, p1: f32) -> bool { invoke!(0xB7DBB2986B87E230, ped, p1) }
 	pub fn _0xD355E2F1BB41087E(ped: Ped, p1: f32) -> bool { invoke!(0xD355E2F1BB41087E, ped, p1) }
-	pub fn IS_ANY_PED_SHOOTING_IN_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, p6: bool, p7: bool) -> bool { invoke!(0xA0D3D71EA1086C55, x1, y1, z1, x2, y2, z2, p6, p7) }
+	pub fn IS_ANY_PED_SHOOTING_IN_AREA(coords1: Vector3, coords2: Vector3, p6: bool, p7: bool) -> bool { invoke!(0xA0D3D71EA1086C55, coords1, coords2, p6, p7) }
 	pub fn IS_PED_SHOOTING(ped: Ped) -> bool { invoke!(0x34616828CD07F1A1, ped) }
 	pub fn TIME_SINCE_PED_LAST_SHOT(ped: Ped) -> f32 { invoke!(0x285D36C5C72B0569, ped) }
 	pub fn SET_PED_ACCURACY(ped: Ped, accuracy: i32) { invoke_ignore!(0x7AEFB85C1D49DEB6, ped, accuracy) }
@@ -3882,9 +3881,9 @@ pub mod PED {
 	pub fn INSTANTLY_FILL_PED_POPULATION() { invoke_ignore!(0x4759CC730F947C81) }
 	pub fn _0xBFA6B7731C3BAF02() { invoke_ignore!(0xBFA6B7731C3BAF02) }
 	pub fn IS_INSTANTLY_FILL_PED_POPULATION_FINISHED() -> bool { invoke!(0x0EE3F0D7FECCC54F) }
-	pub fn SET_PED_NON_CREATION_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) { invoke_ignore!(0xEE01041D559983EA, x1, y1, z1, x2, y2, z2) }
+	pub fn SET_PED_NON_CREATION_AREA(coords1: Vector3, coords2: Vector3) { invoke_ignore!(0xEE01041D559983EA, coords1, coords2) }
 	pub fn CLEAR_PED_NON_CREATION_AREA() { invoke_ignore!(0x2E05208086BA0651) }
-	pub fn _ATTACH_VOLUME_TO_ENTITY(volume: Volume, entity: Entity, offsetX: f32, offsetY: f32, offsetZ: f32, rotX: f32, rotY: f32, rotZ: f32, p8: i32, p9: bool) { invoke_ignore!(0x7C00CFC48A782DC0, volume, entity, offsetX, offsetY, offsetZ, rotX, rotY, rotZ, p8, p9) }
+	pub fn _ATTACH_VOLUME_TO_ENTITY(volume: Volume, entity: Entity, offset: Vector3, rot: Vector3, p8: i32, p9: bool) { invoke_ignore!(0x7C00CFC48A782DC0, volume, entity, offset, rot, p8, p9) }
 	pub fn _DETACH_VOLUME_FROM_ENTITY(volume: Volume, entity: Entity) { invoke_ignore!(0x19C975B81BE53C28, volume, entity) }
 	pub fn SET_PED_ONTO_MOUNT(ped: Ped, mount: Ped, seatIndex: i32, p3: bool) { invoke_ignore!(0x028F76B6E78246EB, ped, mount, seatIndex, p3) }
 	pub fn _REMOVE_PED_FROM_MOUNT(ped: Ped, p1: bool, p2: bool) { invoke_ignore!(0x5337B721C51883A9, ped, p1, p2) }
@@ -4052,7 +4051,7 @@ pub mod PED {
 	pub fn GET_PED_TIME_OF_DEATH(ped: Ped) -> i32 { invoke!(0x1E98817B311AE98A, ped) }
 	pub fn COUNT_PEDS_IN_COMBAT_WITH_TARGET(ped: Ped, flag: i32) -> i32 { invoke!(0x5407B7288D0478B7, ped, flag) }
 	pub fn _GET_PEDS_IN_COMBAT_WITH_TARGET(ped: Ped, itemset: ItemSet, flag: i32) -> i32 { invoke!(0x7BE607DAFF382FD2, ped, itemset, flag) }
-	pub fn COUNT_PEDS_IN_COMBAT_WITH_TARGET_WITHIN_RADIUS(ped: Ped, x: f32, y: f32, z: f32, radius: f32, flag: i32) -> i32 { invoke!(0x336B3D200AB007CB, ped, x, y, z, radius, flag) }
+	pub fn COUNT_PEDS_IN_COMBAT_WITH_TARGET_WITHIN_RADIUS(ped: Ped, coords: Vector3, radius: f32, flag: i32) -> i32 { invoke!(0x336B3D200AB007CB, ped, coords, radius, flag) }
 	pub fn GET_CURRENT_TARGET_FOR_PED(ped: Ped) -> Entity { invoke!(0xCD66FEA29400A0B5, ped) }
 	pub fn SET_PED_RELATIONSHIP_GROUP_DEFAULT_HASH(ped: Ped, hash: Hash) { invoke_ignore!(0xADB3F206518799E8, ped, hash) }
 	pub fn _GET_DEFAULT_RELATIONSHIP_GROUP_HASH(modelHash: Hash) -> Hash { invoke!(0x3CC4A718C258BDD0, modelHash) }
@@ -4067,11 +4066,11 @@ pub mod PED {
 	pub fn GET_RELATIONSHIP_BETWEEN_GROUPS(group1: Hash, group2: Hash) -> i32 { invoke!(0x9E6B70061662AE5C, group1, group2) }
 	pub fn _0xDC91F22F09BC6C2F(group: Hash, p1: bool) { invoke_ignore!(0xDC91F22F09BC6C2F, group, p1) }
 	pub fn _0x9629FAF6460D35CB(group: Hash, p1: bool) { invoke_ignore!(0x9629FAF6460D35CB, group, p1) }
-	pub fn _0x4E68C7EF706DF35D(ped: Ped, x: f32, y: f32, z: f32, p4: f32, relationshipGroup: Hash) { invoke_ignore!(0x4E68C7EF706DF35D, ped, x, y, z, p4, relationshipGroup) }
-	pub fn _0x3ACCE14DFA6BA8C2(ped: Ped, p1: i32, x: f32, y: f32, z: f32, p5: f32, itemset: ItemSet) -> i32 { invoke!(0x3ACCE14DFA6BA8C2, ped, p1, x, y, z, p5, itemset) }
+	pub fn _0x4E68C7EF706DF35D(ped: Ped, coords: Vector3, p4: f32, relationshipGroup: Hash) { invoke_ignore!(0x4E68C7EF706DF35D, ped, coords, p4, relationshipGroup) }
+	pub fn _0x3ACCE14DFA6BA8C2(ped: Ped, p1: i32, coords: Vector3, p5: f32, itemset: ItemSet) -> i32 { invoke!(0x3ACCE14DFA6BA8C2, ped, p1, coords, p5, itemset) }
 	pub fn SET_PED_TO_INFORM_RESPECTED_FRIENDS(ped: Ped, radius: f32, maxFriends: i32) { invoke_ignore!(0x112942C6E708F70B, ped, radius, maxFriends) }
 	pub fn _0x40C9155AF8BC13F3(ped: Ped) -> bool { invoke!(0x40C9155AF8BC13F3, ped) }
-	pub fn _0xF4860514AD354226(shockingEvent: ScrHandle, x: f32, y: f32, z: f32, p4: f32, p5: &mut i32) -> i32 { invoke!(0xF4860514AD354226, shockingEvent, x, y, z, p4, p5) }
+	pub fn _0xF4860514AD354226(shockingEvent: ScrHandle, coords: Vector3, p4: f32, p5: &mut i32) -> i32 { invoke!(0xF4860514AD354226, shockingEvent, coords, p4, p5) }
 	pub fn IS_PED_RESPONDING_TO_EVENT(ped: Ped, eventType: Hash) -> bool { invoke!(0x625B774D75C87068, ped, eventType) }
 	pub fn _0x5E9FAF6C513347B4(ped: Ped, eventType: Hash) -> Entity { invoke!(0x5E9FAF6C513347B4, ped, eventType) }
 	pub fn _0x326F7951EF0D7F75(ped: Ped, eventType: Hash) -> Any { invoke!(0x326F7951EF0D7F75, ped, eventType) }
@@ -4098,7 +4097,7 @@ pub mod PED {
 	pub fn SET_GROUP_FORMATION_SPACING(groupId: i32, p1: f32, p2: f32, p3: f32) { invoke_ignore!(0x1D9D45004C28C916, groupId, p1, p2, p3) }
 	pub fn RESET_GROUP_FORMATION_DEFAULT_SPACING(groupId: i32) { invoke_ignore!(0x63DAB4CCB3273205, groupId) }
 	pub fn _0xB05CC690CDE8A4A9(groupId: i32, p1: f32) -> bool { invoke!(0xB05CC690CDE8A4A9, groupId, p1) }
-	pub fn ADD_CUSTOM_FORMATION_LOCATION(groupId: i32, x: f32, y: f32, z: f32, position: i32) { invoke_ignore!(0x4E23CD07BD161E06, groupId, x, y, z, position) }
+	pub fn ADD_CUSTOM_FORMATION_LOCATION(groupId: i32, coords: Vector3, position: i32) { invoke_ignore!(0x4E23CD07BD161E06, groupId, coords, position) }
 	pub fn ADD_FORMATION_LOCATION(groupId: i32, p1: f32, p2: f32, p3: f32) -> bool { invoke!(0xB05945C1E9E60D91, groupId, p1, p2, p3) }
 	pub fn SET_FORMATION_POSITIONS_TARGET_RADIUS(groupId: i32, radius: f32) -> bool { invoke!(0x7CC7D3B7AF7FB71F, groupId, radius) }
 	pub fn _SET_FORMATION_AUTO_ASSIGN_POSITION(groupId: i32, toggle: bool) { invoke_ignore!(0x478F6B9920446CE2, groupId, toggle) }
@@ -4209,8 +4208,8 @@ pub mod PED {
 	pub fn _SET_PED_DRUNKNESS(ped: Ped, enabled: bool, drunknessLevel: f32) { invoke_ignore!(0x406CCF555B04FAD3, ped, enabled, drunknessLevel) }
 	pub fn _IS_PED_DRUNK(ped: Ped) -> bool { invoke!(0x50F124E6EF188B22, ped) }
 	pub fn _GET_PED_DRUNKNESS(ped: Ped) -> f32 { invoke!(0x6FB76442469ABD68, ped) }
-	pub fn GET_ANIM_INITIAL_OFFSET_POSITION(animDict: & CStr, animName: & CStr, x: f32, y: f32, z: f32, xRot: f32, yRot: f32, zRot: f32, p8: f32, p9: i32) -> Vector3 { invoke!(0xBE22B26DD764C040, animDict, animName, x, y, z, xRot, yRot, zRot, p8, p9) }
-	pub fn GET_ANIM_INITIAL_OFFSET_ROTATION(animDict: & CStr, animName: & CStr, x: f32, y: f32, z: f32, xRot: f32, yRot: f32, zRot: f32, p8: f32, p9: i32) -> Vector3 { invoke!(0x4B805E6046EE9E47, animDict, animName, x, y, z, xRot, yRot, zRot, p8, p9) }
+	pub fn GET_ANIM_INITIAL_OFFSET_POSITION(animDict: & CStr, animName: & CStr, coords: Vector3, rot: Vector3, p8: f32, p9: i32) -> Vector3 { invoke!(0xBE22B26DD764C040, animDict, animName, coords, rot, p8, p9) }
+	pub fn GET_ANIM_INITIAL_OFFSET_ROTATION(animDict: & CStr, animName: & CStr, coords: Vector3, rot: Vector3, p8: f32, p9: i32) -> Vector3 { invoke!(0x4B805E6046EE9E47, animDict, animName, coords, rot, p8, p9) }
 	pub fn SET_PED_RANDOM_COMPONENT_VARIATION(ped: Ped, p1: i32) { invoke_ignore!(0xC8A9481A01E63C28, ped, p1) }
 	pub fn KNOCK_OFF_PED_PROP(ped: Ped, p1: bool, p2: bool, p3: bool, p4: bool) { invoke_ignore!(0x6FD7816A36615F48, ped, p1, p2, p3, p4) }
 	pub fn SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(ped: Ped, toggle: bool) { invoke_ignore!(0x9F8AA94D6D97DBF4, ped, toggle) }
@@ -4221,14 +4220,14 @@ pub mod PED {
 	pub fn _GET_PED_HEIGHT(ped: Ped) -> f32 { invoke!(0x1D491CCF7211FB74, ped) }
 	pub fn _GET_PED_MODEL_SIZE_FROM_HASH(modelHash: Hash) -> i32 { invoke!(0xA65AA1ACE81E5A77, modelHash) }
 	pub fn REGISTER_TARGET(ped: Ped, targetPed: Ped, p2: bool) { invoke_ignore!(0x2F25D9AEFA34FBA2, ped, targetPed, p2) }
-	pub fn _REGISTER_HATED_TARGETS_IN_AREA(ped: Ped, x: f32, y: f32, z: f32, radius: f32) { invoke_ignore!(0xD8736EFDA38EDC5C, ped, x, y, z, radius) }
+	pub fn _REGISTER_HATED_TARGETS_IN_AREA(ped: Ped, coords: Vector3, radius: f32) { invoke_ignore!(0xD8736EFDA38EDC5C, ped, coords, radius) }
 	pub fn REGISTER_HATED_TARGETS_AROUND_PED(ped: Ped, radius: f32) { invoke_ignore!(0x9222F300BF8354FE, ped, radius) }
 	pub fn _IS_TARGET(ped: Ped, targetPed: Ped) -> bool { invoke!(0x6E5CBCB3941D7D08, ped, targetPed) }
 	pub fn _REMOVE_TARGET(ped: Ped, targetPed: Ped) { invoke_ignore!(0x4707E9C23D8CA3FE, ped, targetPed) }
-	pub fn GET_CLOSEST_PED(x: f32, y: f32, z: f32, radius: f32, p4: bool, p5: bool, outPed: &mut Ped, p7: bool, p8: bool, p9: bool, pedType: i32) -> bool { invoke!(0xC33AB876A77F8164, x, y, z, radius, p4, p5, outPed, p7, p8, p9, pedType) }
+	pub fn GET_CLOSEST_PED(coords: Vector3, radius: f32, p4: bool, p5: bool, outPed: &mut Ped, p7: bool, p8: bool, p9: bool, pedType: i32) -> bool { invoke!(0xC33AB876A77F8164, coords, radius, p4, p5, outPed, p7, p8, p9, pedType) }
 	pub fn CAN_PED_RAGDOLL(ped: Ped) -> bool { invoke!(0x128F79EDCECE4FD5, ped) }
 	pub fn SET_PED_TO_RAGDOLL(ped: Ped, timeMin: i32, timeMax: i32, ragdollType: i32, abortIfInjured: bool, abortIfDead: bool, nmTaskMessageParameterName: & CStr) -> bool { invoke!(0xAE99FB955581844A, ped, timeMin, timeMax, ragdollType, abortIfInjured, abortIfDead, nmTaskMessageParameterName) }
-	pub fn SET_PED_TO_RAGDOLL_WITH_FALL(ped: Ped, timeMin: i32, timeMax: i32, ragdollType: i32, falldirX: f32, falldirY: f32, falldirZ: f32, p7: f32, p8: f32, p9: f32, p10: f32, p11: f32, p12: f32, p13: f32) -> bool { invoke!(0xD76632D99E4966C8, ped, timeMin, timeMax, ragdollType, falldirX, falldirY, falldirZ, p7, p8, p9, p10, p11, p12, p13) }
+	pub fn SET_PED_TO_RAGDOLL_WITH_FALL(ped: Ped, timeMin: i32, timeMax: i32, ragdollType: i32, falldir: Vector3, p7: f32, p8: f32, p9: f32, p10: f32, p11: f32, p12: f32, p13: f32) -> bool { invoke!(0xD76632D99E4966C8, ped, timeMin, timeMax, ragdollType, falldir, p7, p8, p9, p10, p11, p12, p13) }
 	pub fn SET_PED_RAGDOLL_ON_COLLISION(ped: Ped, toggle: bool, p2: bool) { invoke_ignore!(0xF0A4F1BBF4FA7497, ped, toggle, p2) }
 	pub fn _SET_PED_TO_DISABLE_RAGDOLL(ped: Ped, toggle: bool) { invoke_ignore!(0x221F4D9912B7FE86, ped, toggle) }
 	pub fn IS_PED_RAGDOLL(ped: Ped) -> bool { invoke!(0x47E4E977581C5B55, ped) }
@@ -4245,23 +4244,23 @@ pub mod PED {
 	pub fn _0x9F933E0985E12C51(ped: Ped, p1: f32, p2: f32, p3: f32) { invoke_ignore!(0x9F933E0985E12C51, ped, p1, p2, p3) }
 	pub fn _0x88B2026A3B0BE33D(ped: Ped, p1: f32) { invoke_ignore!(0x88B2026A3B0BE33D, ped, p1) }
 	pub fn SET_PED_DEFENSIVE_AREA_VOLUME(ped: Ped, volume: Volume, p2: bool, p3: bool, p4: bool) { invoke_ignore!(0xFC3DB99C8144CD81, ped, volume, p2, p3, p4) }
-	pub fn SET_PED_SPHERE_DEFENSIVE_AREA(ped: Ped, x: f32, y: f32, z: f32, radius: f32, p5: bool, p6: bool, p7: bool) { invoke_ignore!(0x9D3151A373974804, ped, x, y, z, radius, p5, p6, p7) }
-	pub fn _SET_PED_DEFENSIVE_SPHERE_ATTACHED_TO_ENTITY(ped: Ped, entity: Entity, x: f32, y: f32, z: f32, radius: f32, p6: i32, p7: bool) { invoke_ignore!(0x1854217C640B39EC, ped, entity, x, y, z, radius, p6, p7) }
-	pub fn _SET_PED_DEFENSIVE_AREA_TO_ANGLED_AREA(ped: Ped, x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, p7: Any, p8: bool, p9: bool, entity: Entity, p11: bool) { invoke_ignore!(0xEB2BFE5D009F0331, ped, x1, y1, z1, x2, y2, z2, p7, p8, p9, entity, p11) }
+	pub fn SET_PED_SPHERE_DEFENSIVE_AREA(ped: Ped, coords: Vector3, radius: f32, p5: bool, p6: bool, p7: bool) { invoke_ignore!(0x9D3151A373974804, ped, coords, radius, p5, p6, p7) }
+	pub fn _SET_PED_DEFENSIVE_SPHERE_ATTACHED_TO_ENTITY(ped: Ped, entity: Entity, coords: Vector3, radius: f32, p6: i32, p7: bool) { invoke_ignore!(0x1854217C640B39EC, ped, entity, coords, radius, p6, p7) }
+	pub fn _SET_PED_DEFENSIVE_AREA_TO_ANGLED_AREA(ped: Ped, coords1: Vector3, coords2: Vector3, p7: Any, p8: bool, p9: bool, entity: Entity, p11: bool) { invoke_ignore!(0xEB2BFE5D009F0331, ped, coords1, coords2, p7, p8, p9, entity, p11) }
 	pub fn SET_PED_DEFENSIVE_AREA_DIRECTION(ped: Ped, p1: f32, p2: f32, p3: f32, p4: bool) { invoke_ignore!(0x413C6C763A4AFFAD, ped, p1, p2, p3, p4) }
 	pub fn REMOVE_PED_DEFENSIVE_AREA(ped: Ped, toggle: bool) { invoke_ignore!(0x74D4E028107450A9, ped, toggle) }
 	pub fn GET_PED_DEFENSIVE_AREA_POSITION(ped: Ped, p1: bool) -> Vector3 { invoke!(0x3C06B8786DD94CD1, ped, p1) }
 	pub fn IS_PED_DEFENSIVE_AREA_ACTIVE(ped: Ped, p1: bool) -> bool { invoke!(0xBA63D9FE45412247, ped, p1) }
 	pub fn _GET_PED_DEFENSIVE_VOLUME(ped: Ped, p1: Any) -> Volume { invoke!(0xEF2E6F870783369B, ped, p1) }
 	pub fn _0x4EC4EA2F72B36358(ped: Ped, p1: bool) { invoke_ignore!(0x4EC4EA2F72B36358, ped, p1) }
-	pub fn _0xCF0B19806473D324(ped: Ped, x: f32, y: f32, z: f32) { invoke_ignore!(0xCF0B19806473D324, ped, x, y, z) }
+	pub fn _0xCF0B19806473D324(ped: Ped, coords: Vector3) { invoke_ignore!(0xCF0B19806473D324, ped, coords) }
 	pub fn _0xB4B7C92FCE7347B7(ped: Ped) { invoke_ignore!(0xB4B7C92FCE7347B7, ped) }
 	pub fn REVIVE_INJURED_PED(ped: Ped) { invoke_ignore!(0x8D8ACD8388CD99CE, ped) }
 	pub fn RESURRECT_PED(ped: Ped) { invoke_ignore!(0x71BC8E838B9C6035, ped) }
 	pub fn SET_PED_NAME_DEBUG(ped: Ped, name: & CStr) { invoke_ignore!(0x98EFA132A4117BE1, ped, name) }
 	pub fn SPECIAL_FUNCTION_DO_NOT_USE(ped: Ped, p1: bool) { invoke_ignore!(0xF9ACF4A08098EA25, ped, p1) }
 	pub fn _0x7020839C7302D8AC(ped: Ped) -> bool { invoke!(0x7020839C7302D8AC, ped) }
-	pub fn _0xE1AADD0055D76603(ped: Ped, entity: Entity, boneIndex1: i32, boneIndex2: i32, x: f32, y: f32, z: f32, p7: f32, p8: bool, p9: bool, p10: i32) { invoke_ignore!(0xE1AADD0055D76603, ped, entity, boneIndex1, boneIndex2, x, y, z, p7, p8, p9, p10) }
+	pub fn _0xE1AADD0055D76603(ped: Ped, entity: Entity, boneIndex1: i32, boneIndex2: i32, coords: Vector3, p7: f32, p8: bool, p9: bool, p10: i32) { invoke_ignore!(0xE1AADD0055D76603, ped, entity, boneIndex1, boneIndex2, coords, p7, p8, p9, p10) }
 	pub fn _0x5A1A929C8B729B4A(ped: Ped) { invoke_ignore!(0x5A1A929C8B729B4A, ped) }
 	pub fn _0x97A38B65EBDA3D50(ped: Ped, p1: bool) { invoke_ignore!(0x97A38B65EBDA3D50, ped, p1) }
 	pub fn _0x06A10B4D7F50B0C3(ped: Ped) -> bool { invoke!(0x06A10B4D7F50B0C3, ped) }
@@ -4296,8 +4295,8 @@ pub mod PED {
 	pub fn SET_PED_SWEAT(ped: Ped, sweat: f32) { invoke_ignore!(0x27B0405F59637D1F, ped, sweat) }
 	pub fn CLEAR_PED_DECORATIONS(ped: Ped) { invoke_ignore!(0x0E5173C163976E38, ped) }
 	pub fn WAS_PED_SKELETON_UPDATED(ped: Ped) -> bool { invoke!(0x11B499C1E0FF8559, ped) }
-	pub fn GET_PED_BONE_COORDS(ped: Ped, boneId: i32, offsetX: f32, offsetY: f32, offsetZ: f32) -> Vector3 { invoke!(0x17C07FC640E86B4E, ped, boneId, offsetX, offsetY, offsetZ) }
-	pub fn ADD_SCENARIO_BLOCKING_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, p6: bool, blockingFlags: i32) -> i32 { invoke!(0x1B5C85C612E5256E, x1, y1, z1, x2, y2, z2, p6, blockingFlags) }
+	pub fn GET_PED_BONE_COORDS(ped: Ped, boneId: i32, offset: Vector3) -> Vector3 { invoke!(0x17C07FC640E86B4E, ped, boneId, offset) }
+	pub fn ADD_SCENARIO_BLOCKING_AREA(coords1: Vector3, coords2: Vector3, p6: bool, blockingFlags: i32) -> i32 { invoke!(0x1B5C85C612E5256E, coords1, coords2, p6, blockingFlags) }
 	pub fn REMOVE_SCENARIO_BLOCKING_AREAS() { invoke_ignore!(0xD37401D78A929A49) }
 	pub fn REMOVE_SCENARIO_BLOCKING_AREA(p0: Any, p1: bool) { invoke_ignore!(0x31D16B74C6E29D66, p0, p1) }
 	pub fn _ADD_SCENARIO_BLOCKING_VOLUME(volume: Volume, p1: bool, flag: i32) -> Any { invoke!(0x4C39C95AE5DB1329, volume, p1, flag) }
@@ -4308,16 +4307,16 @@ pub mod PED {
 	pub fn IS_PED_USING_THIS_SCENARIO(ped: Ped, scenario: i32) -> bool { invoke!(0x9C54041BB66BCF9E, ped, scenario) }
 	pub fn _CAN_PED_USE_SCENARIO_POINT(ped: Ped, scenario: i32, p2: Any, p3: Any, p4: Any) -> bool { invoke!(0xAB643407D0B26F07, ped, scenario, p2, p3, p4) }
 	pub fn _0x1148F706CF4EBDDA(ped: Ped, p1: Hash, p2: i32) -> bool { invoke!(0x1148F706CF4EBDDA, ped, p1, p2) }
-	pub fn SET_PED_PANIC_EXIT_SCENARIO(ped: Ped, x: f32, y: f32, z: f32) -> bool { invoke!(0xFE07FF6495D52E2A, ped, x, y, z) }
+	pub fn SET_PED_PANIC_EXIT_SCENARIO(ped: Ped, coords: Vector3) -> bool { invoke!(0xFE07FF6495D52E2A, ped, coords) }
 	pub fn TOGGLE_SCENARIO_PED_COWER_IN_PLACE(ped: Ped, toggle: bool) { invoke_ignore!(0x9A77DFD295E29B09, ped, toggle) }
 	pub fn _0xD8CEEED54C672B5D(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xD8CEEED54C672B5D, p0, p1, p2, p3, p4, p5, p6) }
-	pub fn SET_PED_SHOULD_PLAY_DIRECTED_NORMAL_SCENARIO_EXIT(ped: Ped, x: f32, y: f32, z: f32) -> bool { invoke!(0xEC6935EBE0847B90, ped, x, y, z) }
+	pub fn SET_PED_SHOULD_PLAY_DIRECTED_NORMAL_SCENARIO_EXIT(ped: Ped, coords: Vector3) -> bool { invoke!(0xEC6935EBE0847B90, ped, coords) }
 	pub fn SET_PED_SHOULD_PLAY_NORMAL_SCENARIO_EXIT(ped: Ped) { invoke_ignore!(0xA3A9299C4F2ADB98, ped) }
 	pub fn SET_PED_SHOULD_PLAY_IMMEDIATE_SCENARIO_EXIT(ped: Ped) { invoke_ignore!(0xF1C03A5352243A30, ped) }
-	pub fn SET_PED_SHOULD_PLAY_FLEE_SCENARIO_EXIT(ped: Ped, x: f32, y: f32, z: f32, lookIntensity: i32) -> bool { invoke!(0xEEED8FAFEC331A70, ped, x, y, z, lookIntensity) }
-	pub fn SET_PED_SHOULD_PLAY_COMBAT_SCENARIO_EXIT(ped: Ped, x: f32, y: f32, z: f32, lookIntensity: i32) -> bool { invoke!(0x802092B07E3B1EEA, ped, x, y, z, lookIntensity) }
-	pub fn SET_PED_SHOULD_PLAY_EMOTIONAL_SCENARIO_EXIT(ped: Ped, x: f32, y: f32, z: f32, lookIntensity: i32, p5: bool) -> bool { invoke!(0x62FDAD5E01D2DD47, ped, x, y, z, lookIntensity, p5) }
-	pub fn SET_PED_SHOULD_PLAY_QUICK_SCENARIO_EXIT(ped: Ped, x: f32, y: f32, z: f32, lookIntensity: i32, p5: bool) -> bool { invoke!(0x463803429297117C, ped, x, y, z, lookIntensity, p5) }
+	pub fn SET_PED_SHOULD_PLAY_FLEE_SCENARIO_EXIT(ped: Ped, coords: Vector3, lookIntensity: i32) -> bool { invoke!(0xEEED8FAFEC331A70, ped, coords, lookIntensity) }
+	pub fn SET_PED_SHOULD_PLAY_COMBAT_SCENARIO_EXIT(ped: Ped, coords: Vector3, lookIntensity: i32) -> bool { invoke!(0x802092B07E3B1EEA, ped, coords, lookIntensity) }
+	pub fn SET_PED_SHOULD_PLAY_EMOTIONAL_SCENARIO_EXIT(ped: Ped, coords: Vector3, lookIntensity: i32, p5: bool) -> bool { invoke!(0x62FDAD5E01D2DD47, ped, coords, lookIntensity, p5) }
+	pub fn SET_PED_SHOULD_PLAY_QUICK_SCENARIO_EXIT(ped: Ped, coords: Vector3, lookIntensity: i32, p5: bool) -> bool { invoke!(0x463803429297117C, ped, coords, lookIntensity, p5) }
 	pub fn _0xF9331B3A314EB49D(ped: Ped) -> bool { invoke!(0xF9331B3A314EB49D, ped) }
 	pub fn _0xE735A7DA22E88359(p0: Any) { invoke_ignore!(0xE735A7DA22E88359, p0) }
 	pub fn _0x82CB0F3F0C7785E5(p0: Any) -> Any { invoke!(0x82CB0F3F0C7785E5, p0) }
@@ -4357,7 +4356,7 @@ pub mod PED {
 	pub fn _0xE0FE107AB174D64A(p0: Any, p1: Any) { invoke_ignore!(0xE0FE107AB174D64A, p0, p1) }
 	pub fn SET_PED_GROUP_MEMBER_PASSENGER_INDEX(ped: Ped, index: i32) { invoke_ignore!(0x0BDDB8D9EC6BCF3C, ped, index) }
 	pub fn IS_PED_EVASIVE_DIVING(ped: Ped, evadingEntity: &mut Entity) -> bool { invoke!(0x414641C26E105898, ped, evadingEntity) }
-	pub fn _SHOOT_TRIGGER_AT_COORDS(ped: Ped, x: f32, y: f32, z: f32, p4: i32, p5: f32, p6: i32, p7: f32) -> Any { invoke!(0x4C57F27D1554E6B0, ped, x, y, z, p4, p5, p6, p7) }
+	pub fn _SHOOT_TRIGGER_AT_COORDS(ped: Ped, coords: Vector3, p4: i32, p5: f32, p6: i32, p7: f32) -> Any { invoke!(0x4C57F27D1554E6B0, ped, coords, p4, p5, p6, p7) }
 	pub fn _IS_THIS_MODEL_A_HORSE(model: Hash) -> bool { invoke!(0x772A1969F649E902, model) }
 	pub fn SET_PED_MODEL_IS_SUPPRESSED(model: Hash, toggle: bool) { invoke_ignore!(0xE163A4BCE4DE6F11, model, toggle) }
 	pub fn _IS_PED_MODEL_SUPPRESSED(model: Hash) -> bool { invoke!(0xAA9F048DCF69B6DC, model) }
@@ -4366,7 +4365,7 @@ pub mod PED {
 	pub fn SET_PED_CAN_RAGDOLL_FROM_PLAYER_IMPACT(ped: Ped, toggle: bool) { invoke_ignore!(0xDF993EE5E90ABA25, ped, toggle) }
 	pub fn _0xE6CB36F43A95D75F(p0: Any) { invoke_ignore!(0xE6CB36F43A95D75F, p0) }
 	pub fn SET_PED_LEG_IK_MODE(ped: Ped, mode: i32) { invoke_ignore!(0xC396F5B86FF9FEBD, ped, mode) }
-	pub fn _IS_PED_IN_POINT(ped: Ped, x: f32, y: f32, z: f32, radius: f32, p5: bool) -> bool { invoke!(0x078076AB50FB117F, ped, x, y, z, radius, p5) }
+	pub fn _IS_PED_IN_POINT(ped: Ped, coords: Vector3, radius: f32, p5: bool) -> bool { invoke!(0x078076AB50FB117F, ped, coords, radius, p5) }
 	pub fn _SET_PED_CAN_BE_LASSOED(ped: Ped, toggle: bool) { invoke_ignore!(0xFD6943B6DF77E449, ped, toggle) }
 	pub fn SET_PED_COMBAT_MOVEMENT(ped: Ped, combatMovement: i32) { invoke_ignore!(0x4D9CA1009AFBD057, ped, combatMovement) }
 	pub fn GET_PED_COMBAT_MOVEMENT(ped: Ped) -> i32 { invoke!(0xDEA92412FCAEB3F5, ped) }
@@ -4434,7 +4433,7 @@ pub mod PED {
 	pub fn _SET_PED_GRAPPLE_ANIMATION(ped: Ped, grappleAnim: Hash) { invoke_ignore!(0x56E9C26CD29D1ED6, ped, grappleAnim) }
 	pub fn SET_PED_FLEE_ATTRIBUTES(ped: Ped, attributeFlags: i32, enable: bool) { invoke_ignore!(0x70A2D1137C8ED7C9, ped, attributeFlags, enable) }
 	pub fn _IS_PED_COWERING(ped: Ped) -> bool { invoke!(0xB086C8C0F5701D14, ped) }
-	pub fn IS_ANY_PED_NEAR_POINT(x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0x083961498679DC9F, x, y, z, radius) }
+	pub fn IS_ANY_PED_NEAR_POINT(coords: Vector3, radius: f32) -> bool { invoke!(0x083961498679DC9F, coords, radius) }
 	pub fn FORCE_PED_AI_AND_ANIMATION_UPDATE(ped: Ped, p1: bool, p2: bool) { invoke_ignore!(0x2208438012482A1A, ped, p1, p2) }
 	pub fn _0xC2722B252C79E641(ped: Ped, p1: Any, p2: Any, p3: bool) { invoke_ignore!(0xC2722B252C79E641, ped, p1, p2, p3) }
 	pub fn _IS_PED_DOING_SCENARIO_TRANSITION(ped: Ped) -> bool { invoke!(0xC488B8C0E52560D8, ped) }
@@ -4442,7 +4441,7 @@ pub mod PED {
 	pub fn _ADD_SCENARIO_TRANSITION(ped: Ped) { invoke_ignore!(0x6D07B371E9439019, ped) }
 	pub fn _GIVE_PED_HASH_COMMAND(ped: Ped, commandHash: Hash, activationDuration: f32) { invoke_ignore!(0xD65FDC686A031C83, ped, commandHash, activationDuration) }
 	pub fn _GET_IS_PED_COMMAND_HASH_PRESENT(ped: Ped, commandHash: Hash) -> bool { invoke!(0x68821369A2CEADD5, ped, commandHash) }
-	pub fn IS_PED_HEADING_TOWARDS_POSITION(ped: Ped, x: f32, y: f32, z: f32, p4: f32) -> bool { invoke!(0xFCF37A457CB96DC0, ped, x, y, z, p4) }
+	pub fn IS_PED_HEADING_TOWARDS_POSITION(ped: Ped, coords: Vector3, p4: f32) -> bool { invoke!(0xFCF37A457CB96DC0, ped, coords, p4) }
 	pub fn _0x600BBDD29820370C(ped: Ped) { invoke_ignore!(0x600BBDD29820370C, ped) }
 	pub fn REQUEST_PED_VISIBILITY_TRACKING(ped: Ped) { invoke_ignore!(0x7D7A2E43E74E2EB8, ped) }
 	pub fn RELEASE_PED_VISIBILITY_TRACKING(ped: Ped) { invoke_ignore!(0x3088634CF8C819CF, ped) }
@@ -4501,8 +4500,8 @@ pub mod PED {
 	pub fn SET_PED_USING_ACTION_MODE(ped: Ped, bActionModeEnabled: bool, p2: i32, action: & CStr) { invoke_ignore!(0xD75ACCF5E0FB5367, ped, bActionModeEnabled, p2, action) }
 	pub fn SET_PED_CAPSULE(ped: Ped, value: f32) { invoke_ignore!(0x364DF566EC833DE2, ped, value) }
 	pub fn _GET_RIDER_OF_MOUNT(mount: Ped, p1: bool) -> Ped { invoke!(0xB676EFDA03DADA52, mount, p1) }
-	pub fn SPAWNPOINTS_START_SEARCH(x: f32, y: f32, z: f32, width: f32, p4: f32, spawnpointsFlag: i32, p6: f32, duration: i32, p8: f32) { invoke_ignore!(0x2DF9038C90AD5264, x, y, z, width, p4, spawnpointsFlag, p6, duration, p8) }
-	pub fn SPAWNPOINTS_START_SEARCH_IN_ANGLED_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, width: f32, spawnpointsFlag: i32, p8: f32, duration: i32, p10: f32) { invoke_ignore!(0xB2AFF10216DEFA2F, x1, y1, z1, x2, y2, z2, width, spawnpointsFlag, p8, duration, p10) }
+	pub fn SPAWNPOINTS_START_SEARCH(coords: Vector3, width: f32, p4: f32, spawnpointsFlag: i32, p6: f32, duration: i32, p8: f32) { invoke_ignore!(0x2DF9038C90AD5264, coords, width, p4, spawnpointsFlag, p6, duration, p8) }
+	pub fn SPAWNPOINTS_START_SEARCH_IN_ANGLED_AREA(coords1: Vector3, coords2: Vector3, width: f32, spawnpointsFlag: i32, p8: f32, duration: i32, p10: f32) { invoke_ignore!(0xB2AFF10216DEFA2F, coords1, coords2, width, spawnpointsFlag, p8, duration, p10) }
 	pub fn _SPAWNPOINTS_START_SEARCH_WITH_VOLUME(volume: Volume, spawnpointsFlag: i32, p2: f32, duration: i32, p4: f32) { invoke_ignore!(0x83ED1FC9DF3411F5, volume, spawnpointsFlag, p2, duration, p4) }
 	pub fn SPAWNPOINTS_CANCEL_SEARCH() { invoke_ignore!(0xFEE4A5459472A9F8) }
 	pub fn SPAWNPOINTS_IS_SEARCH_ACTIVE() -> bool { invoke!(0x3C67506996001F5E) }
@@ -4511,7 +4510,7 @@ pub mod PED {
 	pub fn SPAWNPOINTS_GET_NUM_SEARCH_RESULTS() -> i32 { invoke!(0xA635C11B8C44AFC2) }
 	pub fn SPAWNPOINTS_GET_SEARCH_RESULT(randomInt: i32, x: &mut f32, y: &mut Any, z: &mut f32) { invoke_ignore!(0x280C7E3AC7F56E90, randomInt, x, y, z) }
 	pub fn SPAWNPOINTS_GET_SEARCH_RESULT_FLAGS(p0: Any, p1: &mut Any) { invoke_ignore!(0xB782F8238512BAD5, p0, p1) }
-	pub fn SET_IK_TARGET(ped: Ped, ikIndex: i32, entityLookAt: Entity, boneLookAt: i32, offsetX: f32, offsetY: f32, offsetZ: f32, p7: Any, blendInDuration: i32, blendOutDuration: i32) { invoke_ignore!(0xC32779C16FCEECD9, ped, ikIndex, entityLookAt, boneLookAt, offsetX, offsetY, offsetZ, p7, blendInDuration, blendOutDuration) }
+	pub fn SET_IK_TARGET(ped: Ped, ikIndex: i32, entityLookAt: Entity, boneLookAt: i32, offset: Vector3, p7: Any, blendInDuration: i32, blendOutDuration: i32) { invoke_ignore!(0xC32779C16FCEECD9, ped, ikIndex, entityLookAt, boneLookAt, offset, p7, blendInDuration, blendOutDuration) }
 	pub fn _REQUEST_PED_EMOTIONAL_PRESET(ped: Ped, name: & CStr) { invoke_ignore!(0x5C3C55EAAD19915F, ped, name) }
 	pub fn _HAS_PED_EMOTIONAL_PRESET_LOADED(ped: Ped, name: & CStr) -> bool { invoke!(0xDE3904B22695D9F9, ped, name) }
 	pub fn _REMOVE_PED_EMOTIONAL_PRESET(ped: Ped, name: & CStr) { invoke_ignore!(0xFC3BAB1801A8255A, ped, name) }
@@ -4523,7 +4522,7 @@ pub mod PED {
 	pub fn SET_PED_LOD_MULTIPLIER(ped: Ped, multiplier: f32) { invoke_ignore!(0xDC2C5C242AAC342B, ped, multiplier) }
 	pub fn _GET_PED_LOD_MULTIPLIER(ped: Ped) -> f32 { invoke!(0x1B710E6F4AB69341, ped) }
 	pub fn _0xA218D2BBCAA7388C(p0: Any, p1: Any) -> Any { invoke!(0xA218D2BBCAA7388C, p0, p1) }
-	pub fn IS_ANY_HOSTILE_PED_NEAR_POINT(ped: Ped, x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0x68772DB2B2526F9F, ped, x, y, z, radius) }
+	pub fn IS_ANY_HOSTILE_PED_NEAR_POINT(ped: Ped, coords: Vector3, radius: f32) -> bool { invoke!(0x68772DB2B2526F9F, ped, coords, radius) }
 	pub fn _0xCBDE59C48F2B06F5(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0xCBDE59C48F2B06F5, p0, p1, p2) }
 	pub fn _0x6A190B94C2541A99(p0: Any) { invoke_ignore!(0x6A190B94C2541A99, p0) }
 	pub fn IS_TARGET_PED_IN_PERCEPTION_AREA(ped: Ped, targetPed: Ped, p2: f32, customDistance: f32, p4: f32, p5: f32) -> bool { invoke!(0x06087579E7AA85A9, ped, targetPed, p2, customDistance, p4, p5) }
@@ -4672,7 +4671,7 @@ pub mod PED {
 	pub fn _REQUEST_META_PED(model: Hash, p1: i32) -> i32 { invoke!(0xF97C34C33487D569, model, p1) }
 	pub fn _HAS_META_PED_REQUEST_LOADED(requestId: i32) -> bool { invoke!(0xC0940AC858C1E126, requestId) }
 	pub fn _IS_META_PED_REQUEST_VALID(requestId: i32) -> bool { invoke!(0x43E4DA469541A9C9, requestId) }
-	pub fn _CREATE_META_PED(requestId: i32, x: f32, y: f32, z: f32, heading: f32, p5: bool, p6: bool, p7: bool, p8: bool, p9: bool) -> Ped { invoke!(0x0BCD4091C8EABA42, requestId, x, y, z, heading, p5, p6, p7, p8, p9) }
+	pub fn _CREATE_META_PED(requestId: i32, coords: Vector3, heading: f32, p5: bool, p6: bool, p7: bool, p8: bool, p9: bool) -> Ped { invoke!(0x0BCD4091C8EABA42, requestId, coords, heading, p5, p6, p7, p8, p9) }
 	pub fn _RELEASE_META_PED_REQUEST(requestId: i32) { invoke_ignore!(0x3972F78A78B5D9DF, requestId) }
 	pub fn _REQUEST_META_PED_OUTFIT(model: Hash, outfit: Hash) -> i32 { invoke!(0x13154A76CE0CF9AB, model, outfit) }
 	pub fn _0x27E8A84C12B0B7D1(p0: Any, p1: Any, p2: Any) -> Any { invoke!(0x27E8A84C12B0B7D1, p0, p1, p2) }
@@ -4684,10 +4683,10 @@ pub mod PED {
 	pub fn _RELEASE_META_PED_ASSET_REQUEST(requestId: i32) { invoke_ignore!(0x13E7320C762F0477, requestId) }
 	pub fn _HAS_META_PED_ASSET_LOADED(requestId: i32) -> bool { invoke!(0xB0B2C6D170B0E8E5, requestId) }
 	pub fn _IS_META_PED_ASSET_VALID(requestId: i32) -> bool { invoke!(0x93FFD92F05EC32FD, requestId) }
-	pub fn _CREATE_META_PED_ASSET(asset: Hash, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, p7: bool, p8: bool, p9: bool) -> Entity { invoke!(0x9641A9A20310F6B8, asset, posX, posY, posZ, rotX, rotY, rotZ, p7, p8, p9) }
+	pub fn _CREATE_META_PED_ASSET(asset: Hash, pos: Vector3, rot: Vector3, p7: bool, p8: bool, p9: bool) -> Entity { invoke!(0x9641A9A20310F6B8, asset, pos, rot, p7, p8, p9) }
 	pub fn _HAS_META_PED_OUTFIT_LOADED(requestId: i32) -> bool { invoke!(0x610438375E5D1801, requestId) }
 	pub fn _IS_META_PED_OUTFIT_REQUEST_VALID(requestId: i32) -> bool { invoke!(0xB25E57FC8E37114D, requestId) }
-	pub fn _CREATE_META_PED_OUTFIT_PED(requestId: i32, x: f32, y: f32, z: f32, heading: f32, p5: bool, p6: bool, p7: bool, p8: bool) -> Ped { invoke!(0xEAF682A14F8E5F53, requestId, x, y, z, heading, p5, p6, p7, p8) }
+	pub fn _CREATE_META_PED_OUTFIT_PED(requestId: i32, coords: Vector3, heading: f32, p5: bool, p6: bool, p7: bool, p8: bool) -> Ped { invoke!(0xEAF682A14F8E5F53, requestId, coords, heading, p5, p6, p7, p8) }
 	pub fn _APPLY_PED_META_PED_OUTFIT(requestId: i32, ped: Ped, p2: bool, p3: bool) -> bool { invoke!(0x74F512E29CB717E2, requestId, ped, p2, p3) }
 	pub fn _SET_META_PED_WEARINESS(ped: Ped, weariness: f32) { invoke_ignore!(0x314C5465195F3B30, ped, weariness) }
 	pub fn _0xF47D54B986F0A346(ped: Ped, danceIntensity: i32) { invoke_ignore!(0xF47D54B986F0A346, ped, danceIntensity) }
@@ -4727,7 +4726,7 @@ pub mod PED {
 	pub fn _GET_PED_LAST_DROPPED_HAT(ped: Ped) -> Object { invoke!(0x1F714E7A9DADFC42, ped) }
 	pub fn _0x5D4CD22A8C82A81A(ped: Ped, p1: bool) { invoke_ignore!(0x5D4CD22A8C82A81A, ped, p1) }
 	pub fn _0xBF567DF2BEF211A6(p0: Any, p1: Any) { invoke_ignore!(0xBF567DF2BEF211A6, p0, p1) }
-	pub fn _CREATE_GRAVITY_WELL(xPos: f32, yPos: f32, zPos: f32, heading: f32, radius: f32, p5: f32, p6: f32, p7: f32, stopAtDestination: bool) -> i32 { invoke!(0x4F5EBE70081E5A20, xPos, yPos, zPos, heading, radius, p5, p6, p7, stopAtDestination) }
+	pub fn _CREATE_GRAVITY_WELL(pos: Vector3, heading: f32, radius: f32, p5: f32, p6: f32, p7: f32, stopAtDestination: bool) -> i32 { invoke!(0x4F5EBE70081E5A20, pos, heading, radius, p5, p6, p7, stopAtDestination) }
 	pub fn _REMOVE_GRAVITY_WELL(handle: i32) { invoke_ignore!(0x87247BC60B60BED8, handle) }
 	pub fn _IS_PED_INTIMIDATED(ped: Ped) -> bool { invoke!(0x57779B55B83E2BEA, ped) }
 	pub fn _0x7EE3A8660F38797E(ped: Ped) -> bool { invoke!(0x7EE3A8660F38797E, ped) }
@@ -4818,7 +4817,7 @@ pub mod PED {
 	pub fn _0x095C2277FED731DB(p0: Any) -> Any { invoke!(0x095C2277FED731DB, p0) }
 	pub fn _0x09171A6F8FDE5DC1(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x09171A6F8FDE5DC1, p0, p1, p2, p3, p4) }
 	pub fn _0x09E378C52B1433B5(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x09E378C52B1433B5, p0, p1, p2, p3, p4) }
-	pub fn _0x6507AC3BD7C99009(x: f32, y: f32, z: f32, p3: f32) -> bool { invoke!(0x6507AC3BD7C99009, x, y, z, p3) }
+	pub fn _0x6507AC3BD7C99009(coords: Vector3, p3: f32) -> bool { invoke!(0x6507AC3BD7C99009, coords, p3) }
 	pub fn _GET_PLAYER_PED_WATER_DEPTH(ped: Ped) -> f32 { invoke!(0x2942457417A5FD24, ped) }
 	pub fn _SET_PED_TRAIL_EFFECT(ped: Ped, p1: bool, duration: f32) { invoke_ignore!(0xA5950E16B8F31052, ped, p1, duration) }
 	pub fn _0xEBAAC9A750E7563B(ped: Ped) -> bool { invoke!(0xEBAAC9A750E7563B, ped) }
@@ -4888,9 +4887,9 @@ pub mod PERSISTENCE {
 	use crate::core::types::*;
 
 	pub fn _0x7A1BD123E5CDB6E5() { invoke_ignore!(0x7A1BD123E5CDB6E5) }
-	pub fn PERSISTENCE_REMOVE_ALL_ENTITIES_IN_AREA(x: f32, y: f32, z: f32, radius: f32) { invoke_ignore!(0x9D16896F0DBE78A2, x, y, z, radius) }
+	pub fn PERSISTENCE_REMOVE_ALL_ENTITIES_IN_AREA(coords: Vector3, radius: f32) { invoke_ignore!(0x9D16896F0DBE78A2, coords, radius) }
 	pub fn _0x065887B694359799(p0: Any) { invoke_ignore!(0x065887B694359799, p0) }
-	pub fn _0xFC9806DA9A460093(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) { invoke_ignore!(0xFC9806DA9A460093, x1, y1, z1, x2, y2, z2) }
+	pub fn _0xFC9806DA9A460093(coords1: Vector3, coords2: Vector3) { invoke_ignore!(0xFC9806DA9A460093, coords1, coords2) }
 	pub fn _0xB03140014ACA6C40(p0: Any, p1: Any) { invoke_ignore!(0xB03140014ACA6C40, p0, p1) }
 	pub fn _0xE225CEF1901F6108(p0: Any, p1: Any) { invoke_ignore!(0xE225CEF1901F6108, p0, p1) }
 	pub fn _0x8DE104BEC243A73B(p0: Any) { invoke_ignore!(0x8DE104BEC243A73B, p0) }
@@ -4906,8 +4905,8 @@ pub mod PERSISTENCE {
 	pub fn _0x291CC21D1FB6790E(p0: Any) { invoke_ignore!(0x291CC21D1FB6790E, p0) }
 	pub fn PERSISTENCE_ADD_SCENARIO_LOOTED(scenario: i32) { invoke_ignore!(0x8245C1F3262F4AC2, scenario) }
 	pub fn _PERSISTENCE_IS_SCENARIO_MARKED_AS_LOOTED(scenario: i32) -> bool { invoke!(0xFB7CF1DE938A3E22, scenario) }
-	pub fn _PERSISTENCE_IS_SCENARIO_MARKED_AS_LOOTED_AT_COORDS(x: f32, y: f32, z: f32) -> bool { invoke!(0xB6E1A185C2B9319A, x, y, z) }
-	pub fn _PERSISTENCE_IS_SCENARIO_MARKED_AS_LOOTED_AT_COORDS_WITH_MODEL(x: f32, y: f32, z: f32, model: Hash) -> bool { invoke!(0x188313616D184213, x, y, z, model) }
+	pub fn _PERSISTENCE_IS_SCENARIO_MARKED_AS_LOOTED_AT_COORDS(coords: Vector3) -> bool { invoke!(0xB6E1A185C2B9319A, coords) }
+	pub fn _PERSISTENCE_IS_SCENARIO_MARKED_AS_LOOTED_AT_COORDS_WITH_MODEL(coords: Vector3, model: Hash) -> bool { invoke!(0x188313616D184213, coords, model) }
 	pub fn _0x66DAA3A9274E8E82() { invoke_ignore!(0x66DAA3A9274E8E82) }
 }
 pub mod PHYSICS {
@@ -4915,31 +4914,31 @@ pub mod PHYSICS {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn ADD_ROPE(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, length: f32, ropeType: i32, maxLength: f32, minLength: f32, p10: f32, p11: bool, p12: bool, rigid: bool, p14: f32, breakWhenShot: bool, unkPtr: &mut Any, p17: bool) -> i32 { invoke!(0xE832D760399EB220, x, y, z, rotX, rotY, rotZ, length, ropeType, maxLength, minLength, p10, p11, p12, rigid, p14, breakWhenShot, unkPtr, p17) }
-	pub fn _ADD_ROPE_2(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, length: f32, ropeType: i32, isNetworked: bool, p9: i32, p10: f32) -> i32 { invoke!(0xE9C59F6809373A99, x, y, z, rotX, rotY, rotZ, length, ropeType, isNetworked, p9, p10) }
+	pub fn ADD_ROPE(coords: Vector3, rot: Vector3, length: f32, ropeType: i32, maxLength: f32, minLength: f32, p10: f32, p11: bool, p12: bool, rigid: bool, p14: f32, breakWhenShot: bool, unkPtr: &mut Any, p17: bool) -> i32 { invoke!(0xE832D760399EB220, coords, rot, length, ropeType, maxLength, minLength, p10, p11, p12, rigid, p14, breakWhenShot, unkPtr, p17) }
+	pub fn _ADD_ROPE_2(coords: Vector3, rot: Vector3, length: f32, ropeType: i32, isNetworked: bool, p9: i32, p10: f32) -> i32 { invoke!(0xE9C59F6809373A99, coords, rot, length, ropeType, isNetworked, p9, p10) }
 	pub fn DELETE_ROPE(ropeId: &mut i32) { invoke_ignore!(0x52B4829281364649, ropeId) }
 	pub fn _RELEASE_ROPE(ropeId: i32) { invoke_ignore!(0x6076213101A47B3B, ropeId) }
 	pub fn DELETE_CHILD_ROPE(ropeId: i32) { invoke_ignore!(0xAA5D6B1888E4DB20, ropeId) }
-	pub fn _BREAK_ROPE(ropeId: &mut i32, ropeTop: &mut i32, ropeBottom: &mut i32, offsetX: f32, offsetY: f32, offsetZ: f32, p6: i32) { invoke_ignore!(0x4CFA2B7FAE115ECB, ropeId, ropeTop, ropeBottom, offsetX, offsetY, offsetZ, p6) }
+	pub fn _BREAK_ROPE(ropeId: &mut i32, ropeTop: &mut i32, ropeBottom: &mut i32, offset: Vector3, p6: i32) { invoke_ignore!(0x4CFA2B7FAE115ECB, ropeId, ropeTop, ropeBottom, offset, p6) }
 	pub fn DOES_ROPE_EXIST(ropeId: i32) -> bool { invoke!(0xFD5448BE3111ED96, ropeId) }
 	pub fn _IS_ROPE_BROKEN(ropeId: i32) -> bool { invoke!(0x79C2BEC82CFD7F7F, ropeId) }
 	pub fn _ROPE_CHANGE_VISIBILITY(ropeId: &mut i32, visible: bool) { invoke_ignore!(0x7A54D82227A139DB, ropeId, visible) }
 	pub fn ROPE_DRAW_SHADOW_ENABLED(ropeId: &mut i32, toggle: bool) { invoke_ignore!(0xF159A63806BB5BA8, ropeId, toggle) }
 	pub fn GET_ROPE_VERTEX_COUNT(ropeId: i32) -> i32 { invoke!(0x3655F544CD30F0B5, ropeId) }
-	pub fn _0xE54BF2CE6C7D23A9(ropeId: i32, p1: i32, x: f32, y: f32, z: f32) { invoke_ignore!(0xE54BF2CE6C7D23A9, ropeId, p1, x, y, z) }
+	pub fn _0xE54BF2CE6C7D23A9(ropeId: i32, p1: i32, coords: Vector3) { invoke_ignore!(0xE54BF2CE6C7D23A9, ropeId, p1, coords) }
 	pub fn _0x9C24846D0A4A2776(p0: Any) { invoke_ignore!(0x9C24846D0A4A2776, p0) }
 	pub fn _0x0CB16D05E03FB525(p0: Any) { invoke_ignore!(0x0CB16D05E03FB525, p0) }
 	pub fn _0xF27F1A8DE4F50A1B(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xF27F1A8DE4F50A1B, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn _0x21D0890D88DFB0B0(ropeId: i32, p1: bool, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: f32, p10: i32) { invoke_ignore!(0x21D0890D88DFB0B0, ropeId, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
-	pub fn ATTACH_ENTITIES_TO_ROPE(ropeId: i32, entity1: Entity, entity2: Entity, ent1X: f32, ent1Y: f32, ent1Z: f32, ent2X: f32, ent2Y: f32, ent2Z: f32, length: f32, alwaysZero1: i32, alwaysZero2: i32, boneName1: & CStr, boneName2: & CStr, p14: bool, boneId1: i32, boneId2: i32, alwaysZero3: i32, alwaysZero4: i32, p19: bool, p20: bool) { invoke_ignore!(0x3D95EC8B6D940AC3, ropeId, entity1, entity2, ent1X, ent1Y, ent1Z, ent2X, ent2Y, ent2Z, length, alwaysZero1, alwaysZero2, boneName1, boneName2, p14, boneId1, boneId2, alwaysZero3, alwaysZero4, p19, p20) }
-	pub fn _ATTACH_ENTITIES_TO_ROPE_2(ropeId: i32, entity1: Entity, entity2: Entity, ent1X: f32, ent1Y: f32, ent1Z: f32, ent2X: f32, ent2Y: f32, ent2Z: f32, boneName1: & CStr, boneName2: & CStr) { invoke_ignore!(0x462FF2A432733A44, ropeId, entity1, entity2, ent1X, ent1Y, ent1Z, ent2X, ent2Y, ent2Z, boneName1, boneName2) }
+	pub fn ATTACH_ENTITIES_TO_ROPE(ropeId: i32, entity1: Entity, entity2: Entity, coordsent1: Vector3, coordsent2: Vector3, length: f32, alwaysZero1: i32, alwaysZero2: i32, boneName1: & CStr, boneName2: & CStr, p14: bool, boneId1: i32, boneId2: i32, alwaysZero3: i32, alwaysZero4: i32, p19: bool, p20: bool) { invoke_ignore!(0x3D95EC8B6D940AC3, ropeId, entity1, entity2, coordsent1, coordsent2, length, alwaysZero1, alwaysZero2, boneName1, boneName2, p14, boneId1, boneId2, alwaysZero3, alwaysZero4, p19, p20) }
+	pub fn _ATTACH_ENTITIES_TO_ROPE_2(ropeId: i32, entity1: Entity, entity2: Entity, coordsent1: Vector3, coordsent2: Vector3, boneName1: & CStr, boneName2: & CStr) { invoke_ignore!(0x462FF2A432733A44, ropeId, entity1, entity2, coordsent1, coordsent2, boneName1, boneName2) }
 	pub fn _ATTACH_ENTITES_TO_ROPE_3(ropeId: i32, entity1: Entity, entity2: Entity, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: Any, p10: Any) { invoke_ignore!(0xE9CD9A67834985A7, ropeId, entity1, entity2, p3, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn _0x69C810B72291D831(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0x69C810B72291D831, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn _0xB7469CB9AC3C0FD4(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xB7469CB9AC3C0FD4, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn _0xC64E7A62632AD2FE(ropeId: i32, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xC64E7A62632AD2FE, ropeId, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn _IS_ROPE_ATTACHED_TO_ENTITY(ropeId: i32, entity: Entity) -> bool { invoke!(0x9B4F7E3E4F9C77B3, ropeId, entity) }
 	pub fn DETACH_ROPE_FROM_ENTITY(ropeId: i32, entity: Entity) { invoke_ignore!(0xBCF3026912A8647D, ropeId, entity) }
-	pub fn _HITCH_HORSE(horse: Ped, x: f32, y: f32, z: f32) { invoke_ignore!(0x06AADE17334F7A40, horse, x, y, z) }
+	pub fn _HITCH_HORSE(horse: Ped, coords: Vector3) { invoke_ignore!(0x06AADE17334F7A40, horse, coords) }
 	pub fn _UNHITCH_HORSE(horse: Ped) { invoke_ignore!(0x0348469DAA17576C, horse) }
 	pub fn _0x6EA0E93CFFA472CC(p0: Any) { invoke_ignore!(0x6EA0E93CFFA472CC, p0) }
 	pub fn _0xBDDA142759307528(p0: Any) { invoke_ignore!(0xBDDA142759307528, p0) }
@@ -5118,7 +5117,7 @@ pub mod PLAYER {
 	pub fn SET_PLAYER_MAY_NOT_ENTER_ANY_VEHICLE(player: Player) { invoke_ignore!(0xBEC463B3A11C909E, player) }
 	pub fn IS_SYSTEM_UI_BEING_DISPLAYED() -> bool { invoke!(0x908258B6209E71F7) }
 	pub fn _0xD48227263E3D06AE(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any) { invoke_ignore!(0xD48227263E3D06AE, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
-	pub fn _0x3946FC742AC305CD(player: Player, ped: Ped, p2: & CStr, x: f32, y: f32, z: f32, targetEntity: Entity, p7: & CStr) { invoke_ignore!(0x3946FC742AC305CD, player, ped, p2, x, y, z, targetEntity, p7) }
+	pub fn _0x3946FC742AC305CD(player: Player, ped: Ped, p2: & CStr, coords: Vector3, targetEntity: Entity, p7: & CStr) { invoke_ignore!(0x3946FC742AC305CD, player, ped, p2, coords, targetEntity, p7) }
 	pub fn _0xA28056CD1B04B250(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0xA28056CD1B04B250, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn _0xC67A4910425F11F1(player: Player, name: & CStr) { invoke_ignore!(0xC67A4910425F11F1, player, name) }
 	pub fn SET_PLAYER_INVINCIBLE(player: Player, toggle: bool) { invoke_ignore!(0xFEBEEBC9CBDF4B12, player, toggle) }
@@ -5188,7 +5187,7 @@ pub mod PLAYER {
 	pub fn _SECONDARY_SPECIAL_ABILITY_SET_DISABLED(player: Player, disabled: bool) { invoke_ignore!(0x64FF4BF9AF59E139, player, disabled) }
 	pub fn _IS_SECONDARY_SPECIAL_ABILITY_ACTIVE(player: Player) -> bool { invoke!(0x45AB66D02B601FA7, player) }
 	pub fn _0x107F2A66E1C4C83A(p0: Any) { invoke_ignore!(0x107F2A66E1C4C83A, p0) }
-	pub fn START_PLAYER_TELEPORT(player: Player, x: f32, y: f32, z: f32, heading: f32, p5: bool, p6: bool, p7: bool, p8: bool) { invoke_ignore!(0xDF8822C55EDDA65B, player, x, y, z, heading, p5, p6, p7, p8) }
+	pub fn START_PLAYER_TELEPORT(player: Player, coords: Vector3, heading: f32, p5: bool, p6: bool, p7: bool, p8: bool) { invoke_ignore!(0xDF8822C55EDDA65B, player, coords, heading, p5, p6, p7, p8) }
 	pub fn _0x2C2D287748E8E9B7(p0: bool) { invoke_ignore!(0x2C2D287748E8E9B7, p0) }
 	pub fn UPDATE_PLAYER_TELEPORT(player: Player) -> bool { invoke!(0xC39DCE4672CBFBC1, player) }
 	pub fn STOP_PLAYER_TELEPORT() { invoke_ignore!(0x0858B86146601BE8) }
@@ -5396,7 +5395,7 @@ pub mod POPULATION {
 
 	pub fn GET_NUM_MODELS_IN_POPULATION_SET(popSetHash: Hash) -> i32 { invoke!(0xA1E3171ED0E47564, popSetHash) }
 	pub fn GET_PED_MODEL_NAME_IN_POPULATION_SET(popSetHash: Hash, index: i32) -> Hash { invoke!(0x3EAFA1C533B7139E, popSetHash, index) }
-	pub fn GET_RANDOM_MODEL_FROM_POPULATION_SET(popSetHash: Hash, flags: i32, p2: Hash, p3: bool, p4: bool, x: f32, y: f32, z: f32) -> Hash { invoke!(0x6B12ED8C77E8567B, popSetHash, flags, p2, p3, p4, x, y, z) }
+	pub fn GET_RANDOM_MODEL_FROM_POPULATION_SET(popSetHash: Hash, flags: i32, p2: Hash, p3: bool, p4: bool, coords: Vector3) -> Hash { invoke!(0x6B12ED8C77E8567B, popSetHash, flags, p2, p3, p4, coords) }
 	pub fn _CREATE_POPZONE_FROM_VOLUME(volume: Volume) -> PopZone { invoke!(0x9AC1C64FE46B6D09, volume) }
 	pub fn _DELETE_SCRIPT_POPZONE(popZone: PopZone) { invoke_ignore!(0xA6E6A66FC4CA4224, popZone) }
 	pub fn _IS_POPZONE_VALID(popZone: PopZone) -> bool { invoke!(0xA5BD585005EFCAD4, popZone) }
@@ -5475,12 +5474,12 @@ pub mod PROPSET {
 	pub fn _SET_PROP_SET_AS_NO_LONGER_NEEDED(propSet: PropSet) { invoke_ignore!(0x909E3C7FAE539FB1, propSet) }
 	pub fn _DELETE_PROP_SET(propSet: PropSet, p1: bool, p2: bool) { invoke_ignore!(0x58AC173A55D9D7B4, propSet, p1, p2) }
 	pub fn _RELEASE_PROP_SET(hash: Hash) -> bool { invoke!(0xB1964A83B345B4AB, hash) }
-	pub fn _CREATE_PROP_SET(propsetType: Hash, x: f32, y: f32, z: f32, placementType: i32, heading: f32, zProbe: f32, p7: bool, useVegMod: bool) -> PropSet { invoke!(0xE65C5CBA95F0E510, propsetType, x, y, z, placementType, heading, zProbe, p7, useVegMod) }
-	pub fn _CREATE_PROP_SET_2(propsetType: Hash, x: f32, y: f32, z: f32, placementType: i32, heading: f32, zProbe: f32, p7: bool, useVegMod: bool) -> PropSet { invoke!(0x899C97A1CCE7D483, propsetType, x, y, z, placementType, heading, zProbe, p7, useVegMod) }
-	pub fn CREATE_PROP_SET_INSTANCE_ATTACHED_TO_ENTITY(hash: Hash, x: f32, y: f32, z: f32, entity: Entity, p5: f32, p6: bool, p7: i32, p8: bool) -> PropSet { invoke!(0x9609DBDDE18FAD8C, hash, x, y, z, entity, p5, p6, p7, p8) }
-	pub fn _CREATE_PROP_SET_INSTANCE_ATTACHED_TO_ENTITY_2(hash: Hash, x: f32, y: f32, z: f32, entity: Entity, p5: f32, p6: bool, p7: i32, p8: bool) -> PropSet { invoke!(0xACA7FB30269096D4, hash, x, y, z, entity, p5, p6, p7, p8) }
+	pub fn _CREATE_PROP_SET(propsetType: Hash, coords: Vector3, placementType: i32, heading: f32, zProbe: f32, p7: bool, useVegMod: bool) -> PropSet { invoke!(0xE65C5CBA95F0E510, propsetType, coords, placementType, heading, zProbe, p7, useVegMod) }
+	pub fn _CREATE_PROP_SET_2(propsetType: Hash, coords: Vector3, placementType: i32, heading: f32, zProbe: f32, p7: bool, useVegMod: bool) -> PropSet { invoke!(0x899C97A1CCE7D483, propsetType, coords, placementType, heading, zProbe, p7, useVegMod) }
+	pub fn CREATE_PROP_SET_INSTANCE_ATTACHED_TO_ENTITY(hash: Hash, coords: Vector3, entity: Entity, p5: f32, p6: bool, p7: i32, p8: bool) -> PropSet { invoke!(0x9609DBDDE18FAD8C, hash, coords, entity, p5, p6, p7, p8) }
+	pub fn _CREATE_PROP_SET_INSTANCE_ATTACHED_TO_ENTITY_2(hash: Hash, coords: Vector3, entity: Entity, p5: f32, p6: bool, p7: i32, p8: bool) -> PropSet { invoke!(0xACA7FB30269096D4, hash, coords, entity, p5, p6, p7, p8) }
 	pub fn DOES_PROP_SET_EXIST(propSet: PropSet) -> bool { invoke!(0x7DDDCF815E650FF5, propSet) }
-	pub fn _DOES_PROP_SET_OF_TYPE_EXIST_NEAR_COORDS(propsetHash: Hash, x: f32, y: f32, z: f32) -> bool { invoke!(0x72068021F498E6E3, propsetHash, x, y, z) }
+	pub fn _DOES_PROP_SET_OF_TYPE_EXIST_NEAR_COORDS(propsetHash: Hash, coords: Vector3) -> bool { invoke!(0x72068021F498E6E3, propsetHash, coords) }
 	pub fn IS_PROP_SET_FULLY_LOADED(propSet: PropSet) -> bool { invoke!(0xF42DB680A8B2A4D9, propSet) }
 	pub fn _SET_PROP_SET_VISIBLE(propSet: PropSet, toggle: bool) { invoke_ignore!(0x9D096A5BD02F953E, propSet, toggle) }
 	pub fn _IS_PROP_SET_VISIBLE(propSet: PropSet) -> bool { invoke!(0x0CE8AAFE9E433A23, propSet) }
@@ -5504,7 +5503,7 @@ pub mod PROPSET {
 	pub fn _IS_VEHICLE_LIGHT_PROP_SET_LOADED(vehicle: Vehicle) -> bool { invoke!(0x0790473EEE1977D3, vehicle) }
 	pub fn _GET_TRAIN_CARRIAGE_PROP_SET(trainCarriage: Entity) -> PropSet { invoke!(0xCFC0BD09BB1B73FF, trainCarriage) }
 	pub fn _HAS_VEHICLE_TRAILER_PROP_SET_LOADED(vehicle: Vehicle, wagonIndex: i32) -> bool { invoke!(0x8F3333F0A6900B3C, vehicle, wagonIndex) }
-	pub fn _GET_PROP_SET_AT_COORDS(propsetHash: Hash, x: f32, y: f32, z: f32) -> PropSet { invoke!(0xC061E50F8D299F95, propsetHash, x, y, z) }
+	pub fn _GET_PROP_SET_AT_COORDS(propsetHash: Hash, coords: Vector3) -> PropSet { invoke!(0xC061E50F8D299F95, propsetHash, coords) }
 }
 pub mod QUEUE {
 	use std::ffi::CStr;
@@ -5667,12 +5666,12 @@ pub mod SHAPETEST {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn START_SHAPE_TEST_LOS_PROBE(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, flags: i32, entity: Entity, p8: i32) -> ScrHandle { invoke!(0x7EE9F5D83DD4F90E, x1, y1, z1, x2, y2, z2, flags, entity, p8) }
+	pub fn START_SHAPE_TEST_LOS_PROBE(coords1: Vector3, coords2: Vector3, flags: i32, entity: Entity, p8: i32) -> ScrHandle { invoke!(0x7EE9F5D83DD4F90E, coords1, coords2, flags, entity, p8) }
 	pub fn _0x04AA59CA40571C2E(p0: Any, p1: Any) -> Any { invoke!(0x04AA59CA40571C2E, p0, p1) }
-	pub fn START_EXPENSIVE_SYNCHRONOUS_SHAPE_TEST_LOS_PROBE(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, flags: i32, entityToIgnore: Entity, p8: i32) -> ScrHandle { invoke!(0x377906D8A31E5586, x1, y1, z1, x2, y2, z2, flags, entityToIgnore, p8) }
-	pub fn START_SHAPE_TEST_BOX(posX: f32, posY: f32, posZ: f32, dimensionsX: f32, dimensionsY: f32, dimensionsZ: f32, rotX: f32, rotY: f32, rotZ: f32, rotationOrder: i32, flags: i32, entityToIgnore: Entity, options: i32) -> ScrHandle { invoke!(0xFE466162C4401D18, posX, posY, posZ, dimensionsX, dimensionsY, dimensionsZ, rotX, rotY, rotZ, rotationOrder, flags, entityToIgnore, options) }
-	pub fn START_SHAPE_TEST_CAPSULE(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, radius: f32, flags: i32, entityToIgnore: Entity, p9: i32) -> ScrHandle { invoke!(0x28579D1B8F8AAC80, x1, y1, z1, x2, y2, z2, radius, flags, entityToIgnore, p9) }
-	pub fn START_SHAPE_TEST_SWEPT_SPHERE(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, radius: f32, flags: i32, entity: Entity, p9: Any) -> ScrHandle { invoke!(0xAA5B7C8309F73230, x1, y1, z1, x2, y2, z2, radius, flags, entity, p9) }
+	pub fn START_EXPENSIVE_SYNCHRONOUS_SHAPE_TEST_LOS_PROBE(coords1: Vector3, coords2: Vector3, flags: i32, entityToIgnore: Entity, p8: i32) -> ScrHandle { invoke!(0x377906D8A31E5586, coords1, coords2, flags, entityToIgnore, p8) }
+	pub fn START_SHAPE_TEST_BOX(pos: Vector3, dimensions: Vector3, rot: Vector3, rotationOrder: i32, flags: i32, entityToIgnore: Entity, options: i32) -> ScrHandle { invoke!(0xFE466162C4401D18, pos, dimensions, rot, rotationOrder, flags, entityToIgnore, options) }
+	pub fn START_SHAPE_TEST_CAPSULE(coords1: Vector3, coords2: Vector3, radius: f32, flags: i32, entityToIgnore: Entity, p9: i32) -> ScrHandle { invoke!(0x28579D1B8F8AAC80, coords1, coords2, radius, flags, entityToIgnore, p9) }
+	pub fn START_SHAPE_TEST_SWEPT_SPHERE(coords1: Vector3, coords2: Vector3, radius: f32, flags: i32, entity: Entity, p9: Any) -> ScrHandle { invoke!(0xAA5B7C8309F73230, coords1, coords2, radius, flags, entity, p9) }
 	pub fn START_SHAPE_TEST_MOUSE_CURSOR_LOS_PROBE(pVec1: &mut Vector3, pVec2: &mut Vector3, flag: i32, entity: Entity, flag2: i32) -> ScrHandle { invoke!(0x9839013D8B6014F1, pVec1, pVec2, flag, entity, flag2) }
 	pub fn GET_SHAPE_TEST_RESULT(shapeTestHandle: ScrHandle, hit: &mut bool, endCoords: &mut Vector3, surfaceNormal: &mut Vector3, entityHit: &mut Entity) -> i32 { invoke!(0xEDE8AC7C5108FB1D, shapeTestHandle, hit, endCoords, surfaceNormal, entityHit) }
 }
@@ -5787,7 +5786,7 @@ pub mod STATS {
 	pub fn _0xCA41E86545413B5B(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xCA41E86545413B5B, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn STATSTRACKER_DEED_STARTED(p0: Hash, p1: Any) { invoke_ignore!(0xB2A38826E5886E83, p0, p1) }
 	pub fn _STATSTRACKER_DEED_STATUS(deedType: i32, deedHash: Hash, missionStatus: i32, data: &mut Any) { invoke_ignore!(0xD5910ECF81A2278C, deedType, deedHash, missionStatus, data) }
-	pub fn _0x99230691875FC218(p0: Any, p1: Hash, x: f32, y: f32, z: f32) { invoke_ignore!(0x99230691875FC218, p0, p1, x, y, z) }
+	pub fn _0x99230691875FC218(p0: Any, p1: Hash, coords: Vector3) { invoke_ignore!(0x99230691875FC218, p0, p1, coords) }
 	pub fn _0x025E98E317652CDD(p0: i32) { invoke_ignore!(0x025E98E317652CDD, p0) }
 	pub fn _0xE5A680A5D8B1F687(p0: i32) { invoke_ignore!(0xE5A680A5D8B1F687, p0) }
 	pub fn _0x4DAC398297981B87(p0: i32) -> bool { invoke!(0x4DAC398297981B87, p0) }
@@ -5842,13 +5841,13 @@ pub mod STREAMING {
 	pub fn IS_MODEL_A_PED(model: Hash) -> bool { invoke!(0xC3F09DE9D6D17DDA, model) }
 	pub fn IS_MODEL_A_VEHICLE(model: Hash) -> bool { invoke!(0x354F62672DE7DB0A, model) }
 	pub fn _IS_MODEL_AN_OBJECT(model: Hash) -> bool { invoke!(0x274EE1B90CFA669E, model) }
-	pub fn _HAS_COLLISION_LOADED_AT_COORD(x: f32, y: f32, z: f32) -> bool { invoke!(0xDA8B2EAF29E872E2, x, y, z) }
+	pub fn _HAS_COLLISION_LOADED_AT_COORD(coords: Vector3) -> bool { invoke!(0xDA8B2EAF29E872E2, coords) }
 	pub fn _0x80B3E0597366ADF1() { invoke_ignore!(0x80B3E0597366ADF1) }
-	pub fn REQUEST_COLLISION_AT_COORD(x: f32, y: f32, z: f32) { invoke_ignore!(0x0A3720F162A033C9, x, y, z) }
-	pub fn _REQUEST_METADATA_AT_COORD(x: f32, y: f32, z: f32) { invoke_ignore!(0xA8432A14D4DC2101, x, y, z) }
+	pub fn REQUEST_COLLISION_AT_COORD(coords: Vector3) { invoke_ignore!(0x0A3720F162A033C9, coords) }
+	pub fn _REQUEST_METADATA_AT_COORD(coords: Vector3) { invoke_ignore!(0xA8432A14D4DC2101, coords) }
 	pub fn REQUEST_COLLISION_FOR_MODEL(model: Hash) { invoke_ignore!(0xF1767BE37F661551, model) }
 	pub fn HAS_COLLISION_FOR_MODEL_LOADED(model: Hash) -> bool { invoke!(0x210A79C9EC89778F, model) }
-	pub fn REQUEST_ADDITIONAL_COLLISION_AT_COORD(x: f32, y: f32, z: f32) { invoke_ignore!(0x83A8D71650D1894F, x, y, z) }
+	pub fn REQUEST_ADDITIONAL_COLLISION_AT_COORD(coords: Vector3) { invoke_ignore!(0x83A8D71650D1894F, coords) }
 	pub fn DOES_ANIM_DICT_EXIST(animDict: & CStr) -> bool { invoke!(0x537F44CB0D7F150D, animDict) }
 	pub fn REQUEST_ANIM_DICT(animDict: & CStr) { invoke_ignore!(0xA862A2AD321F94B4, animDict) }
 	pub fn HAS_ANIM_DICT_LOADED(animDict: & CStr) -> bool { invoke!(0x27FF6FE8009B40CA, animDict) }
@@ -5877,7 +5876,7 @@ pub mod STREAMING {
 	pub fn REMOVE_IPL_BY_HASH(iplHash: Hash) { invoke_ignore!(0x431E3AB760629B34, iplHash) }
 	pub fn IS_IPL_ACTIVE_HASH(iplHash: Hash) -> bool { invoke!(0xD779B9B910BD3B7C, iplHash) }
 	pub fn IS_IPL_ACTIVE_BY_HASH(iplHash: Hash) -> bool { invoke!(0x93AC1B91CB6D9913, iplHash) }
-	pub fn _IS_POSITION_INSIDE_IPL_STREAMING_EXTENTS(iplHash: Hash, x: f32, y: f32, z: f32) -> bool { invoke!(0x73B40D97D7BAAD77, iplHash, x, y, z) }
+	pub fn _IS_POSITION_INSIDE_IPL_STREAMING_EXTENTS(iplHash: Hash, coords: Vector3) -> bool { invoke!(0x73B40D97D7BAAD77, iplHash, coords) }
 	pub fn _0xDEEE1F265B7ECEF5() { invoke_ignore!(0xDEEE1F265B7ECEF5) }
 	pub fn SET_GAME_PAUSES_FOR_STREAMING(toggle: bool) { invoke_ignore!(0xB3BC8250F4FE8B63, toggle) }
 	pub fn GET_NUMBER_OF_STREAMING_REQUESTS() -> i32 { invoke!(0x30CCCC4D88E654CA) }
@@ -5891,14 +5890,14 @@ pub mod STREAMING {
 	pub fn GET_POPULATION_BUDGET_MULTIPLIER() -> f32 { invoke!(0x8A3945405B31048F) }
 	pub fn _0x071769BCB24379E5() -> Any { invoke!(0x071769BCB24379E5) }
 	pub fn CLEAR_FOCUS() { invoke_ignore!(0x86CCAF7CE493EFBE) }
-	pub fn SET_FOCUS_POS_AND_VEL(x: f32, y: f32, z: f32, offsetX: f32, offsetY: f32, offsetZ: f32) { invoke_ignore!(0x25F6EF88664540E2, x, y, z, offsetX, offsetY, offsetZ) }
+	pub fn SET_FOCUS_POS_AND_VEL(coords: Vector3, offset: Vector3) { invoke_ignore!(0x25F6EF88664540E2, coords, offset) }
 	pub fn SET_FOCUS_ENTITY(entity: Entity) { invoke_ignore!(0x955AEDD58F4BD309, entity) }
 	pub fn IS_ENTITY_FOCUS(entity: Entity) -> bool { invoke!(0xF87DE697E9A06EC6, entity) }
 	pub fn SET_MAPDATACULLBOX_ENABLED(name: & CStr, toggle: bool) { invoke_ignore!(0x3CACC83F6FED837C, name, toggle) }
 	pub fn SET_ALL_MAPDATA_CULLED(p0: Any) { invoke_ignore!(0x19ABCC581D28E6F9, p0) }
 	pub fn _0xF01D21DF39554115(p0: Any) { invoke_ignore!(0xF01D21DF39554115, p0) }
-	pub fn LOAD_SCENE_START(posX: f32, posY: f32, posZ: f32, offsetX: f32, offsetY: f32, offsetZ: f32, radius: f32, p7: i32) -> bool { invoke!(0x387AD749E3B69B70, posX, posY, posZ, offsetX, offsetY, offsetZ, radius, p7) }
-	pub fn LOAD_SCENE_START_SPHERE(x: f32, y: f32, z: f32, radius: f32, p4: Any) -> bool { invoke!(0x513F8AA5BF2F17CF, x, y, z, radius, p4) }
+	pub fn LOAD_SCENE_START(pos: Vector3, offset: Vector3, radius: f32, p7: i32) -> bool { invoke!(0x387AD749E3B69B70, pos, offset, radius, p7) }
+	pub fn LOAD_SCENE_START_SPHERE(coords: Vector3, radius: f32, p4: Any) -> bool { invoke!(0x513F8AA5BF2F17CF, coords, radius, p4) }
 	pub fn LOAD_SCENE_STOP() { invoke_ignore!(0x5A8B01199C3E79C3) }
 	pub fn IS_LOAD_SCENE_ACTIVE() -> bool { invoke!(0xCF45DF50C7775F2A) }
 	pub fn IS_LOAD_SCENE_LOADED() -> bool { invoke!(0x0909F71B5C070797) }
@@ -5920,7 +5919,7 @@ pub mod STREAMING {
 	pub fn SET_SRL_TIME(p0: f32) { invoke_ignore!(0x18231AEF458BCFF2, p0) }
 	pub fn SET_SRL_READAHEAD_TIMES(p0: i32, p1: i32, p2: i32, p3: i32) { invoke_ignore!(0xD346248C1DCE0D76, p0, p1, p2, p3) }
 	pub fn SET_SRL_LONG_JUMP_MODE(p0: bool) { invoke_ignore!(0x7C907E8A725E5FD2, p0) }
-	pub fn SET_HD_AREA(x: f32, y: f32, z: f32, radius: f32) { invoke_ignore!(0xB88B905AFA35CB4D, x, y, z, radius) }
+	pub fn SET_HD_AREA(coords: Vector3, radius: f32) { invoke_ignore!(0xB88B905AFA35CB4D, coords, radius) }
 	pub fn CLEAR_HD_AREA() { invoke_ignore!(0xD83B22434E52728D) }
 	pub fn _0x09FBF15D73EFC900() { invoke_ignore!(0x09FBF15D73EFC900) }
 	pub fn _0xF11D7CB962FCD747(p0: Any) { invoke_ignore!(0xF11D7CB962FCD747, p0) }
@@ -5958,7 +5957,7 @@ pub mod TASK {
 	pub fn TASK_PAUSE(ped: Ped, ms: i32) { invoke_ignore!(0xE73A266DB0CA9042, ped, ms) }
 	pub fn TASK_STAND_STILL(ped: Ped, time: i32) { invoke_ignore!(0x919BE13EED931959, ped, time) }
 	pub fn TASK_JUMP(ped: Ped, unused: bool) { invoke_ignore!(0x0AE4086104E067B1, ped, unused) }
-	pub fn _TASK_JUMP_2(ped: Ped, x: f32, y: f32, z: f32, entity: Entity) { invoke_ignore!(0x91083103137D7254, ped, x, y, z, entity) }
+	pub fn _TASK_JUMP_2(ped: Ped, coords: Vector3, entity: Entity) { invoke_ignore!(0x91083103137D7254, ped, coords, entity) }
 	pub fn TASK_COWER(ped: Ped, duration: i32, pedToCowerFrom: Ped, p3: & CStr) { invoke_ignore!(0x3EB1FE9E8E908E15, ped, duration, pedToCowerFrom, p3) }
 	pub fn TASK_HANDS_UP(ped: Ped, duration: i32, facingPed: Ped, timeToFacePed: i32, flags: i32) { invoke_ignore!(0xF2EAB31979A7F910, ped, duration, facingPed, timeToFacePed, flags) }
 	pub fn TASK_KNOCKED_OUT(ped: Ped, p1: f32, permanently: bool) { invoke_ignore!(0xF90427F00A495A28, ped, p1, permanently) }
@@ -5978,22 +5977,22 @@ pub mod TASK {
 	pub fn TASK_DISMOUNT_ANIMAL(rider: Ped, taskFlag: i32, p2: Any, p3: Any, p4: Any, targetPed: Ped) { invoke_ignore!(0x48E92D3DDE23C23A, rider, taskFlag, p2, p3, p4, targetPed) }
 	pub fn TASK_HITCH_ANIMAL(ped: Ped, scenarioPoint: i32, flag: i32) { invoke_ignore!(0x9030AD4B6207BFE8, ped, scenarioPoint, flag) }
 	pub fn _0xE05A5D39BE6E93AF(p0: Any) { invoke_ignore!(0xE05A5D39BE6E93AF, p0) }
-	pub fn TASK_VEHICLE_DRIVE_TO_COORD(ped: Ped, vehicle: Vehicle, x: f32, y: f32, z: f32, speed: f32, style: Any, vehicleModel: Hash, drivingMode: i32, stopRange: f32, straightLineDist: f32) { invoke_ignore!(0xE2A2AA2F659D77A7, ped, vehicle, x, y, z, speed, style, vehicleModel, drivingMode, stopRange, straightLineDist) }
+	pub fn TASK_VEHICLE_DRIVE_TO_COORD(ped: Ped, vehicle: Vehicle, coords: Vector3, speed: f32, style: Any, vehicleModel: Hash, drivingMode: i32, stopRange: f32, straightLineDist: f32) { invoke_ignore!(0xE2A2AA2F659D77A7, ped, vehicle, coords, speed, style, vehicleModel, drivingMode, stopRange, straightLineDist) }
 	pub fn _TASK_VEHICLE_DRIVE_TO_COORD_2(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0xF0108F01FB105DA2, ped, p1, p2, p3, p4, p5, p6, p7, p8) }
 	pub fn TASK_VEHICLE_DRIVE_WANDER(ped: Ped, vehicle: Vehicle, speed: f32, drivingStyle: i32) { invoke_ignore!(0x480142959D337D00, ped, vehicle, speed, drivingStyle) }
-	pub fn TASK_FOLLOW_TO_OFFSET_OF_ENTITY(ped: Ped, entity: Entity, offsetX: f32, offsetY: f32, offsetZ: f32, movementSpeed: f32, timeout: i32, stoppingRange: f32, persistFollowing: bool, p9: bool, walkOnly: bool, p11: bool, p12: bool, p13: bool) { invoke_ignore!(0x304AE42E357B8C7E, ped, entity, offsetX, offsetY, offsetZ, movementSpeed, timeout, stoppingRange, persistFollowing, p9, walkOnly, p11, p12, p13) }
+	pub fn TASK_FOLLOW_TO_OFFSET_OF_ENTITY(ped: Ped, entity: Entity, offset: Vector3, movementSpeed: f32, timeout: i32, stoppingRange: f32, persistFollowing: bool, p9: bool, walkOnly: bool, p11: bool, p12: bool, p13: bool) { invoke_ignore!(0x304AE42E357B8C7E, ped, entity, offset, movementSpeed, timeout, stoppingRange, persistFollowing, p9, walkOnly, p11, p12, p13) }
 	pub fn TASK_FOLLOW_TO_OFFSET_OF_COORD(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any) { invoke_ignore!(0x2E3676282C18A692, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14) }
 	pub fn _0x3FFCD7BBA074CC80(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0x3FFCD7BBA074CC80, ped, p1, p2, p3, p4, p5, p6, p7, p8) }
-	pub fn TASK_GO_STRAIGHT_TO_COORD(ped: Ped, x: f32, y: f32, z: f32, moveBlendSpeedY: f32, p5: i32, p6: f32, p7: f32, p8: i32) { invoke_ignore!(0xD76B57B44F1E6F8B, ped, x, y, z, moveBlendSpeedY, p5, p6, p7, p8) }
+	pub fn TASK_GO_STRAIGHT_TO_COORD(ped: Ped, coords: Vector3, moveBlendSpeedY: f32, p5: i32, p6: f32, p7: f32, p8: i32) { invoke_ignore!(0xD76B57B44F1E6F8B, ped, coords, moveBlendSpeedY, p5, p6, p7, p8) }
 	pub fn TASK_GO_STRAIGHT_TO_COORD_RELATIVE_TO_ENTITY(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x61E360B7E040D12E, ped, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn TASK_MOVE_IN_TRAFFIC(ped: Ped, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0x8AA1593AEC087A29, ped, p1, p2, p3) }
 	pub fn TASK_MOVE_IN_TRAFFIC_TO_DESTINATION(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xDCA3A13F7A45338B, ped, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn TASK_MOVE_IN_TRAFFIC_AWAY_FROM_ENTITY(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x13DED0BC45600FE1, ped, p1, p2, p3, p4) }
 	pub fn _0xBAAB791AA72C2821(p0: Any, p1: Any) { invoke_ignore!(0xBAAB791AA72C2821, p0, p1) }
-	pub fn TASK_MOVE_FOLLOW_ROAD_USING_NAVMESH(ped: Ped, moveBlendRatio: f32, x: f32, y: f32, z: f32, p5: Any) { invoke_ignore!(0x79482C12482A860D, ped, moveBlendRatio, x, y, z, p5) }
+	pub fn TASK_MOVE_FOLLOW_ROAD_USING_NAVMESH(ped: Ped, moveBlendRatio: f32, coords: Vector3, p5: Any) { invoke_ignore!(0x79482C12482A860D, ped, moveBlendRatio, coords, p5) }
 	pub fn TASK_ACHIEVE_HEADING(ped: Ped, heading: f32, timeout: i32) { invoke_ignore!(0x93B93A37987F1F3D, ped, heading, timeout) }
 	pub fn TASK_FLUSH_ROUTE() { invoke_ignore!(0x841142A1376E9006) }
-	pub fn TASK_EXTEND_ROUTE(x: f32, y: f32, z: f32) { invoke_ignore!(0x1E7889778264843A, x, y, z) }
+	pub fn TASK_EXTEND_ROUTE(coords: Vector3) { invoke_ignore!(0x1E7889778264843A, coords) }
 	pub fn TASK_FOLLOW_POINT_ROUTE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0x0E14C5550DC3CD1D, ped, p1, p2, p3, p4, p5) }
 	pub fn TASK_ENTER_ANIM_SCENE(ped: Ped, animScene: AnimScene, entityName: & CStr, playbackListName: & CStr, enterSpeed: f32, bAutoStart: bool, flag: i32, p7: i32, p8: f32) { invoke_ignore!(0xC2329B0206426644, ped, animScene, entityName, playbackListName, enterSpeed, bAutoStart, flag, p7, p8) }
 	pub fn TASK_MOVE_BE_IN_FORMATION(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0x4AA5AA97C65E4A2F, ped, p1, p2, p3, p4, p5, p6) }
@@ -6010,29 +6009,29 @@ pub mod TASK {
 	pub fn TASK_LEAD_HORSE(ped: Ped, horse: Ped) { invoke_ignore!(0x9A7A4A54596FE09D, ped, horse) }
 	pub fn TASK_STOP_LEADING_HORSE(ped: Ped) { invoke_ignore!(0xED27560703F37258, ped) }
 	pub fn _TASK_FLEE_FROM_COORD(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any) { invoke_ignore!(0x6879FF208ED87F2A, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) }
-	pub fn _TASK_FLEE_FROM_PED(ped: Ped, fleeFromTarget: Ped, x: f32, y: f32, z: f32, distance: f32, p6: i32, p7: i32, p8: f32, targetPed: Ped) { invoke_ignore!(0x7B74D8EEDE9B5727, ped, fleeFromTarget, x, y, z, distance, p6, p7, p8, targetPed) }
-	pub fn TASK_SMART_FLEE_COORD(ped: Ped, x: f32, y: f32, z: f32, distance: f32, time: i32, fleeType: i32, fleeSpeed: f32) { invoke_ignore!(0x94587F17E9C365D5, ped, x, y, z, distance, time, fleeType, fleeSpeed) }
+	pub fn _TASK_FLEE_FROM_PED(ped: Ped, fleeFromTarget: Ped, coords: Vector3, distance: f32, p6: i32, p7: i32, p8: f32, targetPed: Ped) { invoke_ignore!(0x7B74D8EEDE9B5727, ped, fleeFromTarget, coords, distance, p6, p7, p8, targetPed) }
+	pub fn TASK_SMART_FLEE_COORD(ped: Ped, coords: Vector3, distance: f32, time: i32, fleeType: i32, fleeSpeed: f32) { invoke_ignore!(0x94587F17E9C365D5, ped, coords, distance, time, fleeType, fleeSpeed) }
 	pub fn TASK_SMART_FLEE_PED(ped: Ped, fleeFromTarget: Ped, fleeDistance: f32, fleeTime: i32, fleeType: i32, fleeSpeed: f32, targetPed: Ped) { invoke_ignore!(0x22B0D0E37CCB840D, ped, fleeFromTarget, fleeDistance, fleeTime, fleeType, fleeSpeed, targetPed) }
 	pub fn _0x673A8779D229BA5A(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0x673A8779D229BA5A, p0, p1, p2, p3, p4, p5) }
 	pub fn _0x2E1D6D87346BB7D2(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0x2E1D6D87346BB7D2, p0, p1, p2, p3) }
-	pub fn TASK_FLEE_COORD(ped: Ped, x: f32, y: f32, z: f32, fleeStyle: i32, p5: i32, p6: f32, duration: i32, p8: i32) { invoke_ignore!(0x58428248BF4B64E4, ped, x, y, z, fleeStyle, p5, p6, duration, p8) }
+	pub fn TASK_FLEE_COORD(ped: Ped, coords: Vector3, fleeStyle: i32, p5: i32, p6: f32, duration: i32, p8: i32) { invoke_ignore!(0x58428248BF4B64E4, ped, coords, fleeStyle, p5, p6, duration, p8) }
 	pub fn TASK_FLEE_PED(ped: Ped, fleeFromTarget: Ped, fleeStyle: i32, flag: i32, p4: f32, p5: i32, p6: i32) { invoke_ignore!(0xFD45175A6DFD7CE9, ped, fleeFromTarget, fleeStyle, flag, p4, p5, p6) }
 	pub fn TASK_FLEE_COORD_VIA(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any) { invoke_ignore!(0x390E0B697D25EAF5, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) }
 	pub fn TASK_FLEE_PED_VIA(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any) { invoke_ignore!(0x5802E0F910E4CF1D, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
-	pub fn _ADD_FLEE_TARGET_COORDS(ped: Ped, x: f32, y: f32, z: f32, p4: f32) { invoke_ignore!(0xE8F1A5B4CED3725A, ped, x, y, z, p4) }
+	pub fn _ADD_FLEE_TARGET_COORDS(ped: Ped, coords: Vector3, p4: f32) { invoke_ignore!(0xE8F1A5B4CED3725A, ped, coords, p4) }
 	pub fn ADD_FLEE_TARGET_PED(ped: Ped, targetPed: Ped, p2: f32) { invoke_ignore!(0x3923EC958249657D, ped, targetPed, p2) }
 	pub fn _0xA42DC7919159CCCF(p0: Any) { invoke_ignore!(0xA42DC7919159CCCF, p0) }
 	pub fn TASK_FLY_AWAY(ped: Ped, fleeFromTarget: Ped) { invoke_ignore!(0xE86A537B5A3C297C, ped, fleeFromTarget) }
-	pub fn TASK_FLY_TO_COORD(ped: Ped, travelMbr: f32, x: f32, y: f32, z: f32, p5: bool, p6: bool) { invoke_ignore!(0xD6CFC2D59DA72042, ped, travelMbr, x, y, z, p5, p6) }
+	pub fn TASK_FLY_TO_COORD(ped: Ped, travelMbr: f32, coords: Vector3, p5: bool, p6: bool) { invoke_ignore!(0xD6CFC2D59DA72042, ped, travelMbr, coords, p5, p6) }
 	pub fn TASK_FLYING_CIRCLE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0x72997893BFB8ECCC, ped, p1, p2, p3, p4, p5, p6) }
 	pub fn TASK_WALK_AWAY(ped: Ped, entity: Entity) { invoke_ignore!(0x04ACFAC71E6858F9, ped, entity) }
 	pub fn TASK_SHOCKING_EVENT_REACT(ped: Ped, p1: Any, p2: Any) { invoke_ignore!(0x452419CBD838065B, ped, p1, p2) }
-	pub fn TASK_REACT(ped: Ped, reactingTo: Entity, x: f32, y: f32, z: f32, reactionName: & CStr, p6: f32, p7: f32, p8: i32) { invoke_ignore!(0xC4C32C31920E1B70, ped, reactingTo, x, y, z, reactionName, p6, p7, p8) }
-	pub fn TASK_WANDER_IN_AREA(ped: Ped, x: f32, y: f32, z: f32, radius: f32, p5: f32, p6: f32, p7: i32) { invoke_ignore!(0xE054346CA3A0F315, ped, x, y, z, radius, p5, p6, p7) }
+	pub fn TASK_REACT(ped: Ped, reactingTo: Entity, coords: Vector3, reactionName: & CStr, p6: f32, p7: f32, p8: i32) { invoke_ignore!(0xC4C32C31920E1B70, ped, reactingTo, coords, reactionName, p6, p7, p8) }
+	pub fn TASK_WANDER_IN_AREA(ped: Ped, coords: Vector3, radius: f32, p5: f32, p6: f32, p7: i32) { invoke_ignore!(0xE054346CA3A0F315, ped, coords, radius, p5, p6, p7) }
 	pub fn TASK_WANDER_IN_VOLUME(ped: Ped, volume: Volume, p2: f32, p3: f32, p4: i32) { invoke_ignore!(0x9FDA168777B28424, ped, volume, p2, p3, p4) }
 	pub fn TASK_WANDER_STANDARD(ped: Ped, p1: f32, p2: i32) { invoke_ignore!(0xBB9CE077274F6A1B, ped, p1, p2) }
 	pub fn TASK_WANDER_SWIM(ped: Ped, p1: Any) { invoke_ignore!(0x527EA3DB8BC7F03B, ped, p1) }
-	pub fn TASK_PLANT_BOMB(ped: Ped, x: f32, y: f32, z: f32, heading: f32) { invoke_ignore!(0x965FEC691D55E9BF, ped, x, y, z, heading) }
+	pub fn TASK_PLANT_BOMB(ped: Ped, coords: Vector3, heading: f32) { invoke_ignore!(0x965FEC691D55E9BF, ped, coords, heading) }
 	pub fn TASK_HORSE_ACTION(ped: Ped, action: i32, targetPed: Ped, p3: Any) { invoke_ignore!(0xA09CFD29100F06C3, ped, action, targetPed, p3) }
 	pub fn TASK_ANIMAL_INTERACTION(ped: Ped, targetPed: Ped, interactionType: Hash, interactionModel: Hash, skipIdleAnimationClip: bool) { invoke_ignore!(0xCD181A959CFDD7F4, ped, targetPed, interactionType, interactionModel, skipIdleAnimationClip) }
 	pub fn TASK_COMBAT_ANIMAL_WARN(ped: Ped, p1: Any, p2: Any) { invoke_ignore!(0xF960F3D57B660E96, ped, p1, p2) }
@@ -6047,8 +6046,8 @@ pub mod TASK {
 	pub fn TASK_EAT(ped: Ped, p1: Any, p2: Any) { invoke_ignore!(0xBD7949BD07299672, ped, p1, p2) }
 	pub fn TASK_BARK(ped: Ped, barkAtTarget: Ped, mood: Hash) { invoke_ignore!(0x83BFC1F836B2F3F2, ped, barkAtTarget, mood) }
 	pub fn TASK_FOLLOW_PAVEMENT_TO_COORD(ped: Ped, args: &mut Any) { invoke_ignore!(0x1B1475414E70DD8E, ped, args) }
-	pub fn TASK_FOLLOW_NAV_MESH_TO_COORD(ped: Ped, x: f32, y: f32, z: f32, speedMultiplier: f32, timeout: i32, stoppingRange: f32, flags: i32, heading: f32) { invoke_ignore!(0x15D3A79D4E44B913, ped, x, y, z, speedMultiplier, timeout, stoppingRange, flags, heading) }
-	pub fn TASK_FOLLOW_NAV_MESH_TO_COORD_ADVANCED(ped: Ped, x: f32, y: f32, z: f32, speedMultiplier: f32, timeout: i32, stoppingRange: f32, flags: i32, p8: f32, p9: f32, p10: f32, entity: Entity, unk: f32) { invoke_ignore!(0x17F58B88D085DBAC, ped, x, y, z, speedMultiplier, timeout, stoppingRange, flags, p8, p9, p10, entity, unk) }
+	pub fn TASK_FOLLOW_NAV_MESH_TO_COORD(ped: Ped, coords: Vector3, speedMultiplier: f32, timeout: i32, stoppingRange: f32, flags: i32, heading: f32) { invoke_ignore!(0x15D3A79D4E44B913, ped, coords, speedMultiplier, timeout, stoppingRange, flags, heading) }
+	pub fn TASK_FOLLOW_NAV_MESH_TO_COORD_ADVANCED(ped: Ped, coords: Vector3, speedMultiplier: f32, timeout: i32, stoppingRange: f32, flags: i32, p8: f32, p9: f32, p10: f32, entity: Entity, unk: f32) { invoke_ignore!(0x17F58B88D085DBAC, ped, coords, speedMultiplier, timeout, stoppingRange, flags, p8, p9, p10, entity, unk) }
 	pub fn SET_PED_PATH_CAN_USE_CLIMBOVERS(ped: Ped, toggle: bool) { invoke_ignore!(0x8E06A6FE76C9EFF4, ped, toggle) }
 	pub fn SET_PED_PATH_CAN_USE_LADDERS(ped: Ped, toggle: bool) { invoke_ignore!(0x77A5B103C87F476E, ped, toggle) }
 	pub fn SET_PED_PATH_CAN_DROP_FROM_HEIGHT(ped: Ped, toggle: bool) { invoke_ignore!(0xE361C5C71C431A4F, ped, toggle) }
@@ -6078,11 +6077,11 @@ pub mod TASK {
 	pub fn _0x216343750545A486(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0x216343750545A486, p0, p1, p2) }
 	pub fn _0x06ECF3925BC2ABAE(p0: Any, p1: Any) { invoke_ignore!(0x06ECF3925BC2ABAE, p0, p1) }
 	pub fn _0xFA30E2254461ADEB(p0: Any, p1: Any) { invoke_ignore!(0xFA30E2254461ADEB, p0, p1) }
-	pub fn TASK_GO_TO_COORD_ANY_MEANS(ped: Ped, x: f32, y: f32, z: f32, speed: f32, entity: Entity, p6: bool, walkingStyle: i32, p8: f32) { invoke_ignore!(0x5BC448CB78FA3E88, ped, x, y, z, speed, entity, p6, walkingStyle, p8) }
-	pub fn TASK_GO_TO_COORD_ANY_MEANS_EXTRA_PARAMS(ped: Ped, x: f32, y: f32, z: f32, speed: f32, p5: Any, p6: bool, walkingStyle: i32, p8: f32, p9: Any, p10: Any, p11: Any, p12: Any) { invoke_ignore!(0x1DD45F9ECFDB1BC9, ped, x, y, z, speed, p5, p6, walkingStyle, p8, p9, p10, p11, p12) }
+	pub fn TASK_GO_TO_COORD_ANY_MEANS(ped: Ped, coords: Vector3, speed: f32, entity: Entity, p6: bool, walkingStyle: i32, p8: f32) { invoke_ignore!(0x5BC448CB78FA3E88, ped, coords, speed, entity, p6, walkingStyle, p8) }
+	pub fn TASK_GO_TO_COORD_ANY_MEANS_EXTRA_PARAMS(ped: Ped, coords: Vector3, speed: f32, p5: Any, p6: bool, walkingStyle: i32, p8: f32, p9: Any, p10: Any, p11: Any, p12: Any) { invoke_ignore!(0x1DD45F9ECFDB1BC9, ped, coords, speed, p5, p6, walkingStyle, p8, p9, p10, p11, p12) }
 	pub fn TASK_GO_TO_COORD_ANY_MEANS_EXTRA_PARAMS_WITH_CRUISE_SPEED(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any) { invoke_ignore!(0xB8ECD61F531A7B02, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14) }
 	pub fn TASK_PLAY_ANIM(ped: Ped, animDict: & CStr, animName: & CStr, speed: f32, speedMultiplier: f32, duration: i32, flags: i32, playbackRate: f32, p8: bool, ikFlags: i32, p10: bool, taskFilter: & CStr, p12: bool) { invoke_ignore!(0xEA47FE3719165B94, ped, animDict, animName, speed, speedMultiplier, duration, flags, playbackRate, p8, ikFlags, p10, taskFilter, p12) }
-	pub fn TASK_PLAY_ANIM_ADVANCED(ped: Ped, animDict: & CStr, animName: & CStr, posX: f32, posY: f32, posZ: f32, rotX: f32, rotY: f32, rotZ: f32, speed: f32, speedMultiplier: f32, duration: i32, flags: i32, p13: f32, p14: i32, p15: i32, p16: i32) { invoke_ignore!(0x83CDB10EA29B370B, ped, animDict, animName, posX, posY, posZ, rotX, rotY, rotZ, speed, speedMultiplier, duration, flags, p13, p14, p15, p16) }
+	pub fn TASK_PLAY_ANIM_ADVANCED(ped: Ped, animDict: & CStr, animName: & CStr, pos: Vector3, rot: Vector3, speed: f32, speedMultiplier: f32, duration: i32, flags: i32, p13: f32, p14: i32, p15: i32, p16: i32) { invoke_ignore!(0x83CDB10EA29B370B, ped, animDict, animName, pos, rot, speed, speedMultiplier, duration, flags, p13, p14, p15, p16) }
 	pub fn TASK_PLAY_UPPER_ANIM_FACING_ENTITY(ped: Ped, animDict: & CStr, animName: & CStr, entity: Entity, p4: i32, p5: f32, p6: f32, p7: i32, p8: f32, p9: bool, p10: bool, p11: f32, p12: & CStr, p13: i32, p14: f32) { invoke_ignore!(0xAD67214236AB1CFE, ped, animDict, animName, entity, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14) }
 	pub fn STOP_ANIM_TASK(ped: Ped, animDictionary: & CStr, animationName: & CStr, p3: f32) { invoke_ignore!(0x97FF36A1D40EA00A, ped, animDictionary, animationName, p3) }
 	pub fn TASK_SCRIPTED_ANIMATION(ped: Ped, args: &mut Any) { invoke_ignore!(0x126EF75F1E17ABE5, ped, args) }
@@ -6103,10 +6102,10 @@ pub mod TASK {
 	pub fn GET_ITEM_INTERACTION_PROMPT_PROGRESS(ped: Ped, inputContext: Hash) -> f32 { invoke!(0xBC864A70AD55E0C1, ped, inputContext) }
 	pub fn _0x678D3226CF70B9C8(ped: Ped, p1: bool) -> Object { invoke!(0x678D3226CF70B9C8, ped, p1) }
 	pub fn TASK_EVASIVE_ANIM(ped1: Ped, ped2: Ped, p2: i32) { invoke_ignore!(0x5F22926E1BCE9B08, ped1, ped2, p2) }
-	pub fn TASK_LOOK_AT_COORD(ped: Ped, x: f32, y: f32, z: f32, duration: i32, flags: i32, p6: i32, p7: bool) { invoke_ignore!(0x6FA46612594F7973, ped, x, y, z, duration, flags, p6, p7) }
+	pub fn TASK_LOOK_AT_COORD(ped: Ped, coords: Vector3, duration: i32, flags: i32, p6: i32, p7: bool) { invoke_ignore!(0x6FA46612594F7973, ped, coords, duration, flags, p6, p7) }
 	pub fn TASK_LOOK_AT_ENTITY(ped: Ped, lookAtTarget: Entity, duration: i32, p3: i32, p4: i32, p5: i32) { invoke_ignore!(0x69F4BE8C8CC4796C, ped, lookAtTarget, duration, p3, p4, p5) }
 	pub fn TASK_CLEAR_LOOK_AT(ped: Ped) { invoke_ignore!(0x0F804F1DB19B9689, ped) }
-	pub fn _0x508F5053E3F6F0C4(ped: Ped, x: f32, y: f32, z: f32, p4: f32) -> bool { invoke!(0x508F5053E3F6F0C4, ped, x, y, z, p4) }
+	pub fn _0x508F5053E3F6F0C4(ped: Ped, coords: Vector3, p4: f32) -> bool { invoke!(0x508F5053E3F6F0C4, ped, coords, p4) }
 	pub fn _0x23767D80C7EED7C6(p0: Any, p1: Any) { invoke_ignore!(0x23767D80C7EED7C6, p0, p1) }
 	pub fn OPEN_SEQUENCE_TASK(taskSequenceId: &mut i32) { invoke_ignore!(0xE8854A4326B9E12B, taskSequenceId) }
 	pub fn CLOSE_SEQUENCE_TASK(taskSequenceId: i32) { invoke_ignore!(0x39E72BC99E6360CB, taskSequenceId) }
@@ -6128,10 +6127,10 @@ pub mod TASK {
 	pub fn TASK_USE_RANDOM_SCENARIO_IN_GROUP(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x14747F4A5971DE4E, ped, p1, p2, p3, p4) }
 	pub fn TASK_AIM_GUN_AT_ENTITY(ped: Ped, targetEntity: Entity, duration: i32, p3: bool, p4: i32) { invoke_ignore!(0x9B53BB6E8943AF53, ped, targetEntity, duration, p3, p4) }
 	pub fn TASK_TURN_PED_TO_FACE_ENTITY(ped: Ped, targetEntity: Entity, duration: i32, p3: f32, p4: f32, p5: f32) { invoke_ignore!(0x5AD23D40115353AC, ped, targetEntity, duration, p3, p4, p5) }
-	pub fn TASK_AIM_GUN_AT_COORD(ped: Ped, x: f32, y: f32, z: f32, time: i32, p5: bool, p6: bool) { invoke_ignore!(0x6671F3EEC681BDA1, ped, x, y, z, time, p5, p6) }
+	pub fn TASK_AIM_GUN_AT_COORD(ped: Ped, coords: Vector3, time: i32, p5: bool, p6: bool) { invoke_ignore!(0x6671F3EEC681BDA1, ped, coords, time, p5, p6) }
 	pub fn TASK_AIM_AT_COORD(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0x4AF1D73861212F52, ped, p1, p2, p3, p4, p5, p6) }
 	pub fn TASK_AIM_AT_ENTITY(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0xCF7569BD0FB480A0, ped, p1, p2, p3, p4) }
-	pub fn TASK_SHOOT_AT_COORD(ped: Ped, x: f32, y: f32, z: f32, duration: i32, firingPattern: Hash, p6: Any) { invoke_ignore!(0x46A6CC01E0826106, ped, x, y, z, duration, firingPattern, p6) }
+	pub fn TASK_SHOOT_AT_COORD(ped: Ped, coords: Vector3, duration: i32, firingPattern: Hash, p6: Any) { invoke_ignore!(0x46A6CC01E0826106, ped, coords, duration, firingPattern, p6) }
 	pub fn TASK_SHUFFLE_TO_NEXT_VEHICLE_SEAT(ped: Ped, vehicle: Vehicle) { invoke_ignore!(0x7AA80209BDA643EB, ped, vehicle) }
 	pub fn CLEAR_PED_TASKS(ped: Ped, p1: bool, p2: bool) { invoke_ignore!(0xE1EF3C1216AFF2CD, ped, p1, p2) }
 	pub fn _0x1A7D63CB1B0BB223(p0: Any) { invoke_ignore!(0x1A7D63CB1B0BB223, p0) }
@@ -6142,29 +6141,29 @@ pub mod TASK {
 	pub fn CLEAR_PED_SECONDARY_TASK(ped: Ped) { invoke_ignore!(0x176CECF6F920D707, ped) }
 	pub fn TASK_EVERYONE_LEAVE_VEHICLE_IN_ORDER(vehicle: Vehicle, p1: bool) { invoke_ignore!(0x6F1C49F275BD25B3, vehicle, p1) }
 	pub fn TASK_INVESTIGATE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0x5C8514540D27FBFB, ped, p1, p2, p3, p4, p5) }
-	pub fn TASK_GOTO_ENTITY_OFFSET(ped: Ped, entity: Entity, p2: Any, x: f32, y: f32, z: f32, duration: i32) { invoke_ignore!(0xE39B4FF4FDEBDE27, ped, entity, p2, x, y, z, duration) }
+	pub fn TASK_GOTO_ENTITY_OFFSET(ped: Ped, entity: Entity, p2: Any, coords: Vector3, duration: i32) { invoke_ignore!(0xE39B4FF4FDEBDE27, ped, entity, p2, coords, duration) }
 	pub fn TASK_GOTO_ENTITY_OFFSET_XY(ped: Ped, entity: Entity, duration: i32, targetRadius: f32, xOffset: f32, yOffset: f32, moveBlendRatio: f32, offsetFlags: i32) { invoke_ignore!(0x338E7EF52B6095A9, ped, entity, duration, targetRadius, xOffset, yOffset, moveBlendRatio, offsetFlags) }
 	pub fn TASK_GOTO_ENTITY_OFFSET_XYZ(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0xFA6DA9D151769392, ped, p1, p2, p3, p4, p5, p6, p7, p8) }
 	pub fn TASK_GOTO_ENTITY_OFFSET_XY_AIMING(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0x901BD69984400F62, ped, p1, p2, p3, p4, p5, p6, p7, p8) }
 	pub fn TASK_GOTO_ENTITY_OFFSET_XYZ_AIMING(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any) { invoke_ignore!(0x41B0832CA96B5351, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn TASK_FOLLOW_ENTITY_WHILE_AIMING_AT_ENTITY(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x2D532EAA142CF83F, ped, p1, p2, p3, p4, p5, p6, p7) }
-	pub fn TASK_TURN_PED_TO_FACE_COORD(ped: Ped, x: f32, y: f32, z: f32, duration: i32) { invoke_ignore!(0x1DDA930A0AC38571, ped, x, y, z, duration) }
+	pub fn TASK_TURN_PED_TO_FACE_COORD(ped: Ped, coords: Vector3, duration: i32) { invoke_ignore!(0x1DDA930A0AC38571, ped, coords, duration) }
 	pub fn TASK_VEHICLE_TEMP_ACTION(driver: Ped, vehicle: Vehicle, action: i32, time: i32) { invoke_ignore!(0xC429DCEEB339E129, driver, vehicle, action, time) }
 	pub fn TASK_VEHICLE_MISSION(driver: Ped, vehicle: Vehicle, vehicleTarget: Vehicle, missionType: i32, p4: f32, p5: Any, p6: f32, p7: f32, DriveAgainstTraffic: bool) { invoke_ignore!(0x659427E0EF36BCDE, driver, vehicle, vehicleTarget, missionType, p4, p5, p6, p7, DriveAgainstTraffic) }
-	pub fn TASK_VEHICLE_DRIVE_TO_DESTINATION(driver: Ped, vehicle: Vehicle, x: f32, y: f32, z: f32, speed: f32, drivingFlags: i32, p7: i32, stoppingRange1: f32, stoppingRange2: f32, p10: bool) { invoke_ignore!(0x7F241A0D14354583, driver, vehicle, x, y, z, speed, drivingFlags, p7, stoppingRange1, stoppingRange2, p10) }
-	pub fn _TASK_VEHICLE_DRIVE_TO_DESTINATION_2(vehicle: Vehicle, x: f32, y: f32, z: f32, speed: f32, p5: i32, p6: i32, p7: f32, p8: f32) { invoke_ignore!(0x391073B9D3CCE2BA, vehicle, x, y, z, speed, p5, p6, p7, p8) }
+	pub fn TASK_VEHICLE_DRIVE_TO_DESTINATION(driver: Ped, vehicle: Vehicle, coords: Vector3, speed: f32, drivingFlags: i32, p7: i32, stoppingRange1: f32, stoppingRange2: f32, p10: bool) { invoke_ignore!(0x7F241A0D14354583, driver, vehicle, coords, speed, drivingFlags, p7, stoppingRange1, stoppingRange2, p10) }
+	pub fn _TASK_VEHICLE_DRIVE_TO_DESTINATION_2(vehicle: Vehicle, coords: Vector3, speed: f32, p5: i32, p6: i32, p7: f32, p8: f32) { invoke_ignore!(0x391073B9D3CCE2BA, vehicle, coords, speed, p5, p6, p7, p8) }
 	pub fn _TASK_VEHICLE_FLEE_ON_CLEANUP(vehicle: Vehicle, p1: f32, p2: f32, p3: f32, speed: f32, type_: Hash) { invoke_ignore!(0x55CD5FDDD4335C1E, vehicle, p1, p2, p3, speed, type_) }
-	pub fn TASK_VEHICLE_DRIVE_STRAIGHT_TO_POINT(driver: Ped, vehicle: Vehicle, x: f32, y: f32, z: f32, p5: f32, p6: f32, flag: i32) { invoke_ignore!(0x089FF2FB965F0A29, driver, vehicle, x, y, z, p5, p6, flag) }
-	pub fn _TASK_VEHICLE_DRIVE_TO_POINT_2(vehicle: Vehicle, x: f32, y: f32, z: f32, p4: f32, p5: f32, p6: Any) { invoke_ignore!(0x6524A8981E8BE7C9, vehicle, x, y, z, p4, p5, p6) }
+	pub fn TASK_VEHICLE_DRIVE_STRAIGHT_TO_POINT(driver: Ped, vehicle: Vehicle, coords: Vector3, p5: f32, p6: f32, flag: i32) { invoke_ignore!(0x089FF2FB965F0A29, driver, vehicle, coords, p5, p6, flag) }
+	pub fn _TASK_VEHICLE_DRIVE_TO_POINT_2(vehicle: Vehicle, coords: Vector3, p4: f32, p5: f32, p6: Any) { invoke_ignore!(0x6524A8981E8BE7C9, vehicle, coords, p4, p5, p6) }
 	pub fn _0x1D125814EBC517EB(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0x1D125814EBC517EB, p0, p1, p2, p3) }
-	pub fn _0x583AE9AF9CEE0958(vehicle: Vehicle, x: f32, y: f32, z: f32) -> bool { invoke!(0x583AE9AF9CEE0958, vehicle, x, y, z) }
+	pub fn _0x583AE9AF9CEE0958(vehicle: Vehicle, coords: Vector3) -> bool { invoke!(0x583AE9AF9CEE0958, vehicle, coords) }
 	pub fn TASK_VEHICLE_MISSION_PED_TARGET(ped: Ped, vehicle: Vehicle, pedTarget: Ped, mode: i32, maxSpeed: f32, drivingStyle: i32, minDistance: f32, p7: f32, DriveAgainstTraffic: bool) { invoke_ignore!(0x9454528DF15D657A, ped, vehicle, pedTarget, mode, maxSpeed, drivingStyle, minDistance, p7, DriveAgainstTraffic) }
 	pub fn _0xA263ADBBC8056214(p0: Any, p1: Any) { invoke_ignore!(0xA263ADBBC8056214, p0, p1) }
 	pub fn TASK_VEHICLE_ESCORT(ped: Ped, vehicle: Vehicle, targetVehicle: Vehicle, mode: i32, speed: f32, drivingStyle: i32, minDistance: f32, p7: i32, noRoadsDistance: f32) { invoke_ignore!(0x0FA6E4B75F302400, ped, vehicle, targetVehicle, mode, speed, drivingStyle, minDistance, p7, noRoadsDistance) }
-	pub fn TASK_BOAT_MISSION(pedDriver: Ped, boat: Vehicle, p2: Any, p3: Any, x: f32, y: f32, z: f32, p7: Any, maxSpeed: f32, drivingStyle: i32, p10: f32, p11: Any) { invoke_ignore!(0x15C86013127CE63F, pedDriver, boat, p2, p3, x, y, z, p7, maxSpeed, drivingStyle, p10, p11) }
+	pub fn TASK_BOAT_MISSION(pedDriver: Ped, boat: Vehicle, p2: Any, p3: Any, coords: Vector3, p7: Any, maxSpeed: f32, drivingStyle: i32, p10: f32, p11: Any) { invoke_ignore!(0x15C86013127CE63F, pedDriver, boat, p2, p3, coords, p7, maxSpeed, drivingStyle, p10, p11) }
 	pub fn TASK_WEAPON(ped: Ped) { invoke_ignore!(0x7157B82D60E4BC46, ped) }
-	pub fn TASK_DRIVE_BY(driverPed: Ped, targetPed: Ped, targetVehicle: Vehicle, targetX: f32, targetY: f32, targetZ: f32, distanceToShoot: f32, pedAccuracy: i32, p8: bool, firingPattern: Hash) { invoke_ignore!(0x2F8AF0E82773A171, driverPed, targetPed, targetVehicle, targetX, targetY, targetZ, distanceToShoot, pedAccuracy, p8, firingPattern) }
-	pub fn SET_DRIVEBY_TASK_TARGET(shootingPed: Ped, targetPed: Ped, targetVehicle: Vehicle, x: f32, y: f32, z: f32) { invoke_ignore!(0xE5B302114D8162EE, shootingPed, targetPed, targetVehicle, x, y, z) }
+	pub fn TASK_DRIVE_BY(driverPed: Ped, targetPed: Ped, targetVehicle: Vehicle, target: Vector3, distanceToShoot: f32, pedAccuracy: i32, p8: bool, firingPattern: Hash) { invoke_ignore!(0x2F8AF0E82773A171, driverPed, targetPed, targetVehicle, target, distanceToShoot, pedAccuracy, p8, firingPattern) }
+	pub fn SET_DRIVEBY_TASK_TARGET(shootingPed: Ped, targetPed: Ped, targetVehicle: Vehicle, coords: Vector3) { invoke_ignore!(0xE5B302114D8162EE, shootingPed, targetPed, targetVehicle, coords) }
 	pub fn CLEAR_DRIVEBY_TASK_UNDERNEATH_DRIVING_TASK(ped: Ped) { invoke_ignore!(0xC35B5CDB2824CF69, ped) }
 	pub fn IS_DRIVEBY_TASK_UNDERNEATH_DRIVING_TASK(ped: Ped) -> bool { invoke!(0x8785E6E40C7A8818, ped) }
 	pub fn GET_IS_PED_AIMING_IN_THE_AIR(ped: Ped) -> bool { invoke!(0x8785E6E40C7A8819, ped) }
@@ -6186,7 +6185,7 @@ pub mod TASK {
 	pub fn TASK_GOTO_ENTITY_AIMING(ped: Ped, target: Entity, distanceToStopAt: f32, StartAimingDist: f32) { invoke_ignore!(0xA9DA48FAB8A76C12, ped, target, distanceToStopAt, StartAimingDist) }
 	pub fn TASK_SET_SPHERE_DEFENSIVE_AREA(ped: Ped, p1: f32, p2: f32, p3: f32, p4: f32) { invoke_ignore!(0x933C06518B52A9A4, ped, p1, p2, p3, p4) }
 	pub fn TASK_CLEAR_DEFENSIVE_AREA(ped: Ped) { invoke_ignore!(0x95A6C46A31D1917D, ped) }
-	pub fn TASK_PED_SLIDE_TO_COORD(ped: Ped, x: f32, y: f32, z: f32, heading: f32, p5: f32) { invoke_ignore!(0xD04FE6765D990A06, ped, x, y, z, heading, p5) }
+	pub fn TASK_PED_SLIDE_TO_COORD(ped: Ped, coords: Vector3, heading: f32, p5: f32) { invoke_ignore!(0xD04FE6765D990A06, ped, coords, heading, p5) }
 	pub fn _0x9420FB11B8D77948(p0: Any) -> Any { invoke!(0x9420FB11B8D77948, p0) }
 	pub fn _0x6BA606AB3A83BC4D(p0: Any) -> Any { invoke!(0x6BA606AB3A83BC4D, p0) }
 	pub fn ADD_COVER_POINT(p0: f32, p1: f32, p2: f32, p3: f32, p4: Any, p5: Any, p6: Any, p7: bool) -> ScrHandle { invoke!(0xD5C12A75C7B9497F, p0, p1, p2, p3, p4, p5, p6, p7) }
@@ -6200,12 +6199,12 @@ pub mod TASK {
 	pub fn TASK_COMBAT_PED(ped: Ped, targetPed: Ped, p2: i32, p3: i32) { invoke_ignore!(0xF166E48407BAC484, ped, targetPed, p2, p3) }
 	pub fn TASK_COMBAT_PED_TIMED(ped: Ped, targetPed: Ped, p2: i32, p3: Any) { invoke_ignore!(0x944F30DCB7096BDE, ped, targetPed, p2, p3) }
 	pub fn _TASK_COMBAT_PED_3(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0xC624414FA748B9BA, p0, p1, p2, p3, p4, p5) }
-	pub fn TASK_SEEK_COVER_FROM_POS(ped: Ped, x: f32, y: f32, z: f32, duration: i32, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x75AC2B60386D89F2, ped, x, y, z, duration, p5, p6, p7) }
+	pub fn TASK_SEEK_COVER_FROM_POS(ped: Ped, coords: Vector3, duration: i32, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x75AC2B60386D89F2, ped, coords, duration, p5, p6, p7) }
 	pub fn TASK_SEEK_COVER_FROM_PED(ped: Ped, fromPed: Ped, duration: i32, p3: Any, p4: Any, p5: Any) { invoke_ignore!(0x84D32B3BEC531324, ped, fromPed, duration, p3, p4, p5) }
 	pub fn TASK_SEEK_COVER_TO_COVER_POINT(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any) { invoke_ignore!(0xD43D95C7A869447F, ped, p1, p2, p3, p4, p5, p6, p7, p8) }
 	pub fn TASK_SEEK_COVER_TO_COORDS(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0x39246A6958EF072C, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
-	pub fn TASK_PUT_PED_DIRECTLY_INTO_COVER(ped: Ped, x: f32, y: f32, z: f32, timeout: i32, p5: bool, p6: f32, p7: Any, p8: Any, coverpoint: ScrHandle, p10: bool, p11: bool, p12: Any) { invoke_ignore!(0x4172393E6BE1FECE, ped, x, y, z, timeout, p5, p6, p7, p8, coverpoint, p10, p11, p12) }
-	pub fn _TASK_PUT_PED_DIRECTLY_INTO_COVER_FROM_COORDS(ped: Ped, x: f32, y: f32, z: f32, fromX: f32, fromY: f32, fromZ: f32, timeout: i32, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any, p16: Any, p17: Any) { invoke_ignore!(0xDF8A5855B9F9A97B, ped, x, y, z, fromX, fromY, fromZ, timeout, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17) }
+	pub fn TASK_PUT_PED_DIRECTLY_INTO_COVER(ped: Ped, coords: Vector3, timeout: i32, p5: bool, p6: f32, p7: Any, p8: Any, coverpoint: ScrHandle, p10: bool, p11: bool, p12: Any) { invoke_ignore!(0x4172393E6BE1FECE, ped, coords, timeout, p5, p6, p7, p8, coverpoint, p10, p11, p12) }
+	pub fn _TASK_PUT_PED_DIRECTLY_INTO_COVER_FROM_COORDS(ped: Ped, coords: Vector3, from: Vector3, timeout: i32, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any, p16: Any, p17: Any) { invoke_ignore!(0xDF8A5855B9F9A97B, ped, coords, from, timeout, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17) }
 	pub fn TASK_PUT_PED_DIRECTLY_INTO_MELEE(ped: Ped, meleeTarget: Ped, meleeStyle: Hash, p3: f32, animBlendRatio: f32, p5: bool, p6: i32) { invoke_ignore!(0x1C6CD14A876FFE39, ped, meleeTarget, meleeStyle, p3, animBlendRatio, p5, p6) }
 	pub fn TASK_PUT_PED_DIRECTLY_INTO_GRAPPLE(ped: Ped, grappleTarget: Ped, grappleStyle: Hash, p3: f32, p4: f32, p5: bool, p6: i32) { invoke_ignore!(0xA05F3F20889D7A5B, ped, grappleTarget, grappleStyle, p3, p4, p5, p6) }
 	pub fn TASK_COMPANION_AMBIENT(ped: Ped, p1: Any) { invoke_ignore!(0xE017CF6E2527FE4F, ped, p1) }
@@ -6216,18 +6215,18 @@ pub mod TASK {
 	pub fn TASK_GUARD_CURRENT_POSITION(ped: Ped, p1: f32, p2: f32, p3: bool) { invoke_ignore!(0x4A58A47A72E3FCB4, ped, p1, p2, p3) }
 	pub fn _TASK_GUARD_ASSIGNED_DEFENSIVE_AREA_2(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x1FC9B33976BACD6C, ped, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn TASK_GUARD_ASSIGNED_DEFENSIVE_AREA(ped: Ped, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: Any) { invoke_ignore!(0xD2A207EEBDF9889B, ped, p1, p2, p3, p4, p5, p6) }
-	pub fn TASK_STAND_GUARD(ped: Ped, x: f32, y: f32, z: f32, heading: f32, scenarioName: & CStr) { invoke_ignore!(0xAE032F8BBA959E90, ped, x, y, z, heading, scenarioName) }
+	pub fn TASK_STAND_GUARD(ped: Ped, coords: Vector3, heading: f32, scenarioName: & CStr) { invoke_ignore!(0xAE032F8BBA959E90, ped, coords, heading, scenarioName) }
 	pub fn SET_DRIVE_TASK_CRUISE_SPEED(driver: Ped, cruiseSpeed: f32) { invoke_ignore!(0x5C9B84BD7D31D908, driver, cruiseSpeed) }
 	pub fn SET_DRIVE_TASK_MAX_CRUISE_SPEED(ped: Ped, maxCruiseSpeed: f32) { invoke_ignore!(0x404A5AA9B9F0B746, ped, maxCruiseSpeed) }
-	pub fn ADD_COVER_BLOCKING_AREA(playerX: f32, playerY: f32, playerZ: f32, radiusX: f32, radiusY: f32, radiusZ: f32, p6: bool, p7: bool, p8: bool, p9: bool) { invoke_ignore!(0x45C597097DD7CB81, playerX, playerY, playerZ, radiusX, radiusY, radiusZ, p6, p7, p8, p9) }
+	pub fn ADD_COVER_BLOCKING_AREA(player: Vector3, radius: Vector3, p6: bool, p7: bool, p8: bool, p9: bool) { invoke_ignore!(0x45C597097DD7CB81, player, radius, p6, p7, p8, p9) }
 	pub fn _ADD_COVER_BLOCKING_VOLUME(volume: Volume, p1: bool, p2: bool, p3: bool, p4: bool) { invoke_ignore!(0xEB2ED1DC3AEC0654, volume, p1, p2, p3, p4) }
 	pub fn REMOVE_ALL_COVER_BLOCKING_AREAS() { invoke_ignore!(0xDB6708C0B46F56D8) }
 	pub fn _0x2A10538D0A005E81(p0: Any, p1: Any) { invoke_ignore!(0x2A10538D0A005E81, p0, p1) }
 	pub fn _0x4F57397388E1DFF8() { invoke_ignore!(0x4F57397388E1DFF8) }
 	pub fn TASK_ROB_PED(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x7BB967F85D8CCBDB, ped, p1, p2, p3, p4) }
 	pub fn _0xBEDBE39B5FD98FD6(ped: Ped) -> bool { invoke!(0xBEDBE39B5FD98FD6, ped) }
-	pub fn CREATE_SCENARIO_POINT_HASH(scenarioHash: Hash, x: f32, y: f32, z: f32, heading: f32, p5: Any, p6: Any, p7: bool) -> i32 { invoke!(0x94B745CE41DB58A1, scenarioHash, x, y, z, heading, p5, p6, p7) }
-	pub fn CREATE_SCENARIO_POINT_HASH_ATTACHED_TO_ENTITY(entity: Entity, scenarioHash: Hash, x: f32, y: f32, z: f32, heading: f32, p6: Any, p7: Any, p8: bool) -> i32 { invoke!(0x794AB1379A74064D, entity, scenarioHash, x, y, z, heading, p6, p7, p8) }
+	pub fn CREATE_SCENARIO_POINT_HASH(scenarioHash: Hash, coords: Vector3, heading: f32, p5: Any, p6: Any, p7: bool) -> i32 { invoke!(0x94B745CE41DB58A1, scenarioHash, coords, heading, p5, p6, p7) }
+	pub fn CREATE_SCENARIO_POINT_HASH_ATTACHED_TO_ENTITY(entity: Entity, scenarioHash: Hash, coords: Vector3, heading: f32, p6: Any, p7: Any, p8: bool) -> i32 { invoke!(0x794AB1379A74064D, entity, scenarioHash, coords, heading, p6, p7, p8) }
 	pub fn _DOES_SCENARIO_POINT_HAVE_PROPS(scenario: i32) -> bool { invoke!(0xEA31F199A73801D3, scenario) }
 	pub fn GET_PROP_FOR_SCENARIO_POINT(scenarioPoint: i32, name: & CStr) -> Entity { invoke!(0x295514F198EFD0CA, scenarioPoint, name) }
 	pub fn _ASSOCIATE_PROP_WITH_SCENARIO(scenario: i32, entity: Entity, propName: & CStr, p3: bool) -> bool { invoke!(0x8360C47380B6F351, scenario, entity, propName, p3) }
@@ -6245,12 +6244,12 @@ pub mod TASK {
 	pub fn _0x370F57C47F68EBCA(p0: Any) -> Any { invoke!(0x370F57C47F68EBCA, p0) }
 	pub fn _GET_SCENARIO_POINT_HEADING(scenario: i32, p1: bool) -> f32 { invoke!(0xB93EA7184BAA85C3, scenario, p1) }
 	pub fn _GET_SCENARIO_POINT_RADIUS(scenario: i32) -> f32 { invoke!(0x6718F40313A2B5A6, scenario) }
-	pub fn _SET_SCENARIO_POINT_COORDS(scenario: i32, xPos: f32, yPos: f32, zPos: f32, p4: bool) { invoke_ignore!(0x2056AB38DF06825C, scenario, xPos, yPos, zPos, p4) }
+	pub fn _SET_SCENARIO_POINT_COORDS(scenario: i32, pos: Vector3, p4: bool) { invoke_ignore!(0x2056AB38DF06825C, scenario, pos, p4) }
 	pub fn _SET_SCENARIO_POINT_HEADING(scenario: i32, heading: f32, p2: bool) { invoke_ignore!(0xD3A0DA8F91612C6E, scenario, heading, p2) }
 	pub fn _SET_SCENARIO_POINT_RADIUS(scenario: i32, radius: f32) { invoke_ignore!(0xC47D9080A9A8856A, scenario, radius) }
 	pub fn _0xA7479FB665361EDB(p0: Any, p1: Any) { invoke_ignore!(0xA7479FB665361EDB, p0, p1) }
 	pub fn _0xE69FDA40AAC3EFC0(p0: Any, p1: Any) { invoke_ignore!(0xE69FDA40AAC3EFC0, p0, p1) }
-	pub fn GET_SCENARIO_POINTS_IN_AREA(posX: f32, posY: f32, posZ: f32, radius: f32, scenariosInRadius: &mut Any, size: i32) -> i32 { invoke!(0x345EC3B7EBDE1CB5, posX, posY, posZ, radius, scenariosInRadius, size) }
+	pub fn GET_SCENARIO_POINTS_IN_AREA(pos: Vector3, radius: f32, scenariosInRadius: &mut Any, size: i32) -> i32 { invoke!(0x345EC3B7EBDE1CB5, pos, radius, scenariosInRadius, size) }
 	pub fn _0xEFD875C2791EBEFD(p0: Any, p1: Any, p2: Any, p3: Any) -> Any { invoke!(0xEFD875C2791EBEFD, p0, p1, p2, p3) }
 	pub fn _0x152664AA3188B193(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) -> Any { invoke!(0x152664AA3188B193, p0, p1, p2, p3, p4, p5) }
 	pub fn _0xE7BBC4E56B989449(p0: Any, p1: Any, p2: Any) -> Any { invoke!(0xE7BBC4E56B989449, p0, p1, p2) }
@@ -6271,23 +6270,23 @@ pub mod TASK {
 	pub fn _TASK_USE_SCENARIO_POINT_2(ped: Ped, ped2: Ped, p2: Any, p3: & CStr, p4: i32, p5: Hash, p6: f32, p7: bool) { invoke_ignore!(0x0F6641449DD86FBE, ped, ped2, p2, p3, p4, p5, p6, p7) }
 	pub fn TASK_START_SCENARIO_IN_PLACE_HASH(ped: Ped, scenarioHash: Hash, duration: i32, playEnterAnim: bool, conditionalHash: Hash, heading: f32, p6: bool) { invoke_ignore!(0x524B54361229154F, ped, scenarioHash, duration, playEnterAnim, conditionalHash, heading, p6) }
 	pub fn _TASK_START_SCENARIO_IN_PLACE_2(ped: Ped, p1: Any, p2: & CStr, p3: i32, p4: bool, p5: f32, p6: bool) { invoke_ignore!(0xA917E39F2CEFD215, ped, p1, p2, p3, p4, p5, p6) }
-	pub fn TASK_START_SCENARIO_AT_POSITION(ped: Ped, scenarioHash: Hash, x: f32, y: f32, z: f32, heading: f32, duration: i32, sittingScenario: bool, teleport: bool, p9: & CStr, p10: f32, p11: bool) { invoke_ignore!(0x4D1F61FC34AF3CD1, ped, scenarioHash, x, y, z, heading, duration, sittingScenario, teleport, p9, p10, p11) }
+	pub fn TASK_START_SCENARIO_AT_POSITION(ped: Ped, scenarioHash: Hash, coords: Vector3, heading: f32, duration: i32, sittingScenario: bool, teleport: bool, p9: & CStr, p10: f32, p11: bool) { invoke_ignore!(0x4D1F61FC34AF3CD1, ped, scenarioHash, coords, heading, duration, sittingScenario, teleport, p9, p10, p11) }
 	pub fn _0xF97F462779B31786(p0: Any) -> Any { invoke!(0xF97F462779B31786, p0) }
 	pub fn _0x6C269F673C47031E(p0: Any) -> Any { invoke!(0x6C269F673C47031E, p0) }
 	pub fn _0x9667CCE29BFA0780(p0: Any) { invoke_ignore!(0x9667CCE29BFA0780, p0) }
 	pub fn _0x00FFE0F85253C572(p0: Any) -> Any { invoke!(0x00FFE0F85253C572, p0) }
-	pub fn _TASK_USE_NEAREST_SCENARIO_TO_COORD(ped: Ped, x: f32, y: f32, z: f32, distance: f32, duration: i32, p6: bool, p7: bool, p8: bool, p9: bool) { invoke_ignore!(0x322BFDEA666E2B0E, ped, x, y, z, distance, duration, p6, p7, p8, p9) }
-	pub fn TASK_USE_NEAREST_SCENARIO_TO_COORD_WARP(ped: Ped, x: f32, y: f32, z: f32, distance: f32, duration: i32, p6: bool, p7: bool, p8: bool, p9: bool) { invoke_ignore!(0x58E2E0F23F6B76C3, ped, x, y, z, distance, duration, p6, p7, p8, p9) }
-	pub fn TASK_USE_NEAREST_TRAIN_SCENARIO_TO_COORD_WARP(ped: Ped, x: f32, y: f32, z: f32, distance: f32) { invoke_ignore!(0x3774B03456DD6106, ped, x, y, z, distance) }
-	pub fn TASK_USE_NEAREST_SCENARIO_CHAIN_TO_COORD(ped: Ped, x: f32, y: f32, z: f32, distance: f32, p5: bool, p6: bool, p7: bool, p8: bool) { invoke_ignore!(0x9FDA1B3D7E7028B3, ped, x, y, z, distance, p5, p6, p7, p8) }
-	pub fn TASK_USE_NEAREST_SCENARIO_CHAIN_TO_COORD_WARP(ped: Ped, x: f32, y: f32, z: f32, distance: f32, p5: bool, p6: bool, p7: bool, p8: bool) { invoke_ignore!(0x97A28E63F0BA5631, ped, x, y, z, distance, p5, p6, p7, p8) }
+	pub fn _TASK_USE_NEAREST_SCENARIO_TO_COORD(ped: Ped, coords: Vector3, distance: f32, duration: i32, p6: bool, p7: bool, p8: bool, p9: bool) { invoke_ignore!(0x322BFDEA666E2B0E, ped, coords, distance, duration, p6, p7, p8, p9) }
+	pub fn TASK_USE_NEAREST_SCENARIO_TO_COORD_WARP(ped: Ped, coords: Vector3, distance: f32, duration: i32, p6: bool, p7: bool, p8: bool, p9: bool) { invoke_ignore!(0x58E2E0F23F6B76C3, ped, coords, distance, duration, p6, p7, p8, p9) }
+	pub fn TASK_USE_NEAREST_TRAIN_SCENARIO_TO_COORD_WARP(ped: Ped, coords: Vector3, distance: f32) { invoke_ignore!(0x3774B03456DD6106, ped, coords, distance) }
+	pub fn TASK_USE_NEAREST_SCENARIO_CHAIN_TO_COORD(ped: Ped, coords: Vector3, distance: f32, p5: bool, p6: bool, p7: bool, p8: bool) { invoke_ignore!(0x9FDA1B3D7E7028B3, ped, coords, distance, p5, p6, p7, p8) }
+	pub fn TASK_USE_NEAREST_SCENARIO_CHAIN_TO_COORD_WARP(ped: Ped, coords: Vector3, distance: f32, p5: bool, p6: bool, p7: bool, p8: bool) { invoke_ignore!(0x97A28E63F0BA5631, ped, coords, distance, p5, p6, p7, p8) }
 	pub fn _0xFDECCA06E8B81346(ped: Ped) -> Any { invoke!(0xFDECCA06E8B81346, ped) }
 	pub fn _0x2D657B10F211C572(ped: Ped, p1: f32) -> Any { invoke!(0x2D657B10F211C572, ped, p1) }
 	pub fn TASK_RIDE_TRAIN(ped: Ped, train: Vehicle, scenarioPoint: i32, scenarioHash: Hash) { invoke_ignore!(0x37FB1C870E2EC2C6, ped, train, scenarioPoint, scenarioHash) }
 	pub fn _0x79197F7D2BB5E73A(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) -> Any { invoke!(0x79197F7D2BB5E73A, p0, p1, p2, p3, p4, p5) }
-	pub fn DOES_SCENARIO_EXIST_IN_AREA(x: f32, y: f32, z: f32, radius: f32, p4: bool, p5: Any, p6: bool) -> bool { invoke!(0x5A59271FFADD33C1, x, y, z, radius, p4, p5, p6) }
-	pub fn DOES_SCENARIO_OF_TYPE_EXIST_IN_AREA_HASH(x: f32, y: f32, z: f32, typeHash: Hash, radius: f32, p5: bool) -> bool { invoke!(0x6EEAD6AF637DA752, x, y, z, typeHash, radius, p5) }
-	pub fn FIND_SCENARIO_OF_TYPE_HASH(xPos: f32, yPos: f32, zPos: f32, scenarioType: Hash, distance: f32, p5: Any, p6: bool) -> i32 { invoke!(0xF533D68FF970D190, xPos, yPos, zPos, scenarioType, distance, p5, p6) }
+	pub fn DOES_SCENARIO_EXIST_IN_AREA(coords: Vector3, radius: f32, p4: bool, p5: Any, p6: bool) -> bool { invoke!(0x5A59271FFADD33C1, coords, radius, p4, p5, p6) }
+	pub fn DOES_SCENARIO_OF_TYPE_EXIST_IN_AREA_HASH(coords: Vector3, typeHash: Hash, radius: f32, p5: bool) -> bool { invoke!(0x6EEAD6AF637DA752, coords, typeHash, radius, p5) }
+	pub fn FIND_SCENARIO_OF_TYPE_HASH(pos: Vector3, scenarioType: Hash, distance: f32, p5: Any, p6: bool) -> i32 { invoke!(0xF533D68FF970D190, pos, scenarioType, distance, p5, p6) }
 	pub fn _0x0D322AEF8878B8FE(p0: Any, p1: Any) { invoke_ignore!(0x0D322AEF8878B8FE, p0, p1) }
 	pub fn _0xD508FA229F1C4900(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) -> Any { invoke!(0xD508FA229F1C4900, p0, p1, p2, p3, p4, p5) }
 	pub fn _0xB8E213D02F37947D(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xB8E213D02F37947D, p0, p1, p2, p3, p4, p5, p6) }
@@ -6349,7 +6348,7 @@ pub mod TASK {
 	pub fn IS_PED_ACTIVE_IN_SCENARIO(ped: Ped, scenario: i32) -> bool { invoke!(0xAA135F9482C82CC3, ped, scenario) }
 	pub fn IS_PED_EXITING_SCENARIO(ped: Ped, p1: bool) -> bool { invoke!(0x0C3CB2E600C8977D, ped, p1) }
 	pub fn _0x2C497BDEF897C6DF(p0: Any) -> Any { invoke!(0x2C497BDEF897C6DF, p0) }
-	pub fn TASK_COMBAT_HATED_TARGETS_IN_AREA(ped: Ped, x: f32, y: f32, z: f32, radius: f32, flags: i32, p6: Any) { invoke_ignore!(0x4CF5F55DAC3280A0, ped, x, y, z, radius, flags, p6) }
+	pub fn TASK_COMBAT_HATED_TARGETS_IN_AREA(ped: Ped, coords: Vector3, radius: f32, flags: i32, p6: Any) { invoke_ignore!(0x4CF5F55DAC3280A0, ped, coords, radius, flags, p6) }
 	pub fn TASK_COMBAT_HATED_TARGETS_NO_LOS_TEST(ped: Ped, radius: f32) { invoke_ignore!(0xB5BC69D9C4060BC3, ped, radius) }
 	pub fn TASK_COMBAT_HATED_TARGETS_AROUND_PED(ped: Ped, radius: f32, flags: i32, p3: Any) { invoke_ignore!(0x7BF835BB9E2698C8, ped, radius, flags, p3) }
 	pub fn TASK_COMBAT_HATED_TARGETS_AROUND_PED_TIMED(ped: Ped, radius: f32, time: i32, flags: i32) { invoke_ignore!(0x2BBA30B854534A0C, ped, radius, time, flags) }
@@ -6373,7 +6372,7 @@ pub mod TASK {
 	pub fn TASK_REVIVE_TARGET(ped: Ped, reviver: Ped, tool: Hash) { invoke_ignore!(0x356088527D9EBAAD, ped, reviver, tool) }
 	pub fn OPEN_PATROL_ROUTE(patrolRoute: & CStr) { invoke_ignore!(0xA36BFB5EE89F3D82, patrolRoute) }
 	pub fn CLOSE_PATROL_ROUTE() { invoke_ignore!(0xB043ECA801B8CBC1) }
-	pub fn ADD_PATROL_ROUTE_NODE(nodeId: i32, scenarioName: & CStr, x: f32, y: f32, z: f32, lookPosX: f32, lookPosY: f32, lookPosZ: f32, duration: i32, p9: bool) { invoke_ignore!(0x8EDF950167586B7C, nodeId, scenarioName, x, y, z, lookPosX, lookPosY, lookPosZ, duration, p9) }
+	pub fn ADD_PATROL_ROUTE_NODE(nodeId: i32, scenarioName: & CStr, coords: Vector3, lookpos: Vector3, duration: i32, p9: bool) { invoke_ignore!(0x8EDF950167586B7C, nodeId, scenarioName, coords, lookpos, duration, p9) }
 	pub fn ADD_PATROL_ROUTE_LINK(node1: i32, node2: i32) { invoke_ignore!(0x23083260DEC3A551, node1, node2) }
 	pub fn CREATE_PATROL_ROUTE() { invoke_ignore!(0xAF8A443CCC8018DC) }
 	pub fn DELETE_PATROL_ROUTE(patrolRoute: & CStr) { invoke_ignore!(0x7767DD9D65E91319, patrolRoute) }
@@ -6383,17 +6382,17 @@ pub mod TASK {
 	pub fn TASK_STAY_IN_COVER(ped: Ped) { invoke_ignore!(0xE5DA8615A6180789, ped) }
 	pub fn TASK_VEHICLE_SHOOT_AT_PED(ped: Ped, target: Ped, p2: f32) { invoke_ignore!(0x10AB107B887214D8, ped, target, p2) }
 	pub fn TASK_VEHICLE_AIM_AT_PED(ped: Ped, target: Ped) { invoke_ignore!(0xE41885592B08B097, ped, target) }
-	pub fn TASK_VEHICLE_SHOOT_AT_COORD(ped: Ped, x: f32, y: f32, z: f32, p4: f32) { invoke_ignore!(0x5190796ED39C9B6D, ped, x, y, z, p4) }
+	pub fn TASK_VEHICLE_SHOOT_AT_COORD(ped: Ped, coords: Vector3, p4: f32) { invoke_ignore!(0x5190796ED39C9B6D, ped, coords, p4) }
 	pub fn _0xAF2EF28CE3084505(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0xAF2EF28CE3084505, p0, p1, p2, p3) }
-	pub fn TASK_VEHICLE_AIM_AT_COORD(ped: Ped, x: f32, y: f32, z: f32) { invoke_ignore!(0x447C1E9EF844BC0F, ped, x, y, z) }
-	pub fn TASK_VEHICLE_GOTO_NAVMESH(ped: Ped, vehicle: Vehicle, x: f32, y: f32, z: f32, speed: f32, behaviorFlag: i32, stoppingRange: f32) { invoke_ignore!(0x195AEEB13CEFE2EE, ped, vehicle, x, y, z, speed, behaviorFlag, stoppingRange) }
+	pub fn TASK_VEHICLE_AIM_AT_COORD(ped: Ped, coords: Vector3) { invoke_ignore!(0x447C1E9EF844BC0F, ped, coords) }
+	pub fn TASK_VEHICLE_GOTO_NAVMESH(ped: Ped, vehicle: Vehicle, coords: Vector3, speed: f32, behaviorFlag: i32, stoppingRange: f32) { invoke_ignore!(0x195AEEB13CEFE2EE, ped, vehicle, coords, speed, behaviorFlag, stoppingRange) }
 	pub fn TASK_GO_TO_COORD_WHILE_AIMING_AT_COORD(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any) { invoke_ignore!(0x11315AB3385B8AC0, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15) }
 	pub fn TASK_GO_TO_COORD_WHILE_AIMING_AT_COORD_USING_COMBAT_STYLE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any) { invoke_ignore!(0x639C0425A0B4E77E, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15) }
-	pub fn TASK_GO_TO_COORD_WHILE_AIMING_AT_ENTITY(ped1: Ped, x: f32, y: f32, z: f32, ped2: Ped, p5: f32, p6: Any, p7: f32, p8: f32, p9: Any, p10: Any, p11: Any, firingPattern: Hash, p13: i32, p14: Any) { invoke_ignore!(0xB2A16444EAD9AE47, ped1, x, y, z, ped2, p5, p6, p7, p8, p9, p10, p11, firingPattern, p13, p14) }
+	pub fn TASK_GO_TO_COORD_WHILE_AIMING_AT_ENTITY(ped1: Ped, coords: Vector3, ped2: Ped, p5: f32, p6: Any, p7: f32, p8: f32, p9: Any, p10: Any, p11: Any, firingPattern: Hash, p13: i32, p14: Any) { invoke_ignore!(0xB2A16444EAD9AE47, ped1, coords, ped2, p5, p6, p7, p8, p9, p10, p11, firingPattern, p13, p14) }
 	pub fn TASK_GO_TO_COORD_WHILE_AIMING_AT_ENTITY_USING_COMBAT_STYLE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any) { invoke_ignore!(0x78426D0982D083C9, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14) }
 	pub fn TASK_GO_TO_ENTITY_WHILE_AIMING_AT_ENTITY(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0x97465886D35210E9, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn TASK_GO_TO_ENTITY_WHILE_AIMING_AT_ENTITY_USING_COMBAT_STYLE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0xCEF0117C233026AD, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
-	pub fn TASK_GO_TO_COORD_AND_AIM_AT_HATED_ENTITIES_NEAR_COORD(ped: Ped, goToLocationX: f32, goToLocationY: f32, goToLocationZ: f32, focusLocationX: f32, focusLocationY: f32, focusLocationZ: f32, speed: f32, shootAtEnemies: bool, distanceToStopAt: f32, noRoadsDistance: f32, unkTrue: bool, unkFlag: i32, aimingFlag: i32, firingPattern: Hash) { invoke_ignore!(0xA55547801EB331FC, ped, goToLocationX, goToLocationY, goToLocationZ, focusLocationX, focusLocationY, focusLocationZ, speed, shootAtEnemies, distanceToStopAt, noRoadsDistance, unkTrue, unkFlag, aimingFlag, firingPattern) }
+	pub fn TASK_GO_TO_COORD_AND_AIM_AT_HATED_ENTITIES_NEAR_COORD(ped: Ped, gotolocation: Vector3, focuslocation: Vector3, speed: f32, shootAtEnemies: bool, distanceToStopAt: f32, noRoadsDistance: f32, unkTrue: bool, unkFlag: i32, aimingFlag: i32, firingPattern: Hash) { invoke_ignore!(0xA55547801EB331FC, ped, gotolocation, focuslocation, speed, shootAtEnemies, distanceToStopAt, noRoadsDistance, unkTrue, unkFlag, aimingFlag, firingPattern) }
 	pub fn TASK_GO_TO_COORD_AND_AIM_AT_HATED_ENTITIES_NEAR_COORD_USING_COMBAT_STYLE(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any) { invoke_ignore!(0x87BD711FC31EA273, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14) }
 	pub fn SET_HIGH_FALL_TASK(ped: Ped, p1: i32, p2: i32, p3: i32) { invoke_ignore!(0x8C825BDC7741D37C, ped, p1, p2, p3) }
 	pub fn _0x5217B7B6DB78E1F3(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x5217B7B6DB78E1F3, p0, p1, p2, p3, p4) }
@@ -6404,7 +6403,7 @@ pub mod TASK {
 	pub fn WAYPOINT_RECORDING_GET_NUM_POINTS(waypointRecording: & CStr, points: &mut i32) -> bool { invoke!(0x5343532C01A07234, waypointRecording, points) }
 	pub fn WAYPOINT_RECORDING_GET_COORD(waypointRecording: & CStr, point: i32, coord: &mut Vector3) -> bool { invoke!(0x2FB897405C90B361, waypointRecording, point, coord) }
 	pub fn WAYPOINT_RECORDING_GET_SPEED_AT_POINT(waypointRecording: & CStr, point: i32) -> f32 { invoke!(0x005622AEBC33ACA9, waypointRecording, point) }
-	pub fn WAYPOINT_RECORDING_GET_CLOSEST_WAYPOINT(waypointRecording: & CStr, x: f32, y: f32, z: f32, point: &mut i32) -> bool { invoke!(0xB629A298081F876F, waypointRecording, x, y, z, point) }
+	pub fn WAYPOINT_RECORDING_GET_CLOSEST_WAYPOINT(waypointRecording: & CStr, coords: Vector3, point: &mut i32) -> bool { invoke!(0xB629A298081F876F, waypointRecording, coords, point) }
 	pub fn TASK_FOLLOW_WAYPOINT_RECORDING_ADVANCED(ped: Ped, p1: Any) { invoke_ignore!(0x0CFC13EBC19BCA52, ped, p1) }
 	pub fn TASK_FOLLOW_WAYPOINT_RECORDING(ped: Ped, waypointRecording: & CStr, p2: i32, flag: i32, p4: i32, p5: bool, p6: Any, p7: i32) { invoke_ignore!(0x0759591819534F7B, ped, waypointRecording, p2, flag, p4, p5, p6, p7) }
 	pub fn TASK_FOLLOW_WAYPOINT_RECORDING_AT_OFFSET(ped: Ped, waypointRecording: & CStr, p2: f32, p3: i32, p4: i32, p5: i32, p6: bool) { invoke_ignore!(0xBE9B0520BD7C445B, ped, waypointRecording, p2, p3, p4, p5, p6) }
@@ -6414,7 +6413,7 @@ pub mod TASK {
 	pub fn GET_PED_WAYPOINT_DISTANCE(ped: Ped) -> f32 { invoke!(0xE6A877C64CAF1BC5, ped) }
 	pub fn SET_PED_WAYPOINT_ROUTE_OFFSET(ped: Ped, p1: f32, p2: f32, p3: f32) -> Any { invoke!(0xED98E10B0AFCE4B4, ped, p1, p2, p3) }
 	pub fn GET_WAYPOINT_DISTANCE_ALONG_ROUTE(waypointRecording: & CStr, p1: i32) -> f32 { invoke!(0xA5B769058763E497, waypointRecording, p1) }
-	pub fn _0x3ACC128510142B9D(waypointRecording: & CStr, x: f32, y: f32, z: f32) -> f32 { invoke!(0x3ACC128510142B9D, waypointRecording, x, y, z) }
+	pub fn _0x3ACC128510142B9D(waypointRecording: & CStr, coords: Vector3) -> f32 { invoke!(0x3ACC128510142B9D, waypointRecording, coords) }
 	pub fn WAYPOINT_PLAYBACK_GET_IS_PAUSED(ped: Ped) -> bool { invoke!(0x701375A7D43F01CB, ped) }
 	pub fn WAYPOINT_PLAYBACK_GET_IS_AIMING(ped: Ped) -> bool { invoke!(0xD73A5D1F0325C71C, ped) }
 	pub fn WAYPOINT_PLAYBACK_GET_IS_SHOOTING(ped: Ped) -> bool { invoke!(0xA5B94DF8AF058F46, ped) }
@@ -6454,7 +6453,7 @@ pub mod TASK {
 	pub fn TASK_FORCE_MOTION_STATE(ped: Ped, motionStateHash: Hash, p2: bool) { invoke_ignore!(0x4F056E1AFFEF17AB, ped, motionStateHash, p2) }
 	pub fn TASK_MOVE_NETWORK_BY_NAME(ped: Ped, task: & CStr, multiplier: f32, p3: bool, animDict: & CStr, flags: i32) { invoke_ignore!(0x2D537BA194896636, ped, task, multiplier, p3, animDict, flags) }
 	pub fn TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS(ped: Ped, moveNetworkDefName: & CStr, taskData: &mut Any, p3: f32, p4: bool, animDict: & CStr, flags: i32) { invoke_ignore!(0x139805C2A67C4795, ped, moveNetworkDefName, taskData, p3, p4, animDict, flags) }
-	pub fn TASK_MOVE_NETWORK_ADVANCED_BY_NAME_WITH_INIT_PARAMS(ped: Ped, moveNetworkDefName: & CStr, taskData: &mut Any, xPos: f32, yPos: f32, zPos: f32, xRot: f32, yRot: f32, zRot: f32, p9: i32, p10: f32, p11: i32, p12: i32, flag: i32, p14: i32) { invoke_ignore!(0x7B6A04F98BBAFB2C, ped, moveNetworkDefName, taskData, xPos, yPos, zPos, xRot, yRot, zRot, p9, p10, p11, p12, flag, p14) }
+	pub fn TASK_MOVE_NETWORK_ADVANCED_BY_NAME_WITH_INIT_PARAMS(ped: Ped, moveNetworkDefName: & CStr, taskData: &mut Any, pos: Vector3, rot: Vector3, p9: i32, p10: f32, p11: i32, p12: i32, flag: i32, p14: i32) { invoke_ignore!(0x7B6A04F98BBAFB2C, ped, moveNetworkDefName, taskData, pos, rot, p9, p10, p11, p12, flag, p14) }
 	pub fn TASK_MOVE_NETWORK_ADVANCED_BY_NAME_WITH_INIT_PARAMS_ATTACHED(ped: Ped, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any, p15: Any, p16: Any, p17: Any) { invoke_ignore!(0xF92171093BCABED4, ped, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17) }
 	pub fn IS_TASK_MOVE_NETWORK_ACTIVE(ped: Ped) -> bool { invoke!(0x921CE12C489C4C41, ped) }
 	pub fn _GET_TASK_MOVE_NETWORK_ID(ped: Ped) -> Hash { invoke!(0xCACC2F9D994504B7, ped) }
@@ -6466,7 +6465,7 @@ pub mod TASK {
 	pub fn SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT(ped: Ped, signalName: & CStr, value: f32) { invoke_ignore!(0xD5BB4025AE449A4E, ped, signalName, value) }
 	pub fn _SET_TASK_MOVE_NETWORK_SIGNAL_FLOAT_2(ped: Ped, signalName: & CStr, value: f32) { invoke_ignore!(0x099D4A855D53B03B, ped, signalName, value) }
 	pub fn SET_TASK_MOVE_NETWORK_SIGNAL_BOOL(ped: Ped, signalName: & CStr, value: bool) { invoke_ignore!(0xB0A6CFD2C69C1088, ped, signalName, value) }
-	pub fn _SET_TASK_MOVE_NETWORK_SIGNAL_VECTOR(ped: Ped, signalName: & CStr, x: f32, y: f32, z: f32) { invoke_ignore!(0x4662BFE01938D98D, ped, signalName, x, y, z) }
+	pub fn _SET_TASK_MOVE_NETWORK_SIGNAL_VECTOR(ped: Ped, signalName: & CStr, coords: Vector3) { invoke_ignore!(0x4662BFE01938D98D, ped, signalName, coords) }
 	pub fn _GET_TASK_MOVE_NETWORK_PHASE_FLOAT(ped: Ped, phaseName: & CStr) -> f32 { invoke!(0x844CEEE428EA35B0, ped, phaseName) }
 	pub fn GET_TASK_MOVE_NETWORK_EVENT(ped: Ped, eventName: & CStr) -> bool { invoke!(0xB4F47213DF45A64C, ped, eventName) }
 	pub fn _0x9585FF23C4B8EDE0(p0: Any, p1: Any) { invoke_ignore!(0x9585FF23C4B8EDE0, p0, p1) }
@@ -6488,7 +6487,7 @@ pub mod TASK {
 	pub fn UNCUFF_PED(ped: Ped) { invoke_ignore!(0x67406F2C8F87FC4F, ped) }
 	pub fn IS_PED_CUFFED(ped: Ped) -> bool { invoke!(0x74E559B3BC910685, ped) }
 	pub fn _IS_PED_DUELLING(ped: Ped) -> bool { invoke!(0xC8B29D18022EA2B7, ped) }
-	pub fn TASK_DUEL(ped: Ped, p1: Any, p2: f32, entity: Entity, p4: f32, p5: i32, vPosOpponentX: f32, vPosOpponentY: f32, vPosOpponentZ: f32, fOpponentHead: f32, p10: i32) { invoke_ignore!(0x5D5B0D5BC3626E5A, ped, p1, p2, entity, p4, p5, vPosOpponentX, vPosOpponentY, vPosOpponentZ, fOpponentHead, p10) }
+	pub fn TASK_DUEL(ped: Ped, p1: Any, p2: f32, entity: Entity, p4: f32, p5: i32, vposopponent: Vector3, fOpponentHead: f32, p10: i32) { invoke_ignore!(0x5D5B0D5BC3626E5A, ped, p1, p2, entity, p4, p5, vposopponent, fOpponentHead, p10) }
 	pub fn _0x908BB14BCE85C80E(p0: Any) -> Any { invoke!(0x908BB14BCE85C80E, p0) }
 	pub fn _0x1F7A9A9C38C13A56(p0: Any) -> Any { invoke!(0x1F7A9A9C38C13A56, p0) }
 	pub fn _0x3FEB770D8ED9047A(p0: Any) -> Any { invoke!(0x3FEB770D8ED9047A, p0) }
@@ -6501,7 +6500,7 @@ pub mod TASK {
 	pub fn _0x9EBD34958AB6F824(p0: Any) { invoke_ignore!(0x9EBD34958AB6F824, p0) }
 	pub fn GET_IS_CARRIABLE_ENTITY(entity: Entity) -> bool { invoke!(0x0CCFE72B43C9CF96, entity) }
 	pub fn _0x10ADFDF07B7DFFBA(p0: Any, p1: Any, p2: Any) -> Any { invoke!(0x10ADFDF07B7DFFBA, p0, p1, p2) }
-	pub fn TASK_PLACE_CARRIED_ENTITY_AT_COORD(ped: Ped, entity: Entity, x: f32, y: f32, z: f32, p5: f32, flags: i32) { invoke_ignore!(0xC7F0B43DCDC57E3D, ped, entity, x, y, z, p5, flags) }
+	pub fn TASK_PLACE_CARRIED_ENTITY_AT_COORD(ped: Ped, entity: Entity, coords: Vector3, p5: f32, flags: i32) { invoke_ignore!(0xC7F0B43DCDC57E3D, ped, entity, coords, p5, flags) }
 	pub fn TASK_PLACE_CARRIED_ENTITY_ON_MOUNT(ped: Ped, entity: Entity, mount: Ped, p3: f32) { invoke_ignore!(0x6D3D87C57B3D52C7, ped, entity, mount, p3) }
 	pub fn TASK_DUMP_CARRIABLE_FROM_PARENT(ped: Ped, ped2: Ped, entity: Entity) { invoke_ignore!(0x17CA98707B15926A, ped, ped2, entity) }
 	pub fn _DETACH_CARRIABLE_PED(ped: Ped) { invoke_ignore!(0x36D188AECB26094B, ped) }
@@ -6515,13 +6514,13 @@ pub mod TASK {
 	pub fn _0x03D741CB4052E26C(p0: Any) -> Any { invoke!(0x03D741CB4052E26C, p0) }
 	pub fn _REQUEST_HERB_COMPOSITE_ASSET(asset: Hash) -> bool { invoke!(0x73F0D0327BFA0812, asset) }
 	pub fn ARE_COMPOSITE_LOOTABLE_ENTITY_DEF_ASSETS_LOADED(asset: Hash) -> bool { invoke!(0x5E5D96BE25E9DF68, asset) }
-	pub fn _CREATE_HERB_COMPOSITES(asset: Hash, x: f32, y: f32, z: f32, heading: f32, groundSetting: i32, p6: &mut Any, p7: i32) -> i32 { invoke!(0x5B4BBE80AD5972DC, asset, x, y, z, heading, groundSetting, p6, p7) }
+	pub fn _CREATE_HERB_COMPOSITES(asset: Hash, coords: Vector3, heading: f32, groundSetting: i32, p6: &mut Any, p7: i32) -> i32 { invoke!(0x5B4BBE80AD5972DC, asset, coords, heading, groundSetting, p6, p7) }
 	pub fn _DELETE_PATCH_OBJECTS_FROM_HERB_COMPOSITES(compositeId: i32, p1: bool) { invoke_ignore!(0x5758B1EE0C3FD4AC, compositeId, p1) }
 	pub fn _GET_HERB_COMPOSITE_NUM_ENTITIES(compositeId: i32, outEntities: &mut Any) -> i32 { invoke!(0x96C6ED22FB742C3E, compositeId, outEntities) }
 	pub fn _0xDF56A2B50C04DEA4(p0: Any, p1: Any) -> Any { invoke!(0xDF56A2B50C04DEA4, p0, p1) }
 	pub fn TASK_LOOT_ENTITY(ped: Ped, entity: Entity) { invoke_ignore!(0x48FAE038401A2888, ped, entity) }
 	pub fn TASK_BREAK_VEHICLE_DOOR_LOCK(ped: Ped, vehicle: Vehicle) { invoke_ignore!(0xBB28D1BC9EA8A6A5, ped, vehicle) }
-	pub fn TASK_LOOT_NEAREST_ENTITY(ped: Ped, x: f32, y: f32, z: f32, p4: i32, p5: f32) { invoke_ignore!(0xCF1501CBC4059412, ped, x, y, z, p4, p5) }
+	pub fn TASK_LOOT_NEAREST_ENTITY(ped: Ped, coords: Vector3, p4: i32, p5: f32) { invoke_ignore!(0xCF1501CBC4059412, ped, coords, p4, p5) }
 	pub fn TASK_LASSO_PED(ped: Ped, targetPed: Ped) { invoke_ignore!(0xC716EB2BD16370A3, ped, targetPed) }
 	pub fn TASK_HOGTIEABLE(ped: Ped) { invoke_ignore!(0x6AFD8FE0D723328F, ped) }
 	pub fn UNHOGTIE_PED(ped: Ped, flags: i32, getupSetHash: Hash, p3: & CStr, p4: & CStr, p5: f32) { invoke_ignore!(0x79559BAD83CCD038, ped, flags, getupSetHash, p3, p4, p5) }
@@ -6635,7 +6634,7 @@ pub mod TELEMETRY {
 	pub fn _TELEMETRY_MOONSHINE_BREW(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any) { invoke_ignore!(0xB5013EFBB5516867, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) }
 	pub fn _TELEMETRY_COLLECT(transactionId: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xD6CB05DDAEE43AFD, transactionId, p1, p2, p3, p4, p5, p6) }
 	pub fn _TELEMETRY_MISSION_ILO_OPTION(p0: Any, p1: Any) { invoke_ignore!(0xEA323F5E1A4DA2F1, p0, p1) }
-	pub fn _TELEMETRY_MISSION_FAILED_TO_LAUNCH(p0: Any, p1: Any, x: f32, y: f32, z: f32, reason: i32) { invoke_ignore!(0x6571E4327390EC0B, p0, p1, x, y, z, reason) }
+	pub fn _TELEMETRY_MISSION_FAILED_TO_LAUNCH(p0: Any, p1: Any, coords: Vector3, reason: i32) { invoke_ignore!(0x6571E4327390EC0B, p0, p1, coords, reason) }
 	pub fn _TELEMETRY_GANG_SHARES(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0xE6DC9B21AC7A8729, p0, p1, p2, p3) }
 	pub fn _TELEMETRY_FAST_TRAVEL(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) { invoke_ignore!(0x7CEF4AC79F7E7FAD, p0, p1, p2, p3, p4) }
 	pub fn _TELEMETRY_NET_CAMP(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) { invoke_ignore!(0xA72773C3134F9A57, p0, p1, p2, p3, p4, p5, p6) }
@@ -6777,7 +6776,7 @@ pub mod UILOG {
 	use crate::core::types::*;
 
 	pub fn _UILOG_IS_ENTRY_REGISTERED(p0: i32, p1: Hash) -> bool { invoke!(0xB8188CCF52202475, p0, p1) }
-	pub fn _UILOG_ADD_ENTRY_HASH(p0: i32, p1: i32, x: f32, y: f32, z: f32, p5: Hash, p6: Hash, p7: Any) { invoke_ignore!(0x69D5479982355D8F, p0, p1, x, y, z, p5, p6, p7) }
+	pub fn _UILOG_ADD_ENTRY_HASH(p0: i32, p1: i32, coords: Vector3, p5: Hash, p6: Hash, p7: Any) { invoke_ignore!(0x69D5479982355D8F, p0, p1, coords, p5, p6, p7) }
 	pub fn _UILOG_ADD_ITEM_TO_TASK_LIST(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0x49C63FDF69744A27, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn _UILOG_SET_ENTRY_ICON_TEXTURE(p0: i32, p1: Hash, icon: Hash, iconDictionary: Hash) { invoke_ignore!(0x6965469934958D8F, p0, p1, icon, iconDictionary) }
 	pub fn _UILOG_SET_ENTRY_BRIEF_TEXTURE(p0: i32, p1: Hash, texture: Hash, textureDictionary: Hash) { invoke_ignore!(0x69684D9936958D8F, p0, p1, texture, textureDictionary) }
@@ -6877,8 +6876,8 @@ pub mod VEHICLE {
 
 	pub fn _0x6355602C02EDC6DF(entity: Entity, p1: Any) { invoke_ignore!(0x6355602C02EDC6DF, entity, p1) }
 	pub fn _SET_VEHICLE_IS_IN_HURRY(vehicle: Vehicle, enabled: bool) { invoke_ignore!(0xCE1531927AD6C9F8, vehicle, enabled) }
-	pub fn CREATE_VEHICLE(modelHash: Hash, x: f32, y: f32, z: f32, heading: f32, isNetwork: bool, bScriptHostVeh: bool, bDontAutoCreateDraftAnimals: bool, p8: bool) -> Vehicle { invoke!(0xAF35D0D2583051B0, modelHash, x, y, z, heading, isNetwork, bScriptHostVeh, bDontAutoCreateDraftAnimals, p8) }
-	pub fn _CREATE_DRAFT_VEHICLE(modelHash: Hash, x: f32, y: f32, z: f32, heading: f32, isNetwork: bool, bScriptHostVeh: bool, bDontAutoCreateDraftAnimals: bool, draftAnimalPopGroup: Hash, p9: bool) -> Vehicle { invoke!(0x214651FB1DFEBA89, modelHash, x, y, z, heading, isNetwork, bScriptHostVeh, bDontAutoCreateDraftAnimals, draftAnimalPopGroup, p9) }
+	pub fn CREATE_VEHICLE(modelHash: Hash, coords: Vector3, heading: f32, isNetwork: bool, bScriptHostVeh: bool, bDontAutoCreateDraftAnimals: bool, p8: bool) -> Vehicle { invoke!(0xAF35D0D2583051B0, modelHash, coords, heading, isNetwork, bScriptHostVeh, bDontAutoCreateDraftAnimals, p8) }
+	pub fn _CREATE_DRAFT_VEHICLE(modelHash: Hash, coords: Vector3, heading: f32, isNetwork: bool, bScriptHostVeh: bool, bDontAutoCreateDraftAnimals: bool, draftAnimalPopGroup: Hash, p9: bool) -> Vehicle { invoke!(0x214651FB1DFEBA89, modelHash, coords, heading, isNetwork, bScriptHostVeh, bDontAutoCreateDraftAnimals, draftAnimalPopGroup, p9) }
 	pub fn DELETE_VEHICLE(vehicle: &mut Vehicle) { invoke_ignore!(0xE20A909D8C4A70F8, vehicle) }
 	pub fn _FADE_AND_DESTROY_VEHICLE(vehicle: &mut Vehicle) { invoke_ignore!(0x35DC1877312FBA0F, vehicle) }
 	pub fn _IS_VEHICLE_FADING_OUT(vehicle: Vehicle) -> bool { invoke!(0x5136B284B67B35C7, vehicle) }
@@ -6886,7 +6885,7 @@ pub mod VEHICLE {
 	pub fn SET_VEHICLE_ALLOW_NO_PASSENGERS_LOCKON(vehicle: Vehicle, toggle: bool) { invoke_ignore!(0xECB9E9BC887E8060, vehicle, toggle) }
 	pub fn IS_VEHICLE_MODEL(vehicle: Vehicle, model: Hash) -> bool { invoke!(0x0045A54EC7A22455, vehicle, model) }
 	pub fn _SET_ALL_VEHICLE_GENERATORS_DISABLED_FOR_VOLUME(volume: Volume, toggle: bool) { invoke_ignore!(0x424FFCB9F0D2D4B5, volume, toggle) }
-	pub fn SET_ALL_VEHICLE_GENERATORS_ACTIVE_IN_AREA(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, p6: bool, p7: bool) { invoke_ignore!(0xBBB134FB9D50C0CC, x1, y1, z1, x2, y2, z2, p6, p7) }
+	pub fn SET_ALL_VEHICLE_GENERATORS_ACTIVE_IN_AREA(coords1: Vector3, coords2: Vector3, p6: bool, p7: bool) { invoke_ignore!(0xBBB134FB9D50C0CC, coords1, coords2, p6, p7) }
 	pub fn SET_ALL_VEHICLE_GENERATORS_ACTIVE() { invoke_ignore!(0x3D596E6E88A02C24) }
 	pub fn SET_VEHICLE_ON_GROUND_PROPERLY(vehicle: Vehicle, p1: bool) -> bool { invoke!(0x7263332501E07F52, vehicle, p1) }
 	pub fn IS_VEHICLE_STOPPED(vehicle: Vehicle) -> bool { invoke!(0x78C3311A73135241, vehicle) }
@@ -6949,7 +6948,7 @@ pub mod VEHICLE {
 	pub fn _SET_VEHICLE_MUD_LEVEL(vehicle: Vehicle, mudLevel: f32) { invoke_ignore!(0x4D15E49764CB328A, vehicle, mudLevel) }
 	pub fn SET_VEHICLE_LIGHTS(vehicle: Vehicle, state: i32) { invoke_ignore!(0x629F0A0E952CAE7D, vehicle, state) }
 	pub fn SET_RANDOM_TRAINS(toggle: bool) { invoke_ignore!(0x1156C6EE7E82A98A, toggle) }
-	pub fn _0x331CBD247FC5DAA8(configHash: Hash, x: f32, y: f32, z: f32, direction: bool, p5: bool) -> i32 { invoke!(0x331CBD247FC5DAA8, configHash, x, y, z, direction, p5) }
+	pub fn _0x331CBD247FC5DAA8(configHash: Hash, coords: Vector3, direction: bool, p5: bool) -> i32 { invoke!(0x331CBD247FC5DAA8, configHash, coords, direction, p5) }
 	pub fn _0x0516FAE561276EFC(trackIndex: i32) -> bool { invoke!(0x0516FAE561276EFC, trackIndex) }
 	pub fn _GET_TRAIN_TRACK_FROM_TRAIN_VEHICLE(train: Vehicle) -> i32 { invoke!(0x45853F4E17D847D5, train) }
 	pub fn _GET_TRAIN_VEHICLE_FROM_TRACK_INDEX(trackIndex: i32) -> Vehicle { invoke!(0x6E585A616ABB8401, trackIndex) }
@@ -6971,7 +6970,7 @@ pub mod VEHICLE {
 	pub fn _0x0D5FDF0D36FA10CD(trackIndex: i32) { invoke_ignore!(0x0D5FDF0D36FA10CD, trackIndex) }
 	pub fn _0xE682002DB1F30669(p0: Any) { invoke_ignore!(0xE682002DB1F30669, p0) }
 	pub fn _0x718EB706B6E998A0(trackIndex: i32) { invoke_ignore!(0x718EB706B6E998A0, trackIndex) }
-	pub fn _0xF05DFAF1ADFEF2CD(trainConfig: Hash, x: f32, y: f32, z: f32, direction: bool, p5: bool) -> bool { invoke!(0xF05DFAF1ADFEF2CD, trainConfig, x, y, z, direction, p5) }
+	pub fn _0xF05DFAF1ADFEF2CD(trainConfig: Hash, coords: Vector3, direction: bool, p5: bool) -> bool { invoke!(0xF05DFAF1ADFEF2CD, trainConfig, coords, direction, p5) }
 	pub fn _0xD1DF5E54F4ACBE1A(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) -> Any { invoke!(0xD1DF5E54F4ACBE1A, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn _0x0FDDEE66E3465726(p0: Any) -> Any { invoke!(0x0FDDEE66E3465726, p0) }
 	pub fn _0x4C05B42A8D937796() { invoke_ignore!(0x4C05B42A8D937796) }
@@ -6982,9 +6981,9 @@ pub mod VEHICLE {
 	pub fn _0x6EA1273D525427F4(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0x6EA1273D525427F4, p0, p1, p2) }
 	pub fn _0x7BE0746539DEF0C8(p0: Any, p1: Any) -> Any { invoke!(0x7BE0746539DEF0C8, p0, p1) }
 	pub fn _0x3137EDC899E6DAE4(p0: Any, p1: Any) { invoke_ignore!(0x3137EDC899E6DAE4, p0, p1) }
-	pub fn _0x6C87F49BFA181DB5(x: f32, y: f32, z: f32) -> i32 { invoke!(0x6C87F49BFA181DB5, x, y, z) }
-	pub fn _GET_TRACK_INDEX_FROM_COORDS(x: f32, y: f32, z: f32) -> i32 { invoke!(0x85D39F5E3B6D7EB0, x, y, z) }
-	pub fn _GET_NEAREST_TRAIN_TRACK_POSITION(x: f32, y: f32, z: f32) -> Vector3 { invoke!(0x6DE03BCC15E81710, x, y, z) }
+	pub fn _0x6C87F49BFA181DB5(coords: Vector3) -> i32 { invoke!(0x6C87F49BFA181DB5, coords) }
+	pub fn _GET_TRACK_INDEX_FROM_COORDS(coords: Vector3) -> i32 { invoke!(0x85D39F5E3B6D7EB0, coords) }
+	pub fn _GET_NEAREST_TRAIN_TRACK_POSITION(coords: Vector3) -> Vector3 { invoke!(0x6DE03BCC15E81710, coords) }
 	pub fn DELETE_ALL_TRAINS() { invoke_ignore!(0xA3120A1385F17FF7) }
 	pub fn _0x0E558D3A49D759D6(p0: Any, p1: Any) -> Any { invoke!(0x0E558D3A49D759D6, p0, p1) }
 	pub fn _0xD4907EF4334C7602(p0: Any, p1: Any) { invoke_ignore!(0xD4907EF4334C7602, p0, p1) }
@@ -7016,12 +7015,12 @@ pub mod VEHICLE {
 	pub fn IS_PLAYBACK_USING_AI_GOING_ON_FOR_VEHICLE(vehicle: Vehicle) -> bool { invoke!(0x5A7472606EC5B7C1, vehicle) }
 	pub fn SET_PLAYBACK_SPEED(vehicle: Vehicle, speed: f32) { invoke_ignore!(0xD78084EED4CD94C6, vehicle, speed) }
 	pub fn SKIP_TIME_IN_PLAYBACK_RECORDED_VEHICLE(vehicle: Vehicle, time: f32) { invoke_ignore!(0x5F5E6379C59EFC56, vehicle, time) }
-	pub fn GET_CLOSEST_VEHICLE(x: f32, y: f32, z: f32, radius: f32, modelHash: Hash, flags: i32) -> Vehicle { invoke!(0x52F45D033645181B, x, y, z, radius, modelHash, flags) }
+	pub fn GET_CLOSEST_VEHICLE(coords: Vector3, radius: f32, modelHash: Hash, flags: i32) -> Vehicle { invoke!(0x52F45D033645181B, coords, radius, modelHash, flags) }
 	pub fn GET_TRAIN_CARRIAGE(train: Vehicle, trailerNumber: i32) -> Entity { invoke!(0xD0FB093A4CDB932C, train, trailerNumber) }
 	pub fn DELETE_MISSION_TRAIN(train: &mut Vehicle) { invoke_ignore!(0x0D3630FB07E8B570, train) }
 	pub fn SET_MISSION_TRAIN_AS_NO_LONGER_NEEDED(train: &mut Vehicle, flags: i32) { invoke_ignore!(0xBBE7648349B49BE8, train, flags) }
-	pub fn SET_MISSION_TRAIN_COORDS(train: Vehicle, x: f32, y: f32, z: f32) { invoke_ignore!(0x7632755962AB9922, train, x, y, z) }
-	pub fn _SET_MISSION_TRAIN_WARP_TO_COORDS(train: Vehicle, x: f32, y: f32, z: f32, direction: bool) { invoke_ignore!(0xC9EA26893C9E4024, train, x, y, z, direction) }
+	pub fn SET_MISSION_TRAIN_COORDS(train: Vehicle, coords: Vector3) { invoke_ignore!(0x7632755962AB9922, train, coords) }
+	pub fn _SET_MISSION_TRAIN_WARP_TO_COORDS(train: Vehicle, coords: Vector3, direction: bool) { invoke_ignore!(0xC9EA26893C9E4024, train, coords, direction) }
 	pub fn _0xA72B1BF3857B94D7(train: Vehicle, p1: bool) { invoke_ignore!(0xA72B1BF3857B94D7, train, p1) }
 	pub fn _IS_THIS_MODEL_A_DRAFT_VEHICLE(model: Hash) -> bool { invoke!(0xB9D5BDDA88E1BB66, model) }
 	pub fn IS_THIS_MODEL_A_BOAT(model: Hash) -> bool { invoke!(0x799CFC7C5B743B15, model) }
@@ -7051,7 +7050,7 @@ pub mod VEHICLE {
 	pub fn _GET_TRAIN_DIRECTION(train: Vehicle) -> bool { invoke!(0x3C9628A811CBD724, train) }
 	pub fn _GET_TRAIN_DIRECTION_FROM_INDEX(trackIndex: i32) -> bool { invoke!(0x67995318F5FAA496, trackIndex) }
 	pub fn _0x09034479E6E3E269(train: Vehicle, trainTrack: &mut Hash, junctionIndex: &mut i32) -> Any { invoke!(0x09034479E6E3E269, train, trainTrack, junctionIndex) }
-	pub fn _GET_TRAIN_TRACK_JUNCTION_AT_COORDS(trainTrack: Hash, x: f32, y: f32, z: f32, junctionIndex: &mut i32) -> bool { invoke!(0x86AFC343CF7F0B34, trainTrack, x, y, z, junctionIndex) }
+	pub fn _GET_TRAIN_TRACK_JUNCTION_AT_COORDS(trainTrack: Hash, coords: Vector3, junctionIndex: &mut i32) -> bool { invoke!(0x86AFC343CF7F0B34, trainTrack, coords, junctionIndex) }
 	pub fn _0xD9BF3ED8EFB67EA3(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) -> Any { invoke!(0xD9BF3ED8EFB67EA3, p0, p1, p2, p3, p4) }
 	pub fn _0x785639D89F8451AB(p0: Any, p1: Any) -> Vector3 { invoke!(0x785639D89F8451AB, p0, p1) }
 	pub fn _SET_TRAIN_TRACK_JUNCTION_SWITCH(trainTrack: Hash, junctionIndex: i32, enabled: bool) { invoke_ignore!(0xE6C5E2125EB210C1, trainTrack, junctionIndex, enabled) }
@@ -7060,7 +7059,7 @@ pub mod VEHICLE {
 	pub fn _0xCAFF2C9747103C02(p0: Any, p1: Any, p2: Any) -> Any { invoke!(0xCAFF2C9747103C02, p0, p1, p2) }
 	pub fn _SET_ALL_JUNCTIONS_CLEARED() { invoke_ignore!(0x138398153824E332) }
 	pub fn _0x34BCF6209B9668A7(trackIndex: i32, p1: Any) { invoke_ignore!(0x34BCF6209B9668A7, trackIndex, p1) }
-	pub fn _0xD0BA1853D76683C8(trackIndex: i32, x: f32, y: f32, z: f32, p4: Any) { invoke_ignore!(0xD0BA1853D76683C8, trackIndex, x, y, z, p4) }
+	pub fn _0xD0BA1853D76683C8(trackIndex: i32, coords: Vector3, p4: Any) { invoke_ignore!(0xD0BA1853D76683C8, trackIndex, coords, p4) }
 	pub fn SET_TRAIN_OFFSET_FROM_STATION(train: Vehicle, offset: f32) { invoke_ignore!(0x8EC47DD4300BF063, train, offset) }
 	pub fn _0xDC69F6913CCA0B99(p0: Any, p1: Any) { invoke_ignore!(0xDC69F6913CCA0B99, p0, p1) }
 	pub fn _0x7840576C50A13DBA(train: Vehicle, p1: bool) { invoke_ignore!(0x7840576C50A13DBA, train, p1) }
@@ -7091,7 +7090,7 @@ pub mod VEHICLE {
 	pub fn IS_VEHICLE_EXTRA_TURNED_ON(vehicle: Vehicle, extraId: i32) -> bool { invoke!(0xFA9A55D9C4351625, vehicle, extraId) }
 	pub fn SET_VEHICLE_EXTRA(vehicle: Vehicle, extraId: i32, disable: bool) { invoke_ignore!(0xBB6F89150BC9D16B, vehicle, extraId, disable) }
 	pub fn DOES_EXTRA_EXIST(vehicle: Vehicle, extraId: i32) -> bool { invoke!(0xAF5E7E9A7620FFB5, vehicle, extraId) }
-	pub fn SET_VEHICLE_DAMAGE(vehicle: Vehicle, xOffset: f32, yOffset: f32, zOffset: f32, damage: f32, radius: f32, p6: bool) { invoke_ignore!(0x1D7678F81452BB41, vehicle, xOffset, yOffset, zOffset, damage, radius, p6) }
+	pub fn SET_VEHICLE_DAMAGE(vehicle: Vehicle, offset: Vector3, damage: f32, radius: f32, p6: bool) { invoke_ignore!(0x1D7678F81452BB41, vehicle, offset, damage, radius, p6) }
 	pub fn GET_VEHICLE_ENGINE_HEALTH(vehicle: Vehicle) -> f32 { invoke!(0x90DBFFAC43B22081, vehicle) }
 	pub fn SET_VEHICLE_ENGINE_HEALTH(vehicle: Vehicle, health: f32) { invoke_ignore!(0x8BDC5B998B4654EF, vehicle, health) }
 	pub fn GET_VEHICLE_PETROL_TANK_HEALTH(vehicle: Vehicle) -> f32 { invoke!(0x1E5A9B356D5098BE, vehicle) }
@@ -7114,7 +7113,7 @@ pub mod VEHICLE {
 	pub fn ARE_ANY_VEHICLE_SEATS_FREE(vehicle: Vehicle) -> bool { invoke!(0xA0A424505A1B6429, vehicle) }
 	pub fn SET_VEHICLE_EXPLODES_ON_HIGH_EXPLOSION_DAMAGE(vehicle: Vehicle, toggle: bool) { invoke_ignore!(0xA402939C6761E1A3, vehicle, toggle) }
 	pub fn SET_ALLOW_VEHICLE_EXPLODES_ON_CONTACT(vehicle: Vehicle, p1: bool) { invoke_ignore!(0x8D3230A0ED7DE39F, vehicle, p1) }
-	pub fn IS_ANY_VEHICLE_NEAR_POINT(x: f32, y: f32, z: f32, radius: f32) -> bool { invoke!(0x5698BA4FD04D39C4, x, y, z, radius) }
+	pub fn IS_ANY_VEHICLE_NEAR_POINT(coords: Vector3, radius: f32) -> bool { invoke!(0x5698BA4FD04D39C4, coords, radius) }
 	pub fn REQUEST_VEHICLE_HIGH_DETAIL_MODEL(vehicle: Vehicle) { invoke_ignore!(0x84B81EF78BD22357, vehicle) }
 	pub fn REQUEST_VEHICLE_ASSET(vehicleHash: Hash, vehicleAsset: i32) { invoke_ignore!(0x81A15811460FAB3A, vehicleHash, vehicleAsset) }
 	pub fn _0xCF9DA72002FC16BF(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0xCF9DA72002FC16BF, p0, p1, p2) }
@@ -7183,14 +7182,14 @@ pub mod VEHICLE {
 	pub fn _DETACH_DRAFT_VEHICLE_HARNESS_PED(draft: Vehicle, ped: Ped) -> bool { invoke!(0xB36D3EC70963BE60, draft, ped) }
 	pub fn _0x0F7F603BDE08C4D3(p0: Any) { invoke_ignore!(0x0F7F603BDE08C4D3, p0) }
 	pub fn _GET_NUM_DRAFT_VEHICLE_HARNESS_PED(modelHash: Hash) -> i32 { invoke!(0x5B1A26BB18E7D451, modelHash) }
-	pub fn _GET_CHECKPOINT_TRAIN_SPAWN_LOCATION(trackIndex: i32, x: f32, y: f32, z: f32, distance: f32, direction: bool) -> Vector3 { invoke!(0x35D302397E524939, trackIndex, x, y, z, distance, direction) }
+	pub fn _GET_CHECKPOINT_TRAIN_SPAWN_LOCATION(trackIndex: i32, coords: Vector3, distance: f32, direction: bool) -> Vector3 { invoke!(0x35D302397E524939, trackIndex, coords, distance, direction) }
 	pub fn _0xC399CC89FBA05DA0(vehicle: Vehicle, p1: bool) { invoke_ignore!(0xC399CC89FBA05DA0, vehicle, p1) }
 	pub fn _GET_ROWING_OARS(vehicle: Vehicle, left: &mut Entity, right: &mut Entity) { invoke_ignore!(0xA6E210FB4283B767, vehicle, left, right) }
 	pub fn GET_DRIVER_OF_VEHICLE(vehicle: Vehicle) -> Ped { invoke!(0x2963B5C1637E8A27, vehicle) }
 	pub fn _SET_FORCE_COACH_ROBBERY_LOOT(vehicle: Vehicle, coachrobberyLoot: Hash) { invoke_ignore!(0xF489F94BFEE12BB0, vehicle, coachrobberyLoot) }
 	pub fn _0x0BA4250D20007C2E(p0: Any) -> Any { invoke!(0x0BA4250D20007C2E, p0) }
-	pub fn _0x2200AB13CBD10F4E(vehicle: Vehicle, x: f32, y: f32, z: f32, p4: bool, p5: f32) { invoke_ignore!(0x2200AB13CBD10F4E, vehicle, x, y, z, p4, p5) }
-	pub fn _0xB42C87521D1BDD2F(vehicle: Vehicle, x: f32, y: f32, z: f32) { invoke_ignore!(0xB42C87521D1BDD2F, vehicle, x, y, z) }
+	pub fn _0x2200AB13CBD10F4E(vehicle: Vehicle, coords: Vector3, p4: bool, p5: f32) { invoke_ignore!(0x2200AB13CBD10F4E, vehicle, coords, p4, p5) }
+	pub fn _0xB42C87521D1BDD2F(vehicle: Vehicle, coords: Vector3) { invoke_ignore!(0xB42C87521D1BDD2F, vehicle, coords) }
 	pub fn _0xC351394B932A6A50(p0: Any) { invoke_ignore!(0xC351394B932A6A50, p0) }
 	pub fn _0x172E9DD35858DCD7(p0: Any) { invoke_ignore!(0x172E9DD35858DCD7, p0) }
 	pub fn _GET_BREAKABLE_VEHICLE_LOCKS_STATE(vehicle: Vehicle) -> i32 { invoke!(0xE015CF1F2C0959D8, vehicle) }
@@ -7208,7 +7207,7 @@ pub mod VEHICLE {
 	pub fn _0x165BE2001E5E4B75(p0: Any) { invoke_ignore!(0x165BE2001E5E4B75, p0) }
 	pub fn _SET_DRAFT_VEHICLE_ANIMALS_CAN_DETACH(draft: Vehicle, canDetach: bool) { invoke_ignore!(0x6090A031C69F384E, draft, canDetach) }
 	pub fn _SET_DRAFT_VEHICLE_YOKE_CAN_BREAK(draft: Vehicle, canBreak: bool) { invoke_ignore!(0x226C6A4E3346D288, draft, canBreak) }
-	pub fn _ADD_TRAIN_TEMPORARY_STOP(train: Vehicle, trackIndex: i32, x: f32, y: f32, z: f32) { invoke_ignore!(0x41503629D1139ABC, train, trackIndex, x, y, z) }
+	pub fn _ADD_TRAIN_TEMPORARY_STOP(train: Vehicle, trackIndex: i32, coords: Vector3) { invoke_ignore!(0x41503629D1139ABC, train, trackIndex, coords) }
 	pub fn _0x0794199B25E499E1(wagon: Vehicle, p1: bool) { invoke_ignore!(0x0794199B25E499E1, wagon, p1) }
 	pub fn _0x73118A3EE9C9B6DB(wagon: Vehicle, p1: i32, p2: bool) { invoke_ignore!(0x73118A3EE9C9B6DB, wagon, p1, p2) }
 	pub fn _0xE1C0F8781BF130C2(wagon: Vehicle, p1: i32) -> bool { invoke!(0xE1C0F8781BF130C2, wagon, p1) }
@@ -7230,10 +7229,10 @@ pub mod VEHICLE {
 	pub fn _0xAE7E66A61E7C17A5(train: Vehicle, p1: bool) { invoke_ignore!(0xAE7E66A61E7C17A5, train, p1) }
 	pub fn _0xEF28A614B4B264B8(train: Vehicle, p1: bool) { invoke_ignore!(0xEF28A614B4B264B8, train, p1) }
 	pub fn _0x04F0579DBDD32F34(vehicle: Vehicle) { invoke_ignore!(0x04F0579DBDD32F34, vehicle) }
-	pub fn _0x12F6C6ED3EFF42DE(vehicle: Vehicle, x: f32, y: f32, z: f32) { invoke_ignore!(0x12F6C6ED3EFF42DE, vehicle, x, y, z) }
+	pub fn _0x12F6C6ED3EFF42DE(vehicle: Vehicle, coords: Vector3) { invoke_ignore!(0x12F6C6ED3EFF42DE, vehicle, coords) }
 	pub fn _0x87B974E54C71BA7B(vehicle: Vehicle, p1: bool) { invoke_ignore!(0x87B974E54C71BA7B, vehicle, p1) }
 	pub fn _HAS_TRAIN_LOADED(train: Vehicle) -> bool { invoke!(0xBD3C4A2ED509205E, train) }
-	pub fn _CREATE_MISSION_TRAIN(configHash: Hash, x: f32, y: f32, z: f32, direction: bool, passengers: bool, p6: bool, conductor: bool) -> Vehicle { invoke!(0xC239DBD9A57D2A71, configHash, x, y, z, direction, passengers, p6, conductor) }
+	pub fn _CREATE_MISSION_TRAIN(configHash: Hash, coords: Vector3, direction: bool, passengers: bool, p6: bool, conductor: bool) -> Vehicle { invoke!(0xC239DBD9A57D2A71, configHash, coords, direction, passengers, p6, conductor) }
 	pub fn _0xD1EFA8D68BF5D63D(p0: Any, p1: Any, p2: Any, p3: Any) { invoke_ignore!(0xD1EFA8D68BF5D63D, p0, p1, p2, p3) }
 	pub fn _0x1121B07088ED3013(p0: Any) -> Any { invoke!(0x1121B07088ED3013, p0) }
 	pub fn _0x42404D57D621601A(p0: Any) -> Any { invoke!(0x42404D57D621601A, p0) }
@@ -7298,36 +7297,36 @@ pub mod VOLUME {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn _CREATE_VOLUME_BY_HASH(volumeType: Hash, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) -> Volume { invoke!(0x502022FA1AF9DC86, volumeType, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
-	pub fn CREATE_VOLUME_BOX(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) -> Volume { invoke!(0xDF85637F22706891, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
-	pub fn CREATE_VOLUME_CYLINDER(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) -> Volume { invoke!(0x0522D4774B82E3E6, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
-	pub fn CREATE_VOLUME_SPHERE(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) -> Volume { invoke!(0xB3FB80A32BAE3065, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
+	pub fn _CREATE_VOLUME_BY_HASH(volumeType: Hash, coords: Vector3, rot: Vector3, scale: Vector3) -> Volume { invoke!(0x502022FA1AF9DC86, volumeType, coords, rot, scale) }
+	pub fn CREATE_VOLUME_BOX(coords: Vector3, rot: Vector3, scale: Vector3) -> Volume { invoke!(0xDF85637F22706891, coords, rot, scale) }
+	pub fn CREATE_VOLUME_CYLINDER(coords: Vector3, rot: Vector3, scale: Vector3) -> Volume { invoke!(0x0522D4774B82E3E6, coords, rot, scale) }
+	pub fn CREATE_VOLUME_SPHERE(coords: Vector3, rot: Vector3, scale: Vector3) -> Volume { invoke!(0xB3FB80A32BAE3065, coords, rot, scale) }
 	pub fn CREATE_VOLUME_AGGREGATE() -> Volume { invoke!(0x59F6F5C1D129F106) }
-	pub fn _CREATE_VOLUME_BY_HASH_WITH_CUSTOM_NAME(volumeType: Hash, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32, name: & CStr) -> Volume { invoke!(0x1F85E4AC774A201E, volumeType, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, name) }
-	pub fn _CREATE_ANTI_GRIEF_VOLUME(volumeType: Hash, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) -> Volume { invoke!(0x0EB78C2B156635B1, volumeType, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
+	pub fn _CREATE_VOLUME_BY_HASH_WITH_CUSTOM_NAME(volumeType: Hash, coords: Vector3, rot: Vector3, scale: Vector3, name: & CStr) -> Volume { invoke!(0x1F85E4AC774A201E, volumeType, coords, rot, scale, name) }
+	pub fn _CREATE_ANTI_GRIEF_VOLUME(volumeType: Hash, coords: Vector3, rot: Vector3, scale: Vector3) -> Volume { invoke!(0x0EB78C2B156635B1, volumeType, coords, rot, scale) }
 	pub fn _SET_ANTI_GRIEF_VOLUME_BLOCKS_HORSE(volume: Volume, toggle: bool) { invoke_ignore!(0xBE551C2CC421185D, volume, toggle) }
 	pub fn _SET_ANTI_GRIEF_VOLUME_BLOCKS_PLAYER(volume: Volume, toggle: bool) { invoke_ignore!(0x5B23DFF8E0948BB2, volume, toggle) }
 	pub fn _CREATE_WALK_AND_TALK_VOLUME(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any) -> Volume { invoke!(0xFD0E389CD44434B6, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12) }
 	pub fn _CREATE_SPEED_VOLUME(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any, p8: Any, p9: Any, p10: Any, p11: Any, p12: Any, p13: Any, p14: Any) -> Volume { invoke!(0xBBE768E3AE76E07C, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14) }
-	pub fn _CREATE_VOLUME_BOX_WITH_CUSTOM_NAME(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32, name: & CStr) -> Volume { invoke!(0xF68485C7495D848E, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, name) }
-	pub fn _CREATE_VOLUME_CYLINDER_WITH_CUSTOM_NAME(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32, name: & CStr) -> Volume { invoke!(0xDF1E350EDDF06E59, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, name) }
-	pub fn _CREATE_VOLUME_SPHERE_WITH_CUSTOM_NAME(x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32, name: & CStr) -> Volume { invoke!(0x10157BC3247FF3BA, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, name) }
+	pub fn _CREATE_VOLUME_BOX_WITH_CUSTOM_NAME(coords: Vector3, rot: Vector3, scale: Vector3, name: & CStr) -> Volume { invoke!(0xF68485C7495D848E, coords, rot, scale, name) }
+	pub fn _CREATE_VOLUME_CYLINDER_WITH_CUSTOM_NAME(coords: Vector3, rot: Vector3, scale: Vector3, name: & CStr) -> Volume { invoke!(0xDF1E350EDDF06E59, coords, rot, scale, name) }
+	pub fn _CREATE_VOLUME_SPHERE_WITH_CUSTOM_NAME(coords: Vector3, rot: Vector3, scale: Vector3, name: & CStr) -> Volume { invoke!(0x10157BC3247FF3BA, coords, rot, scale, name) }
 	pub fn _CREATE_VOLUME_AGGREGATE_WITH_CUSTOM_NAME(name: & CStr) -> Volume { invoke!(0x5D580DE6398BB162, name) }
 	pub fn _ADD_BOUNDS_TO_AGGREGATE_VOLUME(volume: Volume, aggregate: Volume) { invoke_ignore!(0x6E0D3C3F828DA773, volume, aggregate) }
 	pub fn _REMOVE_BOUNDS_FROM_AGGREGATE_VOLUME(volume: Volume, aggregate: Volume) { invoke_ignore!(0xF92FA8890DECECF6, volume, aggregate) }
-	pub fn _ADD_VOLUME_TO_VOLUME_AGGREGATE(aggregate: Volume, typeHash: Hash, x: f32, y: f32, z: f32, rotX: f32, rotY: f32, rotZ: f32, scaleX: f32, scaleY: f32, scaleZ: f32) { invoke_ignore!(0x12FCAA23F2320422, aggregate, typeHash, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ) }
+	pub fn _ADD_VOLUME_TO_VOLUME_AGGREGATE(aggregate: Volume, typeHash: Hash, coords: Vector3, rot: Vector3, scale: Vector3) { invoke_ignore!(0x12FCAA23F2320422, aggregate, typeHash, coords, rot, scale) }
 	pub fn _ADD_BOX_VOLUME_TO_VOLUME_AGGREGATE(aggregate: Volume, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: f32) { invoke_ignore!(0x39816F6F94F385AD, aggregate, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn _ADD_CYLINDER_VOLUME_TO_VOLUME_AGGREGATE(aggregate: Volume, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: f32) { invoke_ignore!(0xBCE668AAF83608BE, aggregate, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn _ADD_SPHERE_VOLUME_TO_VOLUME_AGGREGATE(aggregate: Volume, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: f32, p7: f32, p8: f32, p9: f32) { invoke_ignore!(0x5B7D7BF36D2DE18B, aggregate, p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 	pub fn DELETE_VOLUME(volume: Volume) { invoke_ignore!(0x43F867EF5C463A53, volume) }
 	pub fn DOES_VOLUME_EXIST(volume: Volume) -> bool { invoke!(0x92A78D0BEDB332A3, volume) }
-	pub fn IS_POINT_IN_VOLUME(volume: Volume, x: f32, y: f32, z: f32) -> bool { invoke!(0xF256A75210C5C0EB, volume, x, y, z) }
+	pub fn IS_POINT_IN_VOLUME(volume: Volume, coords: Vector3) -> bool { invoke!(0xF256A75210C5C0EB, volume, coords) }
 	pub fn GET_VOLUME_COORDS(volume: Volume) -> Vector3 { invoke!(0xF70F00013A62F866, volume) }
-	pub fn SET_VOLUME_COORDS(volume: Volume, posX: f32, posY: f32, posZ: f32) -> bool { invoke!(0x541B8576615C33DE, volume, posX, posY, posZ) }
+	pub fn SET_VOLUME_COORDS(volume: Volume, pos: Vector3) -> bool { invoke!(0x541B8576615C33DE, volume, pos) }
 	pub fn GET_VOLUME_ROTATION(volume: Volume) -> Vector3 { invoke!(0x18675BC914891122, volume) }
-	pub fn SET_VOLUME_ROTATION(volume: Volume, rotX: f32, rotY: f32, rotZ: f32) -> bool { invoke!(0xA07CF1B21B56F041, volume, rotX, rotY, rotZ) }
+	pub fn SET_VOLUME_ROTATION(volume: Volume, rot: Vector3) -> bool { invoke!(0xA07CF1B21B56F041, volume, rot) }
 	pub fn GET_VOLUME_SCALE(volume: Volume) -> Vector3 { invoke!(0x3E2A25B2416DD67E, volume) }
-	pub fn SET_VOLUME_SCALE(volume: Volume, scaleX: f32, scaleY: f32, scaleZ: f32) -> bool { invoke!(0xA46E98BDC407E23D, volume, scaleX, scaleY, scaleZ) }
+	pub fn SET_VOLUME_SCALE(volume: Volume, scale: Vector3) -> bool { invoke!(0xA46E98BDC407E23D, volume, scale) }
 	pub fn _GET_VOLUME_BOUNDS(volume: Volume, min: &mut Vector3, max: &mut Vector3) { invoke_ignore!(0x5737199AF2DC609F, volume, min, max) }
 	pub fn _0x748C5F51A18CB8F0(p0: bool) { invoke_ignore!(0x748C5F51A18CB8F0, p0) }
 	pub fn _0x2B32B11520626229(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any) -> Any { invoke!(0x2B32B11520626229, p0, p1, p2, p3, p4) }
@@ -7346,7 +7345,7 @@ pub mod VOLUME {
 	pub fn _0xCA5C90D40665D5CE(p0: Any, p1: Any) -> Any { invoke!(0xCA5C90D40665D5CE, p0, p1) }
 	pub fn _0x3EFABB21E14A6BD1(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0x3EFABB21E14A6BD1, p0, p1, p2) }
 	pub fn _IS_AGGREGATE_VOLUME(volume: Volume) -> bool { invoke!(0xFEFF01B5725BCD22, volume) }
-	pub fn _CREATE_VOLUME_LOCK(x: f32, y: f32, z: f32, radius: f32, flag: i32, p5: Any) -> Volume { invoke!(0x00BBF7CEAE8C666A, x, y, z, radius, flag, p5) }
+	pub fn _CREATE_VOLUME_LOCK(coords: Vector3, radius: f32, flag: i32, p5: Any) -> Volume { invoke!(0x00BBF7CEAE8C666A, coords, radius, flag, p5) }
 	pub fn _CREATE_VOLUME_LOCK_ATTACHED_TO_ENTITY(entity: Entity, radius: f32, flag: i32, p3: Any) -> Volume { invoke!(0xF383E96C4904DF0C, entity, radius, flag, p3) }
 	pub fn _IS_VOLUME_LOCK_REQUEST_VALID_2(volLockRequestId: i32) -> bool { invoke!(0xF6A8A652A6B186CD, volLockRequestId) }
 	pub fn _0xC4019CF9AE8E931A(volLockRequestId: i32) -> Vector3 { invoke!(0xC4019CF9AE8E931A, volLockRequestId) }
@@ -7358,17 +7357,17 @@ pub mod VOLUME {
 	pub fn _0xEBA87B9273835CF3(p0: Any, p1: Any) { invoke_ignore!(0xEBA87B9273835CF3, p0, p1) }
 	pub fn _0xAA9EE2AAFC717623(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) -> Any { invoke!(0xAA9EE2AAFC717623, p0, p1, p2, p3, p4, p5) }
 	pub fn _0x870E9981ED27C815(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any) -> Any { invoke!(0x870E9981ED27C815, p0, p1, p2, p3, p4, p5) }
-	pub fn DOES_VOLUME_COLLIDE_WITH_ANY_VOLUME_LOCK(x: f32, y: f32, z: f32, radius: f32, p4: bool, p5: i32, p6: i32) -> bool { invoke!(0x397769175A7DBB30, x, y, z, radius, p4, p5, p6) }
-	pub fn _IS_POINT_NEAR_VOLUME_LOCK_CENTER(x: f32, y: f32, z: f32, radius: f32, p4: i32, p5: i32, flags: i32) -> bool { invoke!(0x769BB7626B8CDB06, x, y, z, radius, p4, p5, flags) }
+	pub fn DOES_VOLUME_COLLIDE_WITH_ANY_VOLUME_LOCK(coords: Vector3, radius: f32, p4: bool, p5: i32, p6: i32) -> bool { invoke!(0x397769175A7DBB30, coords, radius, p4, p5, p6) }
+	pub fn _IS_POINT_NEAR_VOLUME_LOCK_CENTER(coords: Vector3, radius: f32, p4: i32, p5: i32, flags: i32) -> bool { invoke!(0x769BB7626B8CDB06, coords, radius, p4, p5, flags) }
 	pub fn _0x51E52C9687FCDEEC(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any) -> Any { invoke!(0x51E52C9687FCDEEC, p0, p1, p2, p3, p4, p5, p6) }
 	pub fn _FIND_VOLUME_LOCK_REQUEST_ID_WITH_ARGS(args: &mut Any) -> i32 { invoke!(0x77A6E4AD0C496F81, args) }
-	pub fn _MODIFY_VOLUME_LOCK_LOCATION(volLock: i32, x: f32, y: f32, z: f32) { invoke_ignore!(0xEC43C2FFB70E3F30, volLock, x, y, z) }
+	pub fn _MODIFY_VOLUME_LOCK_LOCATION(volLock: i32, coords: Vector3) { invoke_ignore!(0xEC43C2FFB70E3F30, volLock, coords) }
 	pub fn _0x695DAC2DB928F308(p0: Any, p1: Any) { invoke_ignore!(0x695DAC2DB928F308, p0, p1) }
 	pub fn _RELEASE_LOCK_VOLUME(volLockRequestId: i32) { invoke_ignore!(0xFDFECC6EE4491E11, volLockRequestId) }
 	pub fn _0xAC355980681A7F89(p0: Any) { invoke_ignore!(0xAC355980681A7F89, p0) }
 	pub fn _ADD_ENTRY_VOLUME_LOCK(args: &mut Any) -> bool { invoke!(0x58D3803FA639A3BB, args) }
 	pub fn _0xC61E2FD926DBB406() { invoke_ignore!(0xC61E2FD926DBB406) }
-	pub fn REQUEST_VOLUME_LOCK(x: f32, y: f32, z: f32, radius: f32, p4: i32, p5: i32) -> i32 { invoke!(0xF14BCEF290F869E1, x, y, z, radius, p4, p5) }
+	pub fn REQUEST_VOLUME_LOCK(coords: Vector3, radius: f32, p4: i32, p5: i32) -> i32 { invoke!(0xF14BCEF290F869E1, coords, radius, p4, p5) }
 	pub fn REQUEST_VOLUME_LOCK_WITH_ARGS(args: &mut Any) -> i32 { invoke!(0x183C0B6CFEFFCAE4, args) }
 	pub fn IS_VOLUME_LOCK_REQUEST_VALID(volLockRequestId: i32) -> bool { invoke!(0xA4A4359320345B34, volLockRequestId) }
 	pub fn GET_VOLUME_LOCK_REQUEST_STATUS(volLockRequestId: i32) -> i32 { invoke!(0xB33A604345F58202, volLockRequestId) }
@@ -7386,10 +7385,10 @@ pub mod WATER {
 
 	pub fn DISABLE_WATER_LOOKUP() { invoke_ignore!(0x754616EC6965D1FB) }
 	pub fn ENABLE_WATER_LOOKUP() { invoke_ignore!(0x754616EC6965D1BF) }
-	pub fn GET_WATER_HEIGHT(x: f32, y: f32, z: f32, height: &mut f32) -> bool { invoke!(0xFCA8B23F28813F69, x, y, z, height) }
-	pub fn GET_WATER_HEIGHT_NO_WAVES(x: f32, y: f32, z: f32, height: &mut f32) -> bool { invoke!(0xDCF3690AA262C03F, x, y, z, height) }
-	pub fn TEST_PROBE_AGAINST_ALL_WATER(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32, flags: i32, intersectionPos: &mut Vector3) -> i32 { invoke!(0x8974647ED222EA5F, x1, y1, z1, x2, y2, z2, flags, intersectionPos) }
-	pub fn TEST_VERTICAL_PROBE_AGAINST_ALL_WATER(x: f32, y: f32, z: f32, flags: i32, waterHeight: &mut f32) -> i32 { invoke!(0x2B3451FA1E3142E2, x, y, z, flags, waterHeight) }
+	pub fn GET_WATER_HEIGHT(coords: Vector3, height: &mut f32) -> bool { invoke!(0xFCA8B23F28813F69, coords, height) }
+	pub fn GET_WATER_HEIGHT_NO_WAVES(coords: Vector3, height: &mut f32) -> bool { invoke!(0xDCF3690AA262C03F, coords, height) }
+	pub fn TEST_PROBE_AGAINST_ALL_WATER(coords1: Vector3, coords2: Vector3, flags: i32, intersectionPos: &mut Vector3) -> i32 { invoke!(0x8974647ED222EA5F, coords1, coords2, flags, intersectionPos) }
+	pub fn TEST_VERTICAL_PROBE_AGAINST_ALL_WATER(coords: Vector3, flags: i32, waterHeight: &mut f32) -> i32 { invoke!(0x2B3451FA1E3142E2, coords, flags, waterHeight) }
 	pub fn REMOVE_EXTRA_CALMING_QUAD(index: i32) { invoke_ignore!(0x4BEF8DD75AF6C71C, index) }
 	pub fn _0x09A1C7DFDCE54FBC(p0: i32) { invoke_ignore!(0x09A1C7DFDCE54FBC, p0) }
 	pub fn _0xF0FBF193F1F5C0EA(ped: Ped) { invoke_ignore!(0xF0FBF193F1F5C0EA, ped) }
@@ -7494,7 +7493,7 @@ pub mod WEAPON {
 	pub fn GET_PED_LAST_WEAPON_IMPACT_COORD(ped: Ped, coords: &mut Vector3) -> bool { invoke!(0x6C4D0409BA1A2BC2, ped, coords) }
 	pub fn _CLEAR_PED_LAST_WEAPON_DAMAGE(ped: Ped) { invoke_ignore!(0x087D8F4BC65F68E4, ped) }
 	pub fn _HAS_ENTITY_BEEN_DAMAGED_BY_WEAPON(entity: Entity, weaponName: Hash, weaponType: i32) -> bool { invoke!(0xDCF06D0CDFF68424, entity, weaponName, weaponType) }
-	pub fn SET_PED_DROPS_INVENTORY_WEAPON(ped: Ped, weaponHash: Hash, xOffset: f32, yOffset: f32, zOffset: f32, ammoCount: i32) { invoke_ignore!(0x208A1888007FC0E6, ped, weaponHash, xOffset, yOffset, zOffset, ammoCount) }
+	pub fn SET_PED_DROPS_INVENTORY_WEAPON(ped: Ped, weaponHash: Hash, offset: Vector3, ammoCount: i32) { invoke_ignore!(0x208A1888007FC0E6, ped, weaponHash, offset, ammoCount) }
 	pub fn _0xB0FB9B196A3D13F0(p0: Any, p1: Any, p2: Any) { invoke_ignore!(0xB0FB9B196A3D13F0, p0, p1, p2) }
 	pub fn _0x2EBF70E1D8C06683(ped: Ped, p1: Hash) { invoke_ignore!(0x2EBF70E1D8C06683, ped, p1) }
 	pub fn _0x63B83A526329AFBC(p0: Any) { invoke_ignore!(0x63B83A526329AFBC, p0) }
@@ -7531,7 +7530,7 @@ pub mod WEAPON {
 	pub fn _GET_WEAPON_STAT_ID(weaponHash: Hash) -> Hash { invoke!(0x8EC44AE8DECFF841, weaponHash) }
 	pub fn _HAS_ENTITY_BEEN_DAMAGED_BY_WEAPON_RECENTLY(entity: Entity, weaponHash: Hash, ms: i32) -> bool { invoke!(0x9E2D5D6BC97A5F1E, entity, weaponHash, ms) }
 	pub fn _GET_PED_HOGTIE_WEAPON(ped: Ped) -> Hash { invoke!(0x90EB1CB189923587, ped) }
-	pub fn _CREATE_WEAPON_OBJECT(weaponHash: Hash, ammoCount: i32, x: f32, y: f32, z: f32, showWorldModel: bool, scale: f32) -> Object { invoke!(0x9888652B8BA77F73, weaponHash, ammoCount, x, y, z, showWorldModel, scale) }
+	pub fn _CREATE_WEAPON_OBJECT(weaponHash: Hash, ammoCount: i32, coords: Vector3, showWorldModel: bool, scale: f32) -> Object { invoke!(0x9888652B8BA77F73, weaponHash, ammoCount, coords, showWorldModel, scale) }
 	pub fn REMOVE_WEAPON_COMPONENT_FROM_WEAPON_OBJECT(weaponObject: Object, component: Hash) { invoke_ignore!(0xF7D82B0D66777611, weaponObject, component) }
 	pub fn HAS_WEAPON_GOT_WEAPON_COMPONENT(weapon: Object, addonHash: Hash) -> bool { invoke!(0x76A18844E743BF91, weapon, addonHash) }
 	pub fn _GIVE_WEAPON_COMPONENT_TO_WEAPON_OBJECT(weaponObject: &mut Object, ped: Ped, componentHash: Hash, p3: bool) { invoke_ignore!(0x1A47699E8D533E8F, weaponObject, ped, componentHash, p3) }
@@ -7635,8 +7634,8 @@ pub mod ZONE {
 	use crate::core::scripthook::*;
 	use crate::core::types::*;
 
-	pub fn _GET_MAP_ZONE_AT_COORDS(x: f32, y: f32, z: f32, type_: i32) -> Hash { invoke!(0x43AD8FC02B429D33, x, y, z, type_) }
-	pub fn _GET_WATER_MAP_ZONE_AT_COORDS(x: f32, y: f32, z: f32) -> Hash { invoke!(0x5BA7A68A346A5A91, x, y, z) }
+	pub fn _GET_MAP_ZONE_AT_COORDS(coords: Vector3, type_: i32) -> Hash { invoke!(0x43AD8FC02B429D33, coords, type_) }
+	pub fn _GET_WATER_MAP_ZONE_AT_COORDS(coords: Vector3) -> Hash { invoke!(0x5BA7A68A346A5A91, coords) }
 }
 pub mod COMPAPP {
 	use std::ffi::CStr;

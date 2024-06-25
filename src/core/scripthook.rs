@@ -2,36 +2,28 @@ use crate::core::libscripthook::script_wait;
 use crate::core::native_value::NativeValues;
 
 macro_rules! invoke {
-    ($hash:expr) => {
-        unsafe {
-            native_init($hash);
-            native_call_2()
-        }
-    };
-    ($hash:expr, $($arg:expr),*) => {
+    ($hash:expr$(, $($arg:expr),*)?) => {
         unsafe {
             native_init($hash);
             $(
-                native_push($arg);
-            )*
-            native_call_2()
+                $(
+                    native_push($arg);
+                )*
+            )?
+            native_call_typed()
         }
     };
 }
 
 macro_rules! invoke_ignore {
-    ($hash:expr) => {
-        unsafe {
-            native_init($hash);
-            native_call();
-        }
-    };
-    ($hash:expr, $($arg:expr),*) => {
+    ($hash:expr$(, $($arg:expr),*)?) => {
         unsafe {
             native_init($hash);
             $(
-                native_push($arg);
-            )*
+                $(
+                    native_push($arg);
+                )*
+            )?
             native_call();
         }
     };
@@ -48,7 +40,7 @@ pub unsafe fn native_push<'a, const N: usize>(value: impl Into<NativeValues<N>>)
     }
 }
 
-pub unsafe fn native_call_2<R: Copy>() -> R {
+pub unsafe fn native_call_typed<R: Copy>() -> R {
     *(native_call() as *mut R)
 }
 

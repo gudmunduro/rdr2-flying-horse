@@ -1,10 +1,12 @@
 use windows::Win32::UI::Input::KeyboardAndMouse::{VK_N, VK_SHIFT, VK_SPACE, VK_W};
 
-use crate::core::keyboard::is_key_down;
+use crate::core::keyboard::{is_key_down, is_key_just_up};
 use crate::core::types::Vector3;
 use crate::core::{natives::*, types::*};
 
 use super::game_utils::{apply_force, controls, is_player_on_mount, is_using_controller, print_bottom};
+
+const MAX_SPEED: f32 = 4_000.0;
 
 pub struct FlyState {
     pub fwd_speed: f32,
@@ -76,7 +78,7 @@ pub fn fly_mode(state: &mut FlyState) {
     }
 
     if is_speeding_up {
-        state.fwd_speed = f32::min(state.fwd_speed + 50.0, 4_000.0);
+        state.fwd_speed = f32::min(state.fwd_speed + 50.0, MAX_SPEED);
     }
     if is_stopping {
         state.fwd_speed = f32::max(state.fwd_speed - 100.0, 0.0);
@@ -98,7 +100,8 @@ pub fn fly_mode(state: &mut FlyState) {
 
     if is_hovering {
         let force = if is_moving_fwd {
-            20.0 + (cam_rot.x / 8.0).clamp(-3.0, 5.0)
+            // TODO: Reverse
+            20.0 + ((cam_rot.x / 8.0) * state.fwd_speed / MAX_SPEED).clamp(-3.0, 5.0)
         } else {
             20.0
         };
@@ -106,17 +109,17 @@ pub fn fly_mode(state: &mut FlyState) {
     }
 
     let mut ground_z = 0_f32;
-    MISC::GET_GROUND_Z_FOR_3D_COORD(mount_pos.x, mount_pos.y, mount_pos.z, &mut ground_z, false);
-    let is_close_to_ground = mount_pos.z - ground_z < 4.0;
+    MISC::GET_GROUND_Z_FOR_3D_COORD(mount_pos, &mut ground_z, false);
+    let is_close_to_ground = mount_pos.z - ground_z < 2.0;
 
     let mut mount_velocity = ENTITY::GET_ENTITY_VELOCITY(mount, 0);
     if is_close_to_ground {
-        mount_velocity.z = (mount_velocity.z + 4.0).clamp(2.0, 20.0);
+        mount_velocity.z = 4.0;
     }
     else {
         mount_velocity.z = mount_velocity.z.clamp(-20.0, 20.0);
     }
-    ENTITY::SET_ENTITY_VELOCITY(mount, mount_velocity.x, mount_velocity.y, mount_velocity.z);
+    ENTITY::SET_ENTITY_VELOCITY(mount, mount_velocity);
 }
 
 fn go_up(mount: Ped, force: f32) {

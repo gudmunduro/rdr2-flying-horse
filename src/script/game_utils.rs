@@ -23,7 +23,7 @@ pub fn is_player_on_mount() -> bool {
 }
 
 pub fn apply_force(entity: Entity, force: &Vector3, offset: &Vector3) {
-    ENTITY::APPLY_FORCE_TO_ENTITY(entity, 0, force.x, force.y, force.z, offset.x, offset.y, offset.z, 0, true, true, true, false, true);
+    ENTITY::APPLY_FORCE_TO_ENTITY(entity, 0, *force, *offset, 0, true, true, true, false, true);
 }
 
 pub fn is_using_controller() -> bool {
