@@ -70,8 +70,8 @@ pub fn fly_mode(state: &mut FlyState) {
     else {
         mount_rot = cam_rot;
     }
-    let Vector3 {x, y, z, ..} = mount_rot;
-    ENTITY::SET_ENTITY_ROTATION(mount, x.clamp(-8.0, 20.0), y, z, 0, true);
+    mount_rot.x = mount_rot.x.clamp(-8.0, 20.0);
+    ENTITY::SET_ENTITY_ROTATION(mount, mount_rot, 0, true);
 
     if PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, controls::INPUT_FRONTEND_RS) {
         state.super_speed = !state.super_speed;
@@ -100,7 +100,6 @@ pub fn fly_mode(state: &mut FlyState) {
 
     if is_hovering {
         let force = if is_moving_fwd {
-            // TODO: Reverse
             20.0 + ((cam_rot.x / 8.0) * state.fwd_speed / MAX_SPEED).clamp(-3.0, 5.0)
         } else {
             20.0

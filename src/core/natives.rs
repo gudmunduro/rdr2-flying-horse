@@ -1324,7 +1324,7 @@ pub mod ENTITY {
 	pub fn SET_ENTITY_PROOFS(entity: Entity, proofsBitset: i32, specialFlag: bool) { invoke_ignore!(0xFAEE099C6F890BB8, entity, proofsBitset, specialFlag) }
 	pub fn _GET_ENTITY_PROOFS(entity: Entity) -> i32 { invoke!(0x6CF0DAD7FA1088EA, entity) }
 	pub fn SET_ENTITY_QUATERNION(entity: Entity, coords: Vector3, w: f32) { invoke_ignore!(0x100E7007D13E3687, entity, coords, w) }
-	pub fn SET_ENTITY_ROTATION(entity: Entity, pitch: f32, roll: f32, yaw: f32, rotationOrder: i32, p5: bool) { invoke_ignore!(0x9CC8314DFEDE441E, entity, pitch, roll, yaw, rotationOrder, p5) }
+	pub fn SET_ENTITY_ROTATION(entity: Entity, rotation: Vector3, rotationOrder: i32, p5: bool) { invoke_ignore!(0x9CC8314DFEDE441E, entity, rotation, rotationOrder, p5) }
 	pub fn _0xD45BB89B53FC0CFD(p0: Any, p1: Any, p2: Any, p3: Any, p4: Any, p5: Any, p6: Any, p7: Any) { invoke_ignore!(0xD45BB89B53FC0CFD, p0, p1, p2, p3, p4, p5, p6, p7) }
 	pub fn SET_ENTITY_VISIBLE(entity: Entity, toggle: bool) { invoke_ignore!(0x1794B4FCC84D812F, entity, toggle) }
 	pub fn _0x80FDEB3A9E9AA578(entity: Entity, p1: bool) { invoke_ignore!(0x80FDEB3A9E9AA578, entity, p1) }
