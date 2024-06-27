@@ -9,6 +9,7 @@ use crate::script::script_main;
 use windows::Win32::Foundation::HMODULE;
 use windows::Win32::System::SystemServices::{DLL_PROCESS_ATTACH, DLL_PROCESS_DETACH};
 
+#[allow(unused_variables)]
 #[no_mangle]
 extern "system" fn DllMain(h_instance: HMODULE, reason: u32, lp_reserved: *const u8) -> u32 {
     match reason {

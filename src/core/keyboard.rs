@@ -3,6 +3,7 @@ use std::sync::Mutex;
 use windows::Win32::{System::SystemInformation::GetTickCount, UI::Input::KeyboardAndMouse::VIRTUAL_KEY};
 use crate::core::types::{BOOL, BYTE, DWORD, WORD};
 
+#[allow(unused)]
 #[derive(Copy, Clone)]
 struct KeyState {
     time: DWORD,
@@ -23,6 +24,7 @@ static KEY_STATES: Mutex<[KeyState; 255]> = Mutex::new([KeyState::initial(); 255
 const NOW_PERIOD: DWORD = 100;
 const MAX_DOWN: DWORD = 5000;
 
+#[allow(unused_variables)]
 pub extern "C" fn on_keyboard_message(key: DWORD, repeats: WORD, scan_code: BYTE, is_extended: BOOL, is_with_alt: BOOL, was_down_before: BOOL, is_up_now: BOOL) {
     let mut key_states = KEY_STATES.lock().unwrap();
     if let Some(key_state) = key_states.get_mut(key as usize) {

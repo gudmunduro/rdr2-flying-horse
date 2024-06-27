@@ -1,5 +1,6 @@
 use crate::core::{natives::*, string::UnsafeIntoCString, types::*};
 
+#[allow(unused)]
 pub mod controls {
     pub const INPUT_SPRINT: u32 = 0x8FFC75D6;
     pub const INPUT_JUMP: u32 = 0xD9D0E1C0;

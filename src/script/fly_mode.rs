@@ -1,10 +1,7 @@
-use windows::Win32::UI::Input::KeyboardAndMouse::{VK_N, VK_SHIFT, VK_SPACE, VK_W};
-
-use crate::core::keyboard::{is_key_down, is_key_just_up};
 use crate::core::types::Vector3;
 use crate::core::{natives::*, types::*};
 
-use super::game_utils::{apply_force, controls, is_player_on_mount, is_using_controller, print_bottom};
+use super::game_utils::{apply_force, controls, is_player_on_mount, is_using_controller};
 
 const MAX_SPEED: f32 = 4_000.0;
 
@@ -19,16 +16,26 @@ impl Default for FlyState {
     }
 }
 
-pub fn on_fly_mode_disabled() {
+pub fn land_and_disable() -> bool {
     let player_ped = PLAYER::PLAYER_PED_ID();
     let mount = PED::GET_MOUNT(player_ped);
+    let mount_pos = ENTITY::GET_ENTITY_COORDS(mount, false, false);
 
-    PED::SET_PED_CAN_RAGDOLL(player_ped, true);
-    PED::SET_PED_CAN_RAGDOLL(mount, true);
     ENTITY::SET_ENTITY_COLLISION(mount, true, true);
 
-    PAD::ENABLE_CONTROL_ACTION(0, controls::INPUT_HORSE_MELEE, false);
-    PAD::ENABLE_CONTROL_ACTION(0, controls::INPUT_JUMP, false);
+    let mut ground_z = 0_f32;
+    MISC::GET_GROUND_Z_FOR_3D_COORD(mount_pos, &mut ground_z, false);
+
+    if (mount_pos.z - ground_z) < 1.0 {
+        PAD::ENABLE_CONTROL_ACTION(0, controls::INPUT_HORSE_MELEE, false);
+        PAD::ENABLE_CONTROL_ACTION(0, controls::INPUT_JUMP, false);
+        PED::SET_PED_CAN_RAGDOLL(player_ped, true);
+        PED::SET_PED_CAN_RAGDOLL(mount, true);
+
+        true
+    } else {
+        false
+    }
 }
 
 pub fn fly_mode(state: &mut FlyState) {
