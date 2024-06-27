@@ -67,7 +67,7 @@ pub fn fly_mode(state: &mut FlyState) {
         // 0: Left - 250: Right
         let lr_value = PAD::GET_CONTROL_VALUE(0, controls::INPUT_HORSE_MOVE_LR) as f32;
 
-        mount_rot.x = if -5.0 < cam_rot.x && cam_rot.x < 5.0 {
+        mount_rot.x = if (-5.0 < cam_rot.x && cam_rot.x < 5.0) || state.fwd_speed < 1_000.0 {
             0.0
         } else {
             (cam_rot.x / 8.0).clamp(-3.0, 8.0)
