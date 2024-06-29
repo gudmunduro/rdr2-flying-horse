@@ -1,17 +1,17 @@
 pub mod fly_mode;
 pub mod game_utils;
 
+use crate::core::keyboard::is_key_just_up;
+use crate::core::natives::PAD;
+use crate::core::scripthook::wait;
 use fly_mode::FlyState;
 use game_utils::{controls, is_player_on_mount, is_using_controller, print_bottom};
 use windows::Win32::UI::Input::KeyboardAndMouse::VK_O;
-use crate::core::natives::PAD;
-use crate::core::scripthook::wait;
-use crate::core::keyboard::is_key_just_up;
 
 enum FlyModeToggle {
     Enabled,
     Disabled,
-    Disabling
+    Disabling,
 }
 
 impl FlyModeToggle {
@@ -25,6 +25,8 @@ pub extern "C" fn script_main() {
     let mut fly_state = FlyState::default();
 
     loop {
+        wait(0);
+        
         let enable_button_pressed = if is_using_controller() {
             PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, controls::INPUT_FRONTEND_LS)
         } else {
@@ -44,21 +46,18 @@ pub extern "C" fn script_main() {
                 fly_state = FlyState::default();
             }
 
-            let toggle_state_text = if fly_toggle.is_enabled() { "ON" } else { "OFF" };
-            print_bottom(&format!("Horse fly mode: {toggle_state_text}"));
             wait(100);
         }
-        
+
         match fly_toggle {
-            FlyModeToggle::Enabled =>  fly_mode::fly_mode(&mut fly_state),
+            FlyModeToggle::Enabled if !is_player_on_mount() => fly_toggle = FlyModeToggle::Disabled,
+            FlyModeToggle::Enabled => fly_mode::fly_mode(&mut fly_state),
             FlyModeToggle::Disabling => {
                 if fly_mode::land_and_disable() {
                     fly_toggle = FlyModeToggle::Disabled;
                 }
-            },
+            }
             FlyModeToggle::Disabled => {}
         }
-
-        wait(0);
     }
 }
