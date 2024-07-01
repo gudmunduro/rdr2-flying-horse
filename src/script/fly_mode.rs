@@ -26,8 +26,8 @@ pub fn fly_mode(state: &mut FlyState) {
     let mount = PED::GET_MOUNT(player_ped);
 
     handle_flight_setup(mount, player_ped);
-    handle_flight_movement(mount, state);
     handle_flight_rotation(mount, state);
+    handle_flight_movement(mount, state);
     limit_vertical_velocity(mount);
 }
 
@@ -79,20 +79,21 @@ fn handle_flight_movement(mount: Ped, state: &mut FlyState) {
 }
 
 fn handle_flight_rotation(mount: Ped, state: &FlyState) {
-    let cam_rot = CAM::GET_GAMEPLAY_CAM_ROT(0);
+    let is_aiming = PLAYER::IS_PLAYER_FREE_AIMING(PLAYER::PLAYER_ID());
     let speed = ENTITY::GET_ENTITY_SPEED(mount);
+    let cam_rot = CAM::GET_GAMEPLAY_CAM_ROT(0);
 
     let mut mount_rot = ENTITY::GET_ENTITY_ROTATION(mount, 0);
     if is_using_controller() {
         // 0: Left - 250: Right
         let lr_value = PAD::GET_CONTROL_VALUE(0, controls::INPUT_HORSE_MOVE_LR) as f32;
 
-        mount_rot.x = if (-5.0 < cam_rot.x && cam_rot.x < 8.0) || state.fwd_speed < 1_000.0 {
+        mount_rot.x = if (-5.0 < cam_rot.x && cam_rot.x < 8.0) || state.fwd_speed < 1_000.0 || is_aiming {
             0.0
         } else {
             let max_rot = 8.0 * (speed / EXPECTED_MAX_SPEED).powi(3);
             let rot_start = if cam_rot.x > 0.0 { 8.0 } else { -5.0 };
-            ((cam_rot.x - rot_start) / 8.0).clamp(-max_rot, max_rot)
+            ((cam_rot.x - rot_start) / 8.0).clamp(-max_rot, max_rot*2.0)
         };
         mount_rot.z += -(lr_value / 125.0 - 1.0) * 2.0;
     }
