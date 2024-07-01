@@ -2,14 +2,15 @@ use crate::core::{natives::*, string::UnsafeIntoCString, types::*};
 
 #[allow(unused)]
 pub mod controls {
-    pub const INPUT_SPRINT: u32 = 0x8FFC75D6;
-    pub const INPUT_JUMP: u32 = 0xD9D0E1C0;
+    pub const INPUT_HORSE_JUMP: u32 = 0xE4D2CE1D;
+    pub const INPUT_HORSE_SPRINT: u32 = 0x5AA007D7;
     pub const INPUT_HORSE_MOVE_LR: u32 = 0x126796EB;
     pub const INPUT_HORSE_MOVE_UD: u32 = 0x3BBDEFEF;
     pub const INPUT_HORSE_STOP: u32 = 0xE16B9AAD;
     pub const INPUT_HORSE_MELEE: u32 = 0x1A3EABBB;
     pub const INPUT_FRONTEND_LS: u32 = 0x43CDA5B0;
     pub const INPUT_FRONTEND_RS: u32 = 0x7DA48D2A;
+    pub const INPUT_FRONTEND_X: u32 = 0x6DB8C62F;
 }
 
 pub fn print_bottom(text: &str) {
