@@ -13,6 +13,7 @@ pub mod controls {
     pub const INPUT_FRONTEND_X: u32 = 0x6DB8C62F;
 }
 
+#[allow(unused)]
 pub fn print_bottom(text: &str) {
     let text = text.c_string();
     UILOG::_UILOG_SET_CACHED_OBJECTIVE(&text);

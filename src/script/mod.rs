@@ -5,7 +5,7 @@ use crate::core::keyboard::is_key_just_up;
 use crate::core::natives::PAD;
 use crate::core::scripthook::wait;
 use fly_mode::FlyState;
-use game_utils::{controls, is_player_on_mount, is_using_controller, print_bottom};
+use game_utils::{controls, is_player_on_mount, is_using_controller};
 use windows::Win32::UI::Input::KeyboardAndMouse::VK_O;
 
 enum FlyModeToggle {
@@ -34,7 +34,6 @@ pub extern "C" fn script_main() {
         };
         if enable_button_pressed {
             if !fly_toggle.is_enabled() && !is_player_on_mount() {
-                print_bottom("You need to be on a horse");
                 continue;
             }
 
