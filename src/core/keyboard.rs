@@ -54,9 +54,17 @@ pub fn is_key_down_limited(key: VIRTUAL_KEY) -> bool {
 pub fn is_key_just_up(key: VIRTUAL_KEY) -> bool {
     let key_states = KEY_STATES.lock().unwrap();
     let tick_count = unsafe { GetTickCount() };
-    key_states.get(key.0 as usize)
+    let is_up = key_states.get(key.0 as usize)
         .map(|k| tick_count < k.time + NOW_PERIOD && k.is_up_now)
-        .unwrap_or(false)
+        .unwrap_or(false);
+
+    // Drop existing reference to KEY_STATES to prevent deadlock
+    drop(key_states);
+    if is_up {
+        reset_key_state(key);
+    }
+
+    is_up
 }
 
 pub fn reset_key_state(key: VIRTUAL_KEY) {

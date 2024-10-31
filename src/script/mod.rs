@@ -45,8 +45,6 @@ pub extern "C" fn script_main() {
             if fly_toggle.is_enabled() {
                 fly_state = FlyState::default();
             }
-
-            wait(100);
         }
 
         match fly_toggle {
