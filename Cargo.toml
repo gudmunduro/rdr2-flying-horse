@@ -7,9 +7,6 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-log = "0.4.21"
-simplelog = "0.12.2"
-tap = "1.0.1"
 [dependencies.windows]
 version = "0.48.0"
 features = [

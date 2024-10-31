@@ -1,4 +1,4 @@
-use crate::core::{natives::*, string::UnsafeIntoCString, types::*};
+use crate::core::{natives::*, string::IntoCString, types::*};
 
 #[allow(unused)]
 pub mod controls {
