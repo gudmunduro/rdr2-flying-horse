@@ -1,7 +1,7 @@
 use crate::core::types::Vector3;
 use crate::core::{natives::*, types::*};
 
-use super::game_utils::{apply_force, controls, is_player_on_mount, is_using_controller};
+use super::game_utils::{apply_force, controls, is_player_on_mount};
 
 const MAX_FORCE: f32 = 4_000.0;
 const EXPECTED_MAX_SPEED: f32 = 50.0;
