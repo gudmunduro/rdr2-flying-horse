@@ -88,31 +88,29 @@ fn handle_flight_rotation(mount: Ped, state: &FlyState, mount_pos: &Vector3, gro
     let cam_rot = CAM::GET_GAMEPLAY_CAM_ROT(0);
 
     let mut mount_rot = ENTITY::GET_ENTITY_ROTATION(mount, 0);
-    if is_using_controller() {
-        // 0: Left - 250: Right
-        let lr_value = PAD::GET_CONTROL_VALUE(0, controls::INPUT_HORSE_MOVE_LR) as f32;
 
-        mount_rot.x =
-            if (-12.0 < cam_rot.x && cam_rot.x < 12.0) || state.fwd_speed < 1_000.0 || is_aiming {
-                0.0
-            } else {
-                let max_rot = 8.0 * (speed / EXPECTED_MAX_SPEED).powi(3);
-                let rot_start = if cam_rot.x > 0.0 { 12.0 } else { -12.0 };
-                let reduce_rot_factor = if is_low_flying {
-                    if cam_rot.x > 0.0 {
-                        6.0
-                    } else {
-                        8.0
-                    }
+    // 0: Left - 250: Right
+    let lr_value = PAD::GET_CONTROL_VALUE(0, controls::INPUT_HORSE_MOVE_LR) as f32;
+
+    mount_rot.x =
+        if (-12.0 < cam_rot.x && cam_rot.x < 12.0) || state.fwd_speed < 1_000.0 || is_aiming {
+            0.0
+        } else {
+            let max_rot = 8.0 * (speed / EXPECTED_MAX_SPEED).powi(3);
+            let rot_start = if cam_rot.x > 0.0 { 12.0 } else { -12.0 };
+            let reduce_rot_factor = if is_low_flying {
+                if cam_rot.x > 0.0 {
+                    6.0
                 } else {
-                    4.0
-                };
-                ((cam_rot.x - rot_start) / reduce_rot_factor).clamp(-max_rot, max_rot)
+                    8.0
+                }
+            } else {
+                4.0
             };
-        mount_rot.z += -(lr_value / 125.0 - 1.0) * 2.0;
-    } else {
-        mount_rot = cam_rot;
-    }
+            ((cam_rot.x - rot_start) / reduce_rot_factor).clamp(-max_rot, max_rot)
+        };
+    mount_rot.z += -(lr_value / 125.0 - 1.0) * 2.0;
+
     mount_rot.x = mount_rot.x.clamp(-8.0, 20.0);
     ENTITY::SET_ENTITY_ROTATION(mount, mount_rot, 0, true);
 }
